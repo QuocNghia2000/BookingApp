@@ -3,6 +3,8 @@ package com.android.bookingapp.model;
 public class Date {
     String day,month,year;
 
+    Date() {}
+
     public Date(String day, String month, String year) {
         this.day = day;
         this.month = month;
