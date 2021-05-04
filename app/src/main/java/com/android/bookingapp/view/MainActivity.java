@@ -1,9 +1,10 @@
-package com.android.bookingapp;
+package com.android.bookingapp.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.android.bookingapp.R;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
