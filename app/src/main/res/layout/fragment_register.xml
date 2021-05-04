@@ -46,6 +46,7 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/edt_fullname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -75,6 +76,7 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/edt_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -104,6 +106,7 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/edt_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -132,6 +135,7 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/edt_pass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -161,6 +165,7 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/edt_confirmpass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -172,7 +177,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/bt_continue"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:backgroundTint="#fe7801"
@@ -202,7 +207,7 @@
                 android:background="@drawable/button">
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/bt_login"
                     android:layout_width="142dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.android.bookingapp.loginFragment"
+        android:name="com.android.bookingapp.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/confrimFragment"
-        android:name="com.android.bookingapp.confrimFragment"
+        android:name="com.android.bookingapp.ConfirmFragment"
         android:label="fragment_confrim"
         tools:layout="@layout/fragment_confrim" >
         <action
