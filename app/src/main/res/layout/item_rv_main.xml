@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="150dp"
+            android:layout_height="100dp"
+            android:layout_marginLeft="130dp"
+            android:background="@drawable/button">
+
+            <Button
+                android:layout_width="140dp"
+                android:layout_height="100dp"
+                android:textColor="#fe7801"
+                android:layout_marginLeft="5dp"
+                android:gravity="center"
+                android:backgroundTint="@color/white"
+                android:text="Khoa">
+            </Button>
+
+    </LinearLayout>
+</LinearLayout>

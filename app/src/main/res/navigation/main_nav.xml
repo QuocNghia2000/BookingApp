@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/mainScreenFragment">
+
+    <fragment
+        android:id="@+id/mainScreenFragment"
+        android:name="com.android.bookingapp.mainScreenFragment"
+        android:label="fragment_main_screen"
+        tools:layout="@layout/fragment_main_screen" >
+        <action
+            android:id="@+id/action_mainScreenFragment_to_detailDepartmentFragment"
+            app:destination="@id/detailDepartmentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailDepartmentFragment"
+        android:name="com.android.bookingapp.DetailDepartmentFragment"
+        android:label="fragment_detail_department"
+        tools:layout="@layout/fragment_detail_department" >
+        <action
+            android:id="@+id/action_detailDepartmentFragment_to_bookFragment"
+            app:destination="@id/bookFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/bookFragment"
+        android:name="com.android.bookingapp.BookFragment"
+        android:label="fragment_book"
+        tools:layout="@layout/fragment_book" />
+</navigation>
