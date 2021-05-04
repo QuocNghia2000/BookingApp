@@ -27,7 +27,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-
+apply plugin: 'com.google.gms.google-services'
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -36,4 +36,16 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    compile 'com.google.firebase:firebase-core:11.8.0'
+//Firebase Messaging library for Sending push Notifications
+    compile 'com.google.firebase:firebase-messaging:11.8.0'
+    implementation platform('com.google.firebase:firebase-bom:27.1.0')
+    implementation 'com.google.firebase:firebase-database'
+
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+
+    // Declare the dependency for the Firebase SDK for Google Analytics
+    implementation 'com.google.firebase:firebase-analytics'
+
 }
