@@ -201,12 +201,38 @@
                 android:background="@android:color/transparent"
                 android:hint="Số điện thoại">
             </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/back"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_iphone_24">
+            </ImageView>
+
+            <Spinner
+                android:id="@+id/sp_book"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </Spinner>
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="40dp"
+            android:layout_height="170dp"
             android:background="@drawable/back"
             android:orientation="horizontal"
             android:layout_marginLeft="20dp"
@@ -217,41 +243,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_house_24">
+                android:src="@drawable/ic_access_time_filled_24">
             </ImageView>
 
-            <EditText
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_book"
+                android:gravity="center"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
-                android:background="@android:color/transparent"
-                android:hint="Địa chỉ">
-            </EditText>
+                >
+            </androidx.recyclerview.widget.RecyclerView>
 
         </LinearLayout>
 
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nam"
-                android:layout_marginLeft="70dp"
-                android:checked="true">
-            </RadioButton>
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nữ"
-                android:layout_marginLeft="150dp">
-            </RadioButton>
-        </RadioGroup>
 
         <LinearLayout
             android:layout_width="fill_parent"
