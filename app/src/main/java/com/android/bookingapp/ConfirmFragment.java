@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.android.bookingapp.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -48,6 +49,7 @@ public class ConfirmFragment extends Fragment {
                         if(task.isSuccessful())
                         {
                             Toast.makeText(getContext(),"Đăng ký thành công", Toast.LENGTH_SHORT).show();
+                            Navigation.findNavController(v).navigate(R.id.action_confrimFragment_to_loginFragment, new Bundle());
                         }
                         else
                         {
