@@ -18,19 +18,10 @@
         android:id="@+id/confrimFragment"
         android:name="com.android.bookingapp.ConfirmFragment"
         android:label="fragment_confrim"
-        tools:layout="@layout/fragment_confrim" >
+        tools:layout="@layout/fragment_confirm" >
         <action
-            android:id="@+id/action_confrimFragment_to_moreInfoFragment"
-            app:destination="@id/moreInfoFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/registerFragment"
-        android:name="com.android.bookingapp.registerFragment"
-        android:label="fragment_register"
-        tools:layout="@layout/fragment_register" >
-        <action
-            android:id="@+id/action_registerFragment_to_confrimFragment"
-            app:destination="@id/confrimFragment" />
+            android:id="@+id/action_confrimFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/moreInfoFragment"
@@ -38,7 +29,16 @@
         android:label="fragment_more_info"
         tools:layout="@layout/fragment_more_info" >
         <action
-            android:id="@+id/action_moreInfoFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            android:id="@+id/action_moreInfoFragment_to_confrimFragment"
+            app:destination="@id/confrimFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.android.bookingapp.registerFragment"
+        android:label="fragment_register"
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_registerFragment_to_moreInfoFragment"
+            app:destination="@id/moreInfoFragment" />
     </fragment>
 </navigation>

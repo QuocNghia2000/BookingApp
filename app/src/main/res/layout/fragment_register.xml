@@ -139,6 +139,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:password="true"
                 android:layout_marginLeft="10dp"
                 android:background="@android:color/transparent"
                 android:hint="Mật khẩu">
@@ -169,6 +170,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:password="true"
                 android:layout_marginLeft="10dp"
                 android:background="@android:color/transparent"
                 android:hint="Xác nhận mật khẩu">

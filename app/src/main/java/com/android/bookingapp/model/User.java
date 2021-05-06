@@ -1,8 +1,8 @@
 package com.android.bookingapp.model;
-
 import java.io.Serializable;
 
 public class User implements Serializable {
+
     private int id;
     private String email;
     private String password;
@@ -15,7 +15,8 @@ public class User implements Serializable {
 
     public User(){}
 
-    public User(String email, String password, String fullname, String phone) {
+    public User(int id,String email, String password, String fullname, String phone) {
+        this.id=id;
         this.email = email;
         this.password = password;
         this.fullname = fullname;

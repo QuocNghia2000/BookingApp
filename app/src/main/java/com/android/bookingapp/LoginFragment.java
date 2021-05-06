@@ -1,13 +1,6 @@
 package com.android.bookingapp;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +9,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import com.android.bookingapp.model.User;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,13 +23,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-import static android.content.ContentValues.TAG;
-
 public class LoginFragment extends Fragment {
     private EditText username,pass;
     private TextView resetpass;
     private Button bt_login,bt_register;
     private ArrayList<User> users;
+    FirebaseDatabase database;
+    DatabaseReference myRef;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -48,9 +45,14 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         users=new ArrayList<>();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("User");
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("User");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -65,12 +67,10 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
 
     }
-
     private void handle() {
         bt_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +88,9 @@ public class LoginFragment extends Fragment {
         bt_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment, new Bundle());
+                Bundle bundle=new Bundle();
+                bundle.putInt("id",users.size());
+                Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment, bundle);
             }
         });
 
