@@ -30,8 +30,6 @@ public class registerFragment extends Fragment {
     DatabaseReference myRef;
     ArrayList<User> users;
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,9 +50,7 @@ public class registerFragment extends Fragment {
                     users.add(user);
                 }
                 handle();
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -70,7 +66,7 @@ public class registerFragment extends Fragment {
                 {
                     if(!emailExist(email.getText().toString()))
                     {
-                        Toast.makeText(getActivity(),"hehehe",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"Vui lòng nhập đầy đủ các thông tin sau",Toast.LENGTH_SHORT).show();
                         if(pass.getText().toString().trim().equals(confirm_pass.getText().toString().trim()))
                         {
                             User user = new User(getArguments().getInt("id"),email.getText().toString(),pass.getText().toString(),fullname.getText().toString(),phone.getText().toString());
