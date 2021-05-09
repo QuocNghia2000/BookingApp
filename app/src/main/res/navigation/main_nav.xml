@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_mainScreenFragment_to_detailDepartmentFragment"
             app:destination="@id/detailDepartmentFragment" />
+        <action
+            android:id="@+id/action_mainScreenFragment_to_infoAccountFragment"
+            app:destination="@id/infoAccountFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailDepartmentFragment"
@@ -28,4 +31,13 @@
         android:name="com.android.bookingapp.BookFragment"
         android:label="fragment_book"
         tools:layout="@layout/fragment_book" />
+    <fragment
+        android:id="@+id/infoAccountFragment"
+        android:name="com.android.bookingapp.InfoAccountFragment"
+        android:label="fragment_info_account"
+        tools:layout="@layout/fragment_info_account" >
+        <action
+            android:id="@+id/action_infoAccountFragment_to_mainScreenFragment"
+            app:destination="@id/mainScreenFragment" />
+    </fragment>
 </navigation>

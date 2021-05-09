@@ -1,5 +1,6 @@
 package com.android.bookingapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.android.bookingapp.model.User;
+import com.android.bookingapp.view.MainActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -75,14 +77,15 @@ public class LoginFragment extends Fragment {
         bt_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(posCurrent(username.getText().toString(),pass.getText().toString())!=-1)
-                {
-                    Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Sai thông tin đăng nhập",Toast.LENGTH_SHORT).show();
-                }
+//                if(posCurrent(username.getText().toString(),pass.getText().toString())!=-1)
+//                {
+//                    Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
+//                }
+//                else
+//                {
+//                    Toast.makeText(getContext(),"Sai thông tin đăng nhập",Toast.LENGTH_SHORT).show();
+//                }
+                startActivity(new Intent(getActivity(), MainActivity.class));
             }
         });
         bt_register.setOnClickListener(new View.OnClickListener() {
