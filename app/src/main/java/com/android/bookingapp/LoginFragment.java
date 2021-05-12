@@ -77,15 +77,18 @@ public class LoginFragment extends Fragment {
         bt_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(posCurrent(username.getText().toString(),pass.getText().toString())!=-1)
-//                {
-//                    Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
-//                }
-//                else
-//                {
-//                    Toast.makeText(getContext(),"Sai thông tin đăng nhập",Toast.LENGTH_SHORT).show();
-//                }
-                startActivity(new Intent(getActivity(), MainActivity.class));
+                int index=posCurrent(username.getText().toString(),pass.getText().toString());
+                if(index!=-1)
+                {
+                    //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
+                    Intent intent =new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra("user",users.get(index));
+                    startActivity(intent);
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"Sai thông tin đăng nhập",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         bt_register.setOnClickListener(new View.OnClickListener() {
