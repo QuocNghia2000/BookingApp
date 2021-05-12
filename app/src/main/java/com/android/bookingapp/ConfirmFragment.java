@@ -34,7 +34,7 @@ public class ConfirmFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             user=(User)getArguments().getSerializable("user");
-            code=(String)getArguments().getSerializable("code");
+            code=getArguments().getString("code");
         }
     }
 
