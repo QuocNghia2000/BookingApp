@@ -1,6 +1,8 @@
 package com.android.bookingapp.model;
 
-public class Date {
+import java.io.Serializable;
+
+public class Date implements Serializable {
     String day,month,year;
 
     Date() {}

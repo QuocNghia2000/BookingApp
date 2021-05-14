@@ -166,7 +166,7 @@ public class moreInfoFragment extends Fragment  {
                     bundle.putSerializable("user",user1);
                     bundle.putString("code",textMessage);
                     Navigation.findNavController(v).navigate(R.id.action_moreInfoFragment_to_confrimFragment, bundle);
-                    Toast.makeText(getActivity(),"Vui lòng mở Gmail để nhận mã",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getActivity(),"Vui lòng mở Gmail để nhận mã",Toast.LENGTH_SHORT).show();
                 }
                 else
                 {

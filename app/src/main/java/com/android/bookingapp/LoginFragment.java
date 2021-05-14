@@ -2,6 +2,7 @@ package com.android.bookingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,8 +64,8 @@ public class LoginFragment extends Fragment {
                     User user = data.getValue(User.class);
                     users.add(user);
                 }
+                Toast.makeText(getContext(),String.valueOf(users.size()),Toast.LENGTH_SHORT).show();
                 handle();
-
             }
 
             @Override
@@ -77,17 +78,24 @@ public class LoginFragment extends Fragment {
         bt_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int index=posCurrent(username.getText().toString(),pass.getText().toString());
-                if(index!=-1)
+                if(!Patterns.EMAIL_ADDRESS.matcher(username.getText().toString()).matches())
                 {
-                    //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
-                    Intent intent =new Intent(getActivity(), MainActivity.class);
-                    intent.putExtra("user",users.get(index));
-                    startActivity(intent);
+                    username.setError("Vui lòng điền đúng địa chỉ email");
                 }
                 else
                 {
-                    Toast.makeText(getContext(),"Sai thông tin đăng nhập",Toast.LENGTH_SHORT).show();
+                    int index=posCurrent(username.getText().toString(),pass.getText().toString());
+                    if(index!=-1)
+                    {
+                        //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
+                        Intent intent =new Intent(getActivity(), MainActivity.class);
+                        //intent.putExtra("user",(Serializable)users.get(index));
+                        startActivity(intent);
+                    }
+                    else
+                    {
+                        Toast.makeText(getContext(),"Sai thông tin đăng nhập",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

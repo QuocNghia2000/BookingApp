@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -42,14 +41,14 @@ public class ConfirmFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         database = FirebaseDatabase.getInstance();
-        myRef = database.getReference();
+        myRef = database.getReference("User");
 
         bt_done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String retype_code = edt_code.getText().toString();
                 if(retype_code.equals(code)){
-                    myRef.child("User").child("User"+user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    myRef.child("User"+user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful())
