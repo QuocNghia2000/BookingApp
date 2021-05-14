@@ -64,7 +64,6 @@ public class LoginFragment extends Fragment {
                     users.add(user);
                 }
                 handle();
-
             }
 
             @Override
@@ -77,15 +76,13 @@ public class LoginFragment extends Fragment {
         bt_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(posCurrent(username.getText().toString(),pass.getText().toString())!=-1)
-//                {
-//                    Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
-//                }
-//                else
-//                {
-//                    Toast.makeText(getContext(),"Sai thông tin đăng nhập",Toast.LENGTH_SHORT).show();
-//                }
-                startActivity(new Intent(getActivity(), MainActivity.class));
+                if(posCurrent(username.getText().toString(),pass.getText().toString())!=-1) {
+                    Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getActivity(), MainActivity.class));
+                }
+                else {
+                    Toast.makeText(getContext(),"Sai thông tin đăng nhập",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         bt_register.setOnClickListener(new View.OnClickListener() {
@@ -96,7 +93,14 @@ public class LoginFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment, bundle);
             }
         });
-
+        resetpass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle=new Bundle();
+                bundle.putInt("id",users.size());
+                Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_ForgetPassFragment, bundle);
+            }
+        });
     }
 
     public int posCurrent(String email, String pass) {
