@@ -46,6 +46,7 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/edt_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -55,42 +56,50 @@
             </EditText>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/back"
-            android:orientation="horizontal"
-            tools:ignore="MissingConstraints"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="30dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_iphone_24">
-            </ImageView>
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:background="@android:color/transparent"
-                android:hint="Số điện thoại">
-            </EditText>
-        </LinearLayout>
-
         <Button
-            android:id="@+id/bt_login"
+            android:id="@+id/bt_sendpass"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:backgroundTint="#fe7801"
-            android:layout_marginTop="270dp"
-            android:text="Yêu cầu mật khẩu mới"
+            android:layout_marginTop="160dp"
+            android:text="Yêu cầu mật khẩu"
             android:shadowColor="@color/black"
             android:layout_gravity="center" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trở lại!"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center"
+                />
+
+            <FrameLayout
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button">
+
+                <Button
+                    android:id="@+id/bt_login"
+                    android:layout_width="142dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/white"
+                    android:text="Đăng nhập"
+                    android:textColor="#fe7801"
+                    tools:ignore="MissingConstraints" />
+
+            </FrameLayout>
+
+        </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>
