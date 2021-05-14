@@ -64,7 +64,6 @@ public class LoginFragment extends Fragment {
                     users.add(user);
                 }
                 handle();
-
             }
 
             @Override
@@ -80,7 +79,7 @@ public class LoginFragment extends Fragment {
                 int index=posCurrent(username.getText().toString(),pass.getText().toString());
                 if(index!=-1)
                 {
-                    //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
                     Intent intent =new Intent(getActivity(), MainActivity.class);
                     intent.putExtra("user",users.get(index));
                     startActivity(intent);
@@ -99,7 +98,14 @@ public class LoginFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment, bundle);
             }
         });
-
+        resetpass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle=new Bundle();
+                bundle.putInt("id",users.size());
+                Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_ForgetPassFragment, bundle);
+            }
+        });
     }
 
     public int posCurrent(String email, String pass) {

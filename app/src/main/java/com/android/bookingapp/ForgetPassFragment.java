@@ -1,57 +1,173 @@
 package com.android.bookingapp;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ForgetPassFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.android.bookingapp.model.User;
+import com.android.bookingapp.view.MainActivity;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.Random;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 public class ForgetPassFragment extends Fragment {
+    private EditText email;
+    private Button bt_login, bt_sendpass;
+    private ArrayList<User> users;
+    FirebaseDatabase database;
+    DatabaseReference myRef;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ForgetPassFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ForgetPassFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ForgetPassFragment newInstance(String param1, String param2) {
         ForgetPassFragment fragment = new ForgetPassFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
+
+    private String randomCode() {
+        int targetStringLength = 8;
+        Random random = new Random();
+        StringBuilder buffer = new StringBuilder(targetStringLength);
+        for (int i = 0; i < targetStringLength; i++) {
+            int randomLimitedInt = 48 + (int)
+                    (random.nextFloat() * (122 - 48 + 1));
+            if ((randomLimitedInt >= 91 && randomLimitedInt <=96) ||
+                    (randomLimitedInt >= 58 && randomLimitedInt <=64)) {
+                randomLimitedInt = 48 + (int)
+                        (random.nextFloat() * (57 - 48 + 1));
+            }
+            buffer.append((char) randomLimitedInt);
+        }
+        System.out.println(buffer.toString());
+        return buffer.toString();
+    }
+
+    Session session = null;
+    String rec, subject, textMessage;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        users=new ArrayList<>();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("User");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot data: snapshot.getChildren())
+                {
+                    User user = data.getValue(User.class);
+                    users.add(user);
+                }
+                handle();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+    private void handle() {
+        bt_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(v).navigate(R.id.action_ForgetPassFragment_to_loginFragment);
+            }
+        });
+        bt_sendpass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(email.getText().toString().equals("")) {
+                    Toast.makeText(getContext(),"Vui lòng nhập đẩy đủ thông tin",Toast.LENGTH_SHORT).show();
+                } else if(posCurrent(email.getText().toString())!=-1) {
+                    rec = email.getText().toString();
+                    textMessage = randomCode();
+                    subject = "Mật khẩu mới";
+                    Properties props = new Properties();
+                    props.put("mail.smtp.host", "smtp.gmail.com");
+                    props.put("mail.smtp.socketFactory.port", "465");
+                    props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+                    props.put("mail.smtp.auth", "true");
+                    props.put("mail.smtp.port", "465");
+                    session = Session.getDefaultInstance(props, new Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication(){
+                            return  new PasswordAuthentication("bm3doithong@gmail.com", "BM3doithong@");
+                        }
+                    });
+                    RetreiveFeedTask task = new RetreiveFeedTask();
+                    task.execute();
+                    Toast.makeText(getContext(),"Vui mở gmail để nhận lại mật khẩu",Toast.LENGTH_SHORT).show();
+                    Navigation.findNavController(v).navigate(R.id.action_ForgetPassFragment_to_loginFragment);
+
+                    HashMap hashMap = new HashMap();
+                    hashMap.put("password", textMessage);
+                    String userId = String.valueOf(users.get(posCurrent(email.getText().toString())).getId());
+                    myRef.child("User"+userId).updateChildren(hashMap);
+                } else {
+                    Toast.makeText(getContext(),"Vui lòng kiểm tra lại thông tin",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    public int posCurrent(String email) {
+        if(users!=null){
+            for (int i = 0; i < users.size(); i++) {
+                if (email.equals(users.get(i).getEmail())) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    class RetreiveFeedTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress("bm3doithong@gmail.com"));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(rec));
+                message.setSubject(subject);
+                message.setContent(textMessage, "text/html; charset=utf-8");
+                Transport.send(message);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 
@@ -59,6 +175,10 @@ public class ForgetPassFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_forget_pass, container, false);
+        View view = inflater.inflate(R.layout.fragment_forget_pass, container, false);;
+        email = view.findViewById(R.id.edt_email);
+        bt_login = view.findViewById(R.id.bt_login);
+        bt_sendpass = view.findViewById(R.id.bt_sendpass);
+        return view;
     }
 }

@@ -115,8 +115,8 @@ public class moreInfoFragment extends Fragment  {
     }
 
     private String randomCode() {
-        int leftLimit = 48; // letter 'a'
-        int rightLimit = 57; // letter 'z'
+        int leftLimit = 48; // '0'
+        int rightLimit = 57; // '9'
         int targetStringLength = 6;
         Random random = new Random();
         StringBuilder buffer = new StringBuilder(targetStringLength);
@@ -192,13 +192,6 @@ public class moreInfoFragment extends Fragment  {
                 e.printStackTrace();
             }
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            rec = "";
-            textMessage = "";
-            subject = "";
         }
     }
 
