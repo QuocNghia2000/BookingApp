@@ -13,6 +13,8 @@ public class Doctor implements Serializable {
     private String achivement;
     private String adđress;
 
+    public Doctor(){}
+
     public Doctor(int id, String email, String password, String fullname, String phone, boolean gender, Department department, String achivement, String adđress) {
         this.id = id;
         this.email = email;

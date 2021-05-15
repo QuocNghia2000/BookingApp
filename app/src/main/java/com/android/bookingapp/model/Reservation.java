@@ -11,6 +11,8 @@ public class Reservation implements Serializable {
     private Time time;
     private Date date;
 
+    public Reservation() {}
+
     public Reservation(int id, int id_user, int id_doctor, String symptorn, String medicine, Time time, Date date) {
         this.id = id;
         this.id_user = id_user;

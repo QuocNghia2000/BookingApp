@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
 
         <LinearLayout
-            android:layout_width="150dp"
-            android:layout_height="100dp"
-            android:layout_marginLeft="130dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/button">
 
             <Button
-                android:layout_width="140dp"
+                android:id="@+id/department"
+                android:layout_width="130dp"
                 android:layout_height="100dp"
                 android:textColor="#fe7801"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:gravity="center"
                 android:backgroundTint="@color/white"
                 android:text="Khoa">
