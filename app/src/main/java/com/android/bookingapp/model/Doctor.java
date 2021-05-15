@@ -11,11 +11,11 @@ public class Doctor implements Serializable {
     private boolean gender;
     private int id_department;
     private String achivement;
-    private String adđress;
+    private String address;
 
     public Doctor(){}
 
-    public Doctor(int id, String email, String password, String fullname, String phone, boolean gender, int id_department, String achivement, String adđress) {
+    public Doctor(int id, String email, String password, String fullname, String phone, boolean gender, int id_department, String achivement, String address) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -24,7 +24,7 @@ public class Doctor implements Serializable {
         this.gender = gender;
         this.id_department = id_department;
         this.achivement = achivement;
-        this.adđress = adđress;
+        this.address = address;
     }
 
     public int getId() {
@@ -91,12 +91,12 @@ public class Doctor implements Serializable {
         this.achivement = achivement;
     }
 
-    public String getAdđress() {
-        return adđress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAdđress(String adđress) {
-        this.adđress = adđress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
 

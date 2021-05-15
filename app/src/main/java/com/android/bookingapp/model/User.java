@@ -99,11 +99,11 @@ public class User implements Serializable {
         this.job = job;
     }
 
-    public String getAdđress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setAdđress(String adđress) {
-        this.address = adđress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
