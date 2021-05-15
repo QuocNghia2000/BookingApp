@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.android.bookingapp.LoginFragment"
+        android:name="com.android.bookingapp.fragment.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/confrimFragment"
-        android:name="com.android.bookingapp.ConfirmFragment"
+        android:name="com.android.bookingapp.fragment.ConfirmFragment"
         android:label="fragment_confrim"
         tools:layout="@layout/fragment_confirm" >
         <action
@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/moreInfoFragment"
-        android:name="com.android.bookingapp.moreInfoFragment"
+        android:name="com.android.bookingapp.fragment.moreInfoFragment"
         android:label="fragment_more_info"
         tools:layout="@layout/fragment_more_info" >
         <action
@@ -37,7 +37,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.android.bookingapp.registerFragment"
+        android:name="com.android.bookingapp.fragment.registerFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
         <action
@@ -46,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/ForgetPassFragment"
-        android:name="com.android.bookingapp.ForgetPassFragment"
+        android:name="com.android.bookingapp.fragment.ForgetPassFragment"
         android:label="fragment_forget_pass"
         tools:layout="@layout/fragment_forget_pass" >
         <action

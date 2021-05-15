@@ -1,4 +1,4 @@
-package com.android.bookingapp;
+package com.android.bookingapp.fragment;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.android.bookingapp.R;
 import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.User;
 

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainScreenFragment"
-        android:name="com.android.bookingapp.mainScreenFragment"
+        android:name="com.android.bookingapp.fragment.mainScreenFragment"
         android:label="fragment_main_screen"
         tools:layout="@layout/fragment_main_screen" >
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/detailDepartmentFragment"
-        android:name="com.android.bookingapp.DetailDepartmentFragment"
+        android:name="com.android.bookingapp.fragment.DetailDepartmentFragment"
         android:label="fragment_detail_department"
         tools:layout="@layout/fragment_detail_department" >
         <action
@@ -28,12 +28,12 @@
     </fragment>
     <fragment
         android:id="@+id/bookFragment"
-        android:name="com.android.bookingapp.BookFragment"
+        android:name="com.android.bookingapp.fragment.BookFragment"
         android:label="fragment_book"
         tools:layout="@layout/fragment_book" />
     <fragment
         android:id="@+id/infoAccountFragment"
-        android:name="com.android.bookingapp.InfoAccountFragment"
+        android:name="com.android.bookingapp.fragment.InfoAccountFragment"
         android:label="fragment_info_account"
         tools:layout="@layout/fragment_info_account" >
         <action

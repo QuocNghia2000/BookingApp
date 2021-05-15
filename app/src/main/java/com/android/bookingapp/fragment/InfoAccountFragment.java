@@ -1,19 +1,20 @@
-package com.android.bookingapp;
+package com.android.bookingapp.fragment;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+
+import com.android.bookingapp.R;
+
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link DetailDepartmentFragment#newInstance} factory method to
+ * Use the {@link InfoAccountFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DetailDepartmentFragment extends Fragment {
+public class InfoAccountFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,7 +25,7 @@ public class DetailDepartmentFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public DetailDepartmentFragment() {
+    public InfoAccountFragment() {
         // Required empty public constructor
     }
 
@@ -34,11 +35,11 @@ public class DetailDepartmentFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment DetailDepartmentFragment.
+     * @return A new instance of fragment InfoAccountFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static DetailDepartmentFragment newInstance(String param1, String param2) {
-        DetailDepartmentFragment fragment = new DetailDepartmentFragment();
+    public static InfoAccountFragment newInstance(String param1, String param2) {
+        InfoAccountFragment fragment = new InfoAccountFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -59,6 +60,6 @@ public class DetailDepartmentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detail_department, container, false);
+        return inflater.inflate(R.layout.fragment_info_account, container, false);
     }
 }

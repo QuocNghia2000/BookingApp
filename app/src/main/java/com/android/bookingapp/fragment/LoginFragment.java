@@ -1,4 +1,4 @@
-package com.android.bookingapp;
+package com.android.bookingapp.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.android.bookingapp.R;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.view.MainActivity;
 import com.google.firebase.database.DataSnapshot;
@@ -64,7 +65,6 @@ public class LoginFragment extends Fragment {
                     User user = data.getValue(User.class);
                     users.add(user);
                 }
-                Toast.makeText(getContext(),String.valueOf(users.size()),Toast.LENGTH_SHORT).show();
                 handle();
             }
 
@@ -89,7 +89,7 @@ public class LoginFragment extends Fragment {
                     {
                         //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
                         Intent intent =new Intent(getActivity(), MainActivity.class);
-                        //intent.putExtra("user",(Serializable)users.get(index));
+                        intent.putExtra("user",users.get(index));
                         startActivity(intent);
                     }
                     else

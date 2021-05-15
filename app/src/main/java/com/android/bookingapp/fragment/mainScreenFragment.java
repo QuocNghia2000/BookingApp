@@ -1,4 +1,4 @@
-package com.android.bookingapp;
+package com.android.bookingapp.fragment;
 
 import android.os.Bundle;
 
@@ -8,10 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.bookingapp.model.Date;
-import com.android.bookingapp.model.User;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.android.bookingapp.R;
 
 
 public class mainScreenFragment extends Fragment {
