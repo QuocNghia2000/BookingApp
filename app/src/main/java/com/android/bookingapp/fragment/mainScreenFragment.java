@@ -58,6 +58,7 @@ public class mainScreenFragment extends Fragment {
         rvDeparts.setAdapter(departAdapter);
         getAllDepart();
 
+
         ivLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
