@@ -9,13 +9,17 @@
         android:id="@+id/mainScreenFragment"
         android:name="com.android.bookingapp.fragment.mainScreenFragment"
         android:label="fragment_main_screen"
-        tools:layout="@layout/fragment_main_screen" >
+        tools:layout="@layout/fragment_main_screen"
+        app:startDestination="@id/action_mainScreenFragment_to_docMainFragment">
         <action
             android:id="@+id/action_mainScreenFragment_to_detailDepartmentFragment"
             app:destination="@id/detailDepartmentFragment" />
         <action
             android:id="@+id/action_mainScreenFragment_to_infoAccountFragment"
             app:destination="@id/infoAccountFragment" />
+        <action
+            android:id="@+id/action_mainScreenFragment_to_docMainFragment"
+            app:destination="@id/docMainFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailDepartmentFragment"
@@ -40,4 +44,27 @@
             android:id="@+id/action_infoAccountFragment_to_mainScreenFragment"
             app:destination="@id/mainScreenFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/docMainFragment"
+        android:name="com.android.bookingapp.fragment.DocMainFragment"
+        android:label="fragment_doc_main"
+        tools:layout="@layout/fragment_doc_main" >
+        <action
+            android:id="@+id/action_docMainFragment_to_listChatFragment"
+            app:destination="@id/listChatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/listChatFragment"
+        android:name="com.android.bookingapp.fragment.ListChatFragment"
+        android:label="fragment_list_chat"
+        tools:layout="@layout/fragment_list_chat" >
+        <action
+            android:id="@+id/action_listChatFragment_to_detailMessFragment"
+            app:destination="@id/detailMessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailMessFragment"
+        android:name="com.android.bookingapp.DetailMessFragment"
+        android:label="fragment_detail_mess"
+        tools:layout="@layout/fragment_detail_mess" />
 </navigation>
