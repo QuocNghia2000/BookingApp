@@ -30,6 +30,7 @@
                 android:background="@drawable/cicle_img">
 
                 <ImageView
+                    android:id="@+id/iv_ogout"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:src="@drawable/logout"
@@ -90,8 +91,9 @@
         </TextView>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_department"
             android:layout_width="match_parent"
-            android:layout_height="380dp" />
+            android:layout_height="310dp" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -121,6 +123,7 @@
                         android:background="@drawable/circle_person">
 
                         <ImageView
+                            android:id="@+id/iv_account"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             android:src="@drawable/ic_person_24"
