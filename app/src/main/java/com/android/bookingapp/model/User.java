@@ -11,7 +11,7 @@ public class User implements Serializable {
     private Date birthday;
     private boolean gender;
     private String job;
-    private String adđress;
+    private String address;
 
     public User(){}
 
@@ -23,7 +23,7 @@ public class User implements Serializable {
         this.phone = phone;
     }
 
-    public User(int id, String email, String password, String fullname, String phone, Date birthday, boolean gender, String job, String adđress) {
+    public User(int id, String email, String password, String fullname, String phone, Date birthday, boolean gender, String job, String address) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -32,7 +32,7 @@ public class User implements Serializable {
         this.birthday = birthday;
         this.gender = gender;
         this.job = job;
-        this.adđress = adđress;
+        this.address = address;
     }
 
     public int getId() {
@@ -100,10 +100,10 @@ public class User implements Serializable {
     }
 
     public String getAdđress() {
-        return adđress;
+        return address;
     }
 
     public void setAdđress(String adđress) {
-        this.adđress = adđress;
+        this.address = adđress;
     }
 }
