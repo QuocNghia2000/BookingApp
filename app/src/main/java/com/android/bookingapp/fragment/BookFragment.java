@@ -9,11 +9,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.databinding.FragmentBookBinding;
+import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.viewmodel.BookAdapter;
 
 import java.util.ArrayList;
@@ -24,13 +28,27 @@ public class BookFragment extends Fragment {
     private BookAdapter bookAdapter;
     private List<String> listTime,listDate,listReser;
     private Spinner spBook;
+    private Doctor doctor;
+    private FragmentBookBinding binding;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(getArguments()!=null)
+        {
+            doctor=(Doctor) getArguments().getSerializable("doctor");
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        binding= DataBindingUtil.inflate(getLayoutInflater(),R.layout.fragment_book,null,false);
+        View view =binding.getRoot();
+        binding.setDoctor(doctor);
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_book, container, false);
+        //View v = inflater.inflate(R.layout.fragment_book, container, false);
         listTime = new ArrayList<>();
         listDate = new ArrayList<>();
         listReser = new ArrayList<>();
@@ -63,7 +81,7 @@ public class BookFragment extends Fragment {
         listReser.add("14:30");
         listReser.add("15:30");
 
-        spBook = v.findViewById(R.id.sp_book);
+        spBook = view.findViewById(R.id.sp_book);
         ArrayAdapter spinnerAdapter = new ArrayAdapter(getContext(),R.layout.support_simple_spinner_dropdown_item,listDate);
 
         spBook.setAdapter(spinnerAdapter);
@@ -82,13 +100,10 @@ public class BookFragment extends Fragment {
         });
 
         bookAdapter = new BookAdapter(listTime,getContext(),listReser);
-        rvBook = v.findViewById(R.id.rv_book);
+        rvBook = view.findViewById(R.id.rv_book);
         rvBook.setLayoutManager(new GridLayoutManager(getActivity(),4));
         rvBook.setAdapter(bookAdapter);
-        return v;
-
-
-
+        return view;
 
     }
 }

@@ -1,12 +1,14 @@
 package com.android.bookingapp.viewmodel;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
@@ -32,6 +34,14 @@ public class DepartAdapter extends RecyclerView.Adapter<DepartAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.btDepartment.setText(mDeparts.get(position).getName());
+        holder.btDepartment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle=new Bundle();
+                bundle.putSerializable("detailDepart",mDeparts.get(position));
+                Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_detailDepartmentFragment, bundle);
+            }
+        });
     }
 
     @Override
