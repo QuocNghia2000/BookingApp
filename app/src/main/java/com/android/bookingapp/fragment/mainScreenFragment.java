@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Department;
+import com.android.bookingapp.model.User;
 import com.android.bookingapp.viewmodel.DepartAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,6 +38,7 @@ public class mainScreenFragment extends Fragment {
 
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
+    private User user;
 
 
     @Override
@@ -47,6 +49,11 @@ public class mainScreenFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if(getActivity().getIntent()!=null)
+        {
+            user= (User) getActivity().getIntent().getSerializableExtra("user");
+        }
 
         mDeparts=new ArrayList<>();
         dbReference= FirebaseDatabase.getInstance().getReference("Department");
@@ -85,13 +92,12 @@ public class mainScreenFragment extends Fragment {
         dialogBuilder.setNegativeButton("Có", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                //XÓa quay lại main activity
                 dialogInterface.dismiss();
                 getActivity().onBackPressed();
             }
         });
-        AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
+        dialog = dialogBuilder.create();
+        dialog.show();
 
     }
 

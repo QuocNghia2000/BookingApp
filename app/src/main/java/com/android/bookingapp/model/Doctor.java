@@ -9,20 +9,20 @@ public class Doctor implements Serializable {
     private String fullname;
     private String phone;
     private boolean gender;
-    private int id_department;
+    private int department;
     private String achivement;
     private String address;
 
     public Doctor(){}
 
-    public Doctor(int id, String email, String password, String fullname, String phone, boolean gender, int id_department, String achivement, String address) {
+    public Doctor(int id, String email, String password, String fullname, String phone, boolean gender, int department, String achivement, String address) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.fullname = fullname;
         this.phone = phone;
         this.gender = gender;
-        this.id_department = id_department;
+        this.department = department;
         this.achivement = achivement;
         this.address = address;
     }
@@ -75,12 +75,12 @@ public class Doctor implements Serializable {
         this.gender = gender;
     }
 
-    public int getId_department() {
-        return id_department;
+    public int getDepartment() {
+        return department;
     }
 
-    public void setId_department(int id_department) {
-        this.id_department = id_department;
+    public void setDepartment(int id_department) {
+        this.department = id_department;
     }
 
     public String getAchivement() {

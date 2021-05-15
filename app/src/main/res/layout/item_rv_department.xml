@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable name="doctor" type="com.android.bookingapp.model.Doctor"/>
+    </data>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,7 +43,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bác sĩ Nguyễn Văn A"
+                    android:text="@{doctor.fullname}"
                     android:textSize="25dp"
                     android:textColor="#1976D2">
                 </TextView>
@@ -52,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textSize="18dp"
-                    android:text="Tung la bac si tai Benh vien abcxaz">
+                    android:text="@{doctor.achivement}">
                 </TextView>
             </LinearLayout>
         </LinearLayout>
@@ -85,7 +86,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="123456789"
+                android:text="@{doctor.phone}"
                 android:textSize="20dp"
                 android:textColor="#808080"
                 android:layout_marginLeft="50dp">
@@ -111,7 +112,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bệnh viên Đà nẵng ---- balalalaa"
+                android:text="@{doctor.address}"
                 android:textSize="20dp"
                 android:textColor="#808080"
                 android:layout_marginLeft="50dp">
@@ -121,4 +122,4 @@
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
