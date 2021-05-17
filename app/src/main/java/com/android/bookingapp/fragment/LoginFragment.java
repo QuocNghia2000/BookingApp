@@ -107,6 +107,12 @@ public class LoginFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment, bundle);
             }
         });
+        resetpass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_ForgetPassFragment);
+            }
+        });
 
     }
 
