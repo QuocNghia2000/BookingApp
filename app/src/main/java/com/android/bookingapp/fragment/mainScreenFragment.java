@@ -1,6 +1,7 @@
 package com.android.bookingapp.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Department;
 import com.android.bookingapp.model.User;
+import com.android.bookingapp.view.MainActivity;
 import com.android.bookingapp.viewmodel.DepartAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,10 +34,8 @@ public class mainScreenFragment extends Fragment {
     private ArrayList<Department> mDeparts;
     private RecyclerView rvDeparts;
     private DepartAdapter departAdapter;
-
     private DatabaseReference dbReference;
     private ImageView ivAccount,ivLogout;
-
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
     private User user;
@@ -75,10 +75,11 @@ public class mainScreenFragment extends Fragment {
         ivAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_infoAccountFragment, new Bundle());
+                Bundle bundle = new Bundle();
+                bundle.putInt("id",user.getId());
+                Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_infoAccountFragment, bundle);
             }
         });
-
     }
     public void showLogoutDialog(){
         dialogBuilder.setMessage("Bạn có muốn đăng xuất?");
@@ -87,6 +88,7 @@ public class mainScreenFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
+
             }
         });
         dialogBuilder.setNegativeButton("Có", new DialogInterface.OnClickListener() {
@@ -103,7 +105,6 @@ public class mainScreenFragment extends Fragment {
 
     public void getAllDepart()
     {
-
         dbReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -118,7 +119,6 @@ public class mainScreenFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
 

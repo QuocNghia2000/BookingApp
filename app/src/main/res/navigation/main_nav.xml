@@ -64,7 +64,7 @@
     </fragment>
     <fragment
         android:id="@+id/detailMessFragment"
-        android:name="com.android.bookingapp.DetailMessFragment"
+        android:name="com.android.bookingapp.fragment.DetailMessFragment"
         android:label="fragment_detail_mess"
         tools:layout="@layout/fragment_detail_mess" />
 </navigation>
