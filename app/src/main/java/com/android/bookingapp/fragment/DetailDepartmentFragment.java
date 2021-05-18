@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Department;
 import com.android.bookingapp.model.Doctor;
+import com.android.bookingapp.model.User;
 import com.android.bookingapp.viewmodel.DetailDepartAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,7 +33,7 @@ public class DetailDepartmentFragment extends Fragment {
     private RecyclerView rvDetailDeparts;
     private ArrayList<Doctor> mDoctors;
     private DetailDepartAdapter detailDepartAdapter;
-
+    private User user;
     private DatabaseReference dbReference;
 
     @Override
@@ -40,6 +41,7 @@ public class DetailDepartmentFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             department= (Department) getArguments().getSerializable("detailDepart");
+            user= (User) getArguments().getSerializable("user");
             dbReference= FirebaseDatabase.getInstance().getReference("Doctor");
         }
     }
@@ -50,7 +52,7 @@ public class DetailDepartmentFragment extends Fragment {
 
 
         mDoctors=new ArrayList<>();
-        detailDepartAdapter = new DetailDepartAdapter(mDoctors);
+        detailDepartAdapter = new DetailDepartAdapter(mDoctors,user);
         rvDetailDeparts.setLayoutManager(new GridLayoutManager(getContext(),1));
         rvDetailDeparts.setAdapter(detailDepartAdapter);
         getDoctor();

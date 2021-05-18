@@ -60,7 +60,7 @@ public class mainScreenFragment extends Fragment {
 
         dialogBuilder=new AlertDialog.Builder(getContext());
 
-        departAdapter = new DepartAdapter(mDeparts);
+        departAdapter = new DepartAdapter(mDeparts,user);
         rvDeparts.setLayoutManager(new GridLayoutManager(getContext(),2));
         rvDeparts.setAdapter(departAdapter);
         getAllDepart();
