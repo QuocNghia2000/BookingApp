@@ -87,4 +87,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
         if(listReser.contains(time)) return false;
         else return true;
     }
+
+    public  int getItemSelected(){
+        return SelectedTime;
+    }
 }

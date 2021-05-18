@@ -89,20 +89,6 @@
                 android:textColor="#808080"
                 android:layout_marginLeft="50dp">
             </TextView>
-
-            <FrameLayout
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginLeft="80dp"
-                android:background="@drawable/cicle_img">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/messenger"
-                    android:layout_gravity="center">
-                </ImageView>
-            </FrameLayout>
         </LinearLayout>
 
         <LinearLayout
