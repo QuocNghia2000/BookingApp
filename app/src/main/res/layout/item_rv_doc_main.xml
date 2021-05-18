@@ -3,12 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="10dp"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+
         android:background="@drawable/button"
         tools:ignore="MissingConstraints">
 
@@ -71,6 +75,7 @@
                 android:layout_height="wrap_content"
                 android:text="PHONE"
                 android:textStyle="bold"
+                android:layout_gravity="center"
                 android:textSize="20dp"
                 android:textColor="@color/black">
             </TextView>
@@ -80,9 +85,24 @@
                 android:layout_height="wrap_content"
                 android:text="123456789"
                 android:textSize="20dp"
+                android:layout_gravity="center"
                 android:textColor="#808080"
                 android:layout_marginLeft="50dp">
             </TextView>
+
+            <FrameLayout
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="80dp"
+                android:background="@drawable/cicle_img">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/messenger"
+                    android:layout_gravity="center">
+                </ImageView>
+            </FrameLayout>
         </LinearLayout>
 
         <LinearLayout

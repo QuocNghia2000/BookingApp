@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable name="doctor" type="com.android.bookingapp.model.Doctor"/>
+        <variable
+            name="user"
+            type="com.android.bookingapp.model.User" />
     </data>
 
     <LinearLayout
@@ -42,6 +45,14 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:background="#fe7801">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/ic_back">
+            </ImageView>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -166,14 +177,13 @@
                 android:src="@drawable/ic_person_24">
             </ImageView>
 
-            <EditText
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
-                android:background="@android:color/transparent"
-                android:hint="Họ và tên">
-            </EditText>
+                android:text="@{user.fullname}">
+            </TextView>
 
         </LinearLayout>
 
@@ -193,14 +203,13 @@
                 android:src="@drawable/ic_iphone_24">
             </ImageView>
 
-            <EditText
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
-                android:background="@android:color/transparent"
-                android:hint="Số điện thoại">
-            </EditText>
+                android:text="@{user.phone}">
+            </TextView>
         </LinearLayout>
 
         <LinearLayout
@@ -217,7 +226,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_iphone_24">
+                android:src="@drawable/ic_date_range_24">
             </ImageView>
 
             <Spinner
@@ -322,7 +331,6 @@
             android:layout_marginTop="50dp"
             android:text="Hoàn tất"
             android:layout_gravity="center" />
-
     </LinearLayout>
 
 </layout>
