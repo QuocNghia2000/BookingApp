@@ -34,7 +34,11 @@
         android:id="@+id/bookFragment"
         android:name="com.android.bookingapp.fragment.BookFragment"
         android:label="fragment_book"
-        tools:layout="@layout/fragment_book" />
+        tools:layout="@layout/fragment_book" >
+        <action
+            android:id="@+id/action_bookFragment_to_mainScreenFragment"
+            app:destination="@id/mainScreenFragment" />
+    </fragment>
     <fragment
         android:id="@+id/infoAccountFragment"
         android:name="com.android.bookingapp.fragment.InfoAccountFragment"
@@ -64,7 +68,7 @@
     </fragment>
     <fragment
         android:id="@+id/detailMessFragment"
-        android:name="com.android.bookingapp.DetailMessFragment"
+        android:name="com.android.bookingapp.fragment.DetailMessFragment"
         android:label="fragment_detail_mess"
         tools:layout="@layout/fragment_detail_mess" />
 </navigation>

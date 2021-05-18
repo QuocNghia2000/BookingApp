@@ -43,6 +43,14 @@
             android:layout_height="40dp"
             android:background="#fe7801">
 
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/ic_back">
+            </ImageView>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -71,6 +79,7 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -100,6 +109,8 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/mail"
+                android:editable="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -129,6 +140,7 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -156,6 +168,7 @@
                 android:src="@drawable/ic_date_range_24">
             </ImageView>
             <Spinner
+                android:id="@+id/spinner_day"
                 android:layout_width="95dp"
                 android:layout_height="50dp" />
             <Spinner
@@ -188,6 +201,7 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/job"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -216,6 +230,7 @@
             </ImageView>
 
             <EditText
+                android:id="@+id/address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -279,7 +294,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/bt_login"
+            android:id="@+id/confirm"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:backgroundTint="#fe7801"
