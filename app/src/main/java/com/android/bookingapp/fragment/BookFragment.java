@@ -111,22 +111,10 @@ public class BookFragment extends Fragment {
     }
 
     public void getAvailableTime(){
-        listTime.add("07:00");
-        listTime.add("07:30");
-        listTime.add("08:00");
-        listTime.add("08:30");
-        listTime.add("09:00");
-        listTime.add("09:30");
-        listTime.add("10:00");
-        listTime.add("10:30");
-        listTime.add("13:00");
-        listTime.add("13:30");
-        listTime.add("14:00");
-        listTime.add("14:30");
-        listTime.add("15:00");
-        listTime.add("15:30");
-        listTime.add("16:00");
-        listTime.add("16:30");
+        listTime.add("07:00");listTime.add("07:30");listTime.add("08:00");listTime.add("08:30");
+        listTime.add("09:00");listTime.add("09:30");listTime.add("10:00");listTime.add("10:30");
+        listTime.add("13:00");listTime.add("13:30");listTime.add("14:00");listTime.add("14:30");
+        listTime.add("15:00");listTime.add("15:30");listTime.add("16:00");listTime.add("16:30");
     }
 
 
