@@ -45,6 +45,14 @@
             android:layout_height="50dp"
             android:background="#fe7801">
 
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/ic_back">
+            </ImageView>
+
             <TextView
                 android:id="@+id/tv_nameDepart"
                 android:layout_width="wrap_content"
