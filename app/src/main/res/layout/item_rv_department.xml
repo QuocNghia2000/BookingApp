@@ -10,6 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="@drawable/button"
         tools:ignore="MissingConstraints">
 
@@ -78,6 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="PHONE"
+                android:layout_gravity="center"
                 android:textStyle="bold"
                 android:textSize="20dp"
                 android:textColor="@color/black">
@@ -88,9 +92,24 @@
                 android:layout_height="wrap_content"
                 android:text="@{doctor.phone}"
                 android:textSize="20dp"
+                android:layout_gravity="center"
                 android:textColor="#808080"
                 android:layout_marginLeft="50dp">
             </TextView>
+
+            <FrameLayout
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="80dp"
+                android:background="@drawable/cicle_img">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/messenger"
+                    android:layout_gravity="center">
+                </ImageView>
+            </FrameLayout>
         </LinearLayout>
 
         <LinearLayout

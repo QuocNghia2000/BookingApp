@@ -14,14 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.databinding.ItemRvDepartmentBinding;
 import com.android.bookingapp.model.Doctor;
+import com.android.bookingapp.model.User;
 
 import java.util.ArrayList;
 
 public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapter.MyViewHolder> {
     private Context context;
+    private User user;
     private ArrayList<Doctor> mDoctors;
 
-    public DetailDepartAdapter(ArrayList<Doctor> mDoctors){
+    public DetailDepartAdapter(ArrayList<Doctor> mDoctors,User user){
+        this.user = user;
         this.mDoctors=mDoctors;
     }
 
@@ -63,6 +66,7 @@ public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapte
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("doctor", doctor);
+                    bundle.putSerializable("user",user);
                     Navigation.findNavController(v).navigate(R.id.action_detailDepartmentFragment_to_bookFragment, bundle);
                 }
             });

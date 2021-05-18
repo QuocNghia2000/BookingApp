@@ -26,6 +26,8 @@ import com.android.bookingapp.model.Reservation;
 import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.viewmodel.BookAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -93,16 +95,34 @@ public class BookFragment extends Fragment {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String symptom = edtSymptom.getText().toString();
-                String medicine = edtMedicine.getText().toString();
-                Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
-                com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
-                Reservation reservation = new Reservation(++idReservation,user.getId(),doctor.getId(),symptom,medicine,time,date);
+                if (bookAdapter.getItemSelected() == -1)
+                {
+                    Toast.makeText(getContext(),"Hãy chọn giờ muốn đặt lịch!", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    String symptom = edtSymptom.getText().toString();
+                    String medicine = edtMedicine.getText().toString();
+                    Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
+                    com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
+                    Reservation reservation = new Reservation(++idReservation,user.getId(),doctor.getId(),symptom,medicine,time,date);
 
-                myRef = FirebaseDatabase.getInstance().getReference();
-                myRef.child("Reservation").push().setValue(reservation);
-
-                Navigation.findNavController(v).navigate(R.id.action_bookFragment_to_mainScreenFragment);
+                    myRef = FirebaseDatabase.getInstance().getReference();
+                    myRef.child("Reservation").push().setValue(reservation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull  Task<Void> task) {
+                            if(task.isSuccessful())
+                            {
+                                Toast.makeText(getContext(),"Đặt lịch thành công!", Toast.LENGTH_SHORT).show();
+                                Navigation.findNavController(v).navigate(R.id.action_bookFragment_to_mainScreenFragment);
+                            }
+                            else
+                            {
+                                Toast.makeText(getContext(),"Lỗi", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
             }
         });
 
@@ -167,7 +187,7 @@ public class BookFragment extends Fragment {
                             com.android.bookingapp.model.Date d = reservation.getDate();
                             String date = d.getDay() + "-" + d.getMonth() + "-" + d.getYear();
 
-                            if (reservation.getId_doctor() == 0){
+                            if (reservation.getId_doctor() == doctor.getId()){
                                 if(date.equals(listDate.get(position))){
                                     Time t = reservation.getTime();
                                     String time = ((t.getHour()<10)?"0":"") + t.getHour() + ":" + ((t.getMinute()<10)?"0":"") + t.getMinute();

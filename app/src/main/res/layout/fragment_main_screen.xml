@@ -97,15 +97,15 @@
             </TextView>
 
             <FrameLayout
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="230dp"
                 android:background="@drawable/cicle_img">
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:src="@drawable/messenger"
                     android:layout_gravity="center">
                 </ImageView>
