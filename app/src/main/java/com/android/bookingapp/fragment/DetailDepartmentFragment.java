@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,7 +30,7 @@ import java.util.ArrayList;
 
 public class DetailDepartmentFragment extends Fragment {
     private Department department;
-
+    private ImageView back;
     private TextView tvNameDepart;
     private RecyclerView rvDetailDeparts;
     private ArrayList<Doctor> mDoctors;
@@ -49,19 +51,21 @@ public class DetailDepartmentFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
         mDoctors=new ArrayList<>();
         detailDepartAdapter = new DetailDepartAdapter(mDoctors,user);
         rvDetailDeparts.setLayoutManager(new GridLayoutManager(getContext(),1));
         rvDetailDeparts.setAdapter(detailDepartAdapter);
         getDoctor();
-
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
     }
+
     public void getDoctor()
     {
-
-
         dbReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -92,6 +96,7 @@ public class DetailDepartmentFragment extends Fragment {
         View view= inflater.inflate(R.layout.fragment_detail_department, container, false);
         rvDetailDeparts=view.findViewById(R.id.rv_detailDepart);
         tvNameDepart=view.findViewById(R.id.tv_nameDepart);
+        back=view.findViewById(R.id.img_back);
         return view;
     }
 }
