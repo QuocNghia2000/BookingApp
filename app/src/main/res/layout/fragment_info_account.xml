@@ -44,6 +44,7 @@
             android:background="#fe7801">
 
             <ImageView
+                android:id="@+id/img_back"
                 android:layout_width="45dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center"
