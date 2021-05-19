@@ -2,6 +2,7 @@ package com.android.bookingapp.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -23,10 +25,8 @@ import androidx.navigation.Navigation;
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.User;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,8 +34,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
 
 public class InfoAccountFragment extends Fragment {
     private User user_now;
@@ -45,9 +43,12 @@ public class InfoAccountFragment extends Fragment {
     private RadioButton male, female;
     private Spinner spinner_day, spinner_month, spinner_year;
     private String nDay,nMonth,nYear;
+    private ImageView back;
     FirebaseDatabase database;
     DatabaseReference myRef;
     private ArrayList<User> users;
+    AlertDialog.Builder dialogBuilder;
+    AlertDialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,6 +125,7 @@ public class InfoAccountFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         addItemsOnSpinner();
+        dialogBuilder=new AlertDialog.Builder(getContext());
         users = new ArrayList<>();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("User");
@@ -176,19 +178,43 @@ public class InfoAccountFragment extends Fragment {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashMap hashMap = new HashMap();
-                hashMap.put("password", password.getText().toString());
-                hashMap.put("fullname", name.getText().toString());
-                hashMap.put("phone", phone.getText().toString());
-                hashMap.put("gender", male.isChecked());
-                hashMap.put("job", job.getText().toString());
-                hashMap.put("address", address.getText().toString());
-                hashMap.put("birthday", new Date(nDay, nMonth, nYear));
-                myRef.child("User" + user_now.getId()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                showLogoutDialog();
+            }
+        });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(v).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment);
+            }
+        });
+    }
+
+    public void showLogoutDialog(){
+        dialogBuilder.setMessage("Bạn có chắc chắn không?");
+        dialogBuilder.setCancelable(false);
+        dialogBuilder.setPositiveButton("Không", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        dialogBuilder.setNegativeButton("Có", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+//                user_now.setPassword(password.getText().toString());
+//                user_now.setFullname(name.getText().toString());
+//                user_now.setPhone(phone.getText().toString());
+//                user_now.setGender(male.isChecked());
+//                user_now.setJob(job.getText().toString());
+//                user_now.setAddress(address.getText().toString());
+//                user_now.setBirthday(new Date(nDay, nMonth, nYear));
+                myRef.child("User" + user_now.getId()).setValue(new User(user_now.getId(),user_now.getEmail(),password.getText().toString(),
+                        name.getText().toString(),phone.getText().toString(),new Date(nDay, nMonth, nYear),male.isChecked(),
+                        job.getText().toString(),address.getText().toString())).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(getContext(),"Xác nhận thành công",Toast.LENGTH_SHORT).show();
-                        Navigation.findNavController(v).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -198,6 +224,8 @@ public class InfoAccountFragment extends Fragment {
                 });
             }
         });
+        dialog = dialogBuilder.create();
+        dialog.show();
     }
 
     @Override
@@ -216,6 +244,7 @@ public class InfoAccountFragment extends Fragment {
         spinner_month = view.findViewById(R.id.spinner_month);
         spinner_year = view.findViewById(R.id.spinner_year);
         confirm = view.findViewById(R.id.confirm);
+        back = view.findViewById(R.id.img_back);
         return view;
     }
 }
