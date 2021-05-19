@@ -65,7 +65,6 @@ public class mainScreenFragment extends Fragment {
         rvDeparts.setAdapter(departAdapter);
         getAllDepart();
 
-
         ivLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,7 +131,6 @@ public class mainScreenFragment extends Fragment {
         rvDeparts=view.findViewById(R.id.rv_department);
         ivAccount=view.findViewById(R.id.iv_account);
         ivLogout=view.findViewById(R.id.iv_ogout);
-
         return view;
     }
 }
