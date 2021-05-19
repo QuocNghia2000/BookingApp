@@ -2,7 +2,6 @@ package com.android.bookingapp.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -202,19 +201,13 @@ public class InfoAccountFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-//                user_now.setPassword(password.getText().toString());
-//                user_now.setFullname(name.getText().toString());
-//                user_now.setPhone(phone.getText().toString());
-//                user_now.setGender(male.isChecked());
-//                user_now.setJob(job.getText().toString());
-//                user_now.setAddress(address.getText().toString());
-//                user_now.setBirthday(new Date(nDay, nMonth, nYear));
                 myRef.child("User" + user_now.getId()).setValue(new User(user_now.getId(),user_now.getEmail(),password.getText().toString(),
                         name.getText().toString(),phone.getText().toString(),new Date(nDay, nMonth, nYear),male.isChecked(),
                         job.getText().toString(),address.getText().toString())).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(getContext(),"Xác nhận thành công",Toast.LENGTH_SHORT).show();
+
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -222,6 +215,7 @@ public class InfoAccountFragment extends Fragment {
                         Toast.makeText(getContext(),"Lỗi",Toast.LENGTH_SHORT).show();
                     }
                 });
+                Navigation.findNavController(getView()).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment, new Bundle());
             }
         });
         dialog = dialogBuilder.create();
