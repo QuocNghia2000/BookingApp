@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_mainScreenFragment_to_docMainFragment"
             app:destination="@id/docMainFragment" />
+        <action
+            android:id="@+id/action_mainScreenFragment_to_listChatFragment"
+            app:destination="@id/listChatFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailDepartmentFragment"
@@ -29,6 +32,9 @@
         <action
             android:id="@+id/action_detailDepartmentFragment_to_bookFragment"
             app:destination="@id/bookFragment" />
+        <action
+            android:id="@+id/action_detailDepartmentFragment_to_detailMessFragment"
+            app:destination="@id/detailMessFragment" />
     </fragment>
     <fragment
         android:id="@+id/bookFragment"

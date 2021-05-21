@@ -17,6 +17,10 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.model.Date;
+import com.android.bookingapp.model.Doctor;
+import com.android.bookingapp.model.Message;
+import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.view.MainActivity;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +36,7 @@ public class LoginFragment extends Fragment {
     private TextView resetpass;
     private Button bt_login,bt_register;
     private ArrayList<User> users;
+    private Doctor doctor;
     FirebaseDatabase database;
     DatabaseReference myRef;
 
@@ -56,6 +61,8 @@ public class LoginFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         users=new ArrayList<>();
         database = FirebaseDatabase.getInstance();
+
+
         myRef = database.getReference("User");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -94,7 +101,7 @@ public class LoginFragment extends Fragment {
                     }
                     else
                     {
-                        Toast.makeText(getContext(),"Sai thông tin đăng nhập",Toast.LENGTH_SHORT).show();
+                        getDoctor(username.getText().toString(),pass.getText().toString());
                     }
                 }
             }
@@ -138,4 +145,34 @@ public class LoginFragment extends Fragment {
         bt_register=view.findViewById(R.id.bt_register);
         return view;
     }
+
+    public void getDoctor(String email,String pass){
+        myRef = database.getReference("Doctor");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot data: snapshot.getChildren())
+                {
+                    Doctor d = data.getValue(Doctor.class);
+                    if (d.getEmail().equals(email) && d.getPassword().equals(pass)){
+                        doctor = d;
+                    }
+                }
+                if(doctor!=null){
+                    Intent intent =new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra("doctor",doctor);
+                    startActivity(intent);
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"Sai thông tin đăng nhập",Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
 }
