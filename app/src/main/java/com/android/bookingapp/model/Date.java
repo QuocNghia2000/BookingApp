@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Date implements Serializable {
     String day,month,year;
 
-    Date() {}
+    public Date() {}
 
     public Date(String day, String month, String year) {
         this.day = day;

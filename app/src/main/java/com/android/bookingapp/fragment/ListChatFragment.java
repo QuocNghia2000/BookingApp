@@ -2,65 +2,78 @@ package com.android.bookingapp.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.model.Date;
+import com.android.bookingapp.model.Doctor;
+import com.android.bookingapp.model.Message;
+import com.android.bookingapp.model.Time;
+import com.android.bookingapp.model.User;
+import com.android.bookingapp.viewmodel.ListChatAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ListChatFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+
 public class ListChatFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public ListChatFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ListChatFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ListChatFragment newInstance(String param1, String param2) {
-        ListChatFragment fragment = new ListChatFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    private List<Message> listMess;
+    private User user;
+    private Doctor doctor;
+    private RecyclerView rcvListChat;
+    private ListChatAdapter listChatAdapter;
+    private List<Doctor> listDocContact;
+    private DatabaseReference dbRef;
+    private boolean isPerson;
+    private boolean person;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list_chat, container, false);
+        View v = inflater.inflate(R.layout.fragment_list_chat, container, false);
+
+        listMess = new ArrayList<>();
+        rcvListChat = v.findViewById(R.id.rcv_listchat);
+        rcvListChat.setLayoutManager(new GridLayoutManager(getContext(),1));
+
+        if(getArguments().getSerializable("user")!=null)
+        {
+            user = (User) getArguments().getSerializable("user");
+            listChatAdapter = new ListChatAdapter(user,getContext());
+        }
+        else
+        {
+            doctor = (Doctor) getArguments().getSerializable("doctor");
+            listChatAdapter = new ListChatAdapter(doctor,getContext());
+        }
+
+        rcvListChat.setAdapter(listChatAdapter);
+
+//        Date d = new Date("20","5","2021");
+//        Time t = new Time(22,04);
+//        Message m = new Message(0,1,2,"Banh kem Thanh Hien!!",d,t,true);
+//        myRef = FirebaseDatabase.getInstance().getReference();
+//        myRef.child("Message").push().setValue(m);
+
+
+
+        return v;
     }
+
 }

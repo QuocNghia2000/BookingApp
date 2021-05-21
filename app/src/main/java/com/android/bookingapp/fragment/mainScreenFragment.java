@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Department;
+import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.view.MainActivity;
 import com.android.bookingapp.viewmodel.DepartAdapter;
@@ -39,6 +40,7 @@ public class mainScreenFragment extends Fragment {
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
     private User user;
+    private ImageView imvChat;
 
 
     @Override
@@ -49,6 +51,14 @@ public class mainScreenFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if(getActivity().getIntent().getSerializableExtra("doctor")!=null)
+        {
+            Doctor doctor= (Doctor) getActivity().getIntent().getSerializableExtra("doctor");
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("doctor",doctor);
+            Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_docMainFragment,bundle);
+        }
 
         if(getActivity().getIntent()!=null)
         {
@@ -77,6 +87,14 @@ public class mainScreenFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putInt("id",user.getId());
                 Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_infoAccountFragment, bundle);
+            }
+        });
+        imvChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user",user);
+                Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_listChatFragment,bundle);
             }
         });
     }
@@ -131,6 +149,7 @@ public class mainScreenFragment extends Fragment {
         rvDeparts=view.findViewById(R.id.rv_department);
         ivAccount=view.findViewById(R.id.iv_account);
         ivLogout=view.findViewById(R.id.iv_ogout);
+        imvChat = view.findViewById(R.id.imv_listchat_main);
         return view;
     }
 }

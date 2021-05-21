@@ -52,7 +52,7 @@ public class DetailDepartmentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mDoctors=new ArrayList<>();
-        detailDepartAdapter = new DetailDepartAdapter(mDoctors,user);
+        detailDepartAdapter = new DetailDepartAdapter(mDoctors,user,getContext());
         rvDetailDeparts.setLayoutManager(new GridLayoutManager(getContext(),1));
         rvDetailDeparts.setAdapter(detailDepartAdapter);
         getDoctor();
