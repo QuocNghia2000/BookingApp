@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Department;
 import com.android.bookingapp.model.Doctor;
-import com.android.bookingapp.model.User;
 import com.android.bookingapp.view.LoginActivity;
 import com.android.bookingapp.viewmodel.DepartAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -41,7 +40,7 @@ public class mainScreenFragment extends Fragment {
     private ImageView ivAccount,ivLogout;
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
-    private User user;
+    //private User user;
     private ImageView imvChat;
     SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
@@ -68,7 +67,7 @@ public class mainScreenFragment extends Fragment {
 
         if(getActivity().getIntent()!=null)
         {
-            user= (User) getActivity().getIntent().getSerializableExtra("user");
+            idUser= getActivity().getIntent().getIntExtra("id",1);
         }
 
         mDeparts=new ArrayList<>();
@@ -76,7 +75,7 @@ public class mainScreenFragment extends Fragment {
 
         dialogBuilder=new AlertDialog.Builder(getContext());
 
-        departAdapter = new DepartAdapter(mDeparts,user);
+        departAdapter = new DepartAdapter(mDeparts,idUser);
         rvDeparts.setLayoutManager(new GridLayoutManager(getContext(),2));
         rvDeparts.setAdapter(departAdapter);
         getAllDepart();
@@ -91,7 +90,7 @@ public class mainScreenFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putInt("id",user.getId());
+                bundle.putInt("id",idUser);
                 Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_infoAccountFragment, bundle);
             }
         });
@@ -99,7 +98,7 @@ public class mainScreenFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("user",user);
+                bundle.putInt("id_user",idUser);
                 Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_listChatFragment,bundle);
             }
         });

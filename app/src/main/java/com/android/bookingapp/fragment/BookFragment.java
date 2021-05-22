@@ -53,6 +53,7 @@ public class BookFragment extends Fragment {
     private EditText edtSymptom,edtMedicine;
     private Button btnDone;
     private int idReservation = 0;
+    private int id_user;
     private User user;
     private List<Reservation> listRes;
 
@@ -62,15 +63,15 @@ public class BookFragment extends Fragment {
         if(getArguments()!=null)
         {
             doctor=(Doctor) getArguments().getSerializable("doctor");
-            user = (User) getArguments().getSerializable("user");
+            id_user = getArguments().getInt("id_user");
         }
-        myRef = FirebaseDatabase.getInstance().getReference("Reservation");
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef = FirebaseDatabase.getInstance().getReference();
+        myRef.child("Reservation").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Reservation reservation = data.getValue(Reservation.class);
-                    listRes.add(reservation);
+                    //listRes.add(reservation);
                 }
             }
 
@@ -87,7 +88,28 @@ public class BookFragment extends Fragment {
         binding= DataBindingUtil.inflate(getLayoutInflater(),R.layout.fragment_book,null,false);
         View view =binding.getRoot();
         binding.setDoctor(doctor);
-        binding.setUser(user);
+        //getUser->set
+
+        //Toast.makeText(getContext(),String.valueOf(id_user),Toast.LENGTH_SHORT).show();
+        myRef.child("User").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot data: snapshot.getChildren())
+                {
+                    User user1 = data.getValue(User.class);
+                    if(user1.getId()==id_user)
+                    {
+                        user=new User(user1.getId(),user1.getEmail(),user1.getPassword(),user1.getFullname(),user1.getPhone());
+                        break;
+                    }
+                }
+                binding.setUser(user);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
 
         rvBook = view.findViewById(R.id.rv_book);
         spBook = view.findViewById(R.id.sp_book);
@@ -134,7 +156,7 @@ public class BookFragment extends Fragment {
                         String medicine = edtMedicine.getText().toString();
 
 
-                        Reservation reservation = new Reservation(++idReservation,user.getId(),doctor.getId(),symptom,medicine,time,date);
+                        Reservation reservation = new Reservation(++idReservation,id_user,doctor.getId(),symptom,medicine,time,date);
 
                         myRef = FirebaseDatabase.getInstance().getReference();
                         myRef.child("Reservation").push().setValue(reservation).addOnCompleteListener(new OnCompleteListener<Void>() {

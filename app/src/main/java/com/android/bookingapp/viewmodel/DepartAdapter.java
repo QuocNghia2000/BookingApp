@@ -13,17 +13,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Department;
-import com.android.bookingapp.model.User;
 
 import java.util.ArrayList;
 
 public class DepartAdapter extends RecyclerView.Adapter<DepartAdapter.MyViewHolder> {
     private Context context;
     private ArrayList<Department> mDeparts;
-    private User user;
+    private int id_user;
 
-    public DepartAdapter(ArrayList<Department> mDeparts,User user){
-        this.user = user;
+    public DepartAdapter(ArrayList<Department> mDeparts,int id_user){
+        this.id_user = id_user;
         this.mDeparts=mDeparts;
     }
 
@@ -42,7 +41,7 @@ public class DepartAdapter extends RecyclerView.Adapter<DepartAdapter.MyViewHold
             public void onClick(View v) {
                 Bundle bundle=new Bundle();
                 bundle.putSerializable("detailDepart",mDeparts.get(position));
-                bundle.putSerializable("user",user);
+                bundle.putInt("id_user",id_user);
                 Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_detailDepartmentFragment, bundle);
             }
         });

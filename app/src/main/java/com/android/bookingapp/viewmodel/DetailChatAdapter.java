@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
-import com.android.bookingapp.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,14 +23,14 @@ import java.util.List;
 public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.MyViewHolder> {
 
     private Doctor doctor;
-    private User user;
+    private int id_user;
     private DatabaseReference myRef;
     private List<Message> listMess;
     private boolean isUser;
 
-    public DetailChatAdapter(Doctor doctor,User user,boolean isUser){
+    public DetailChatAdapter(Doctor doctor,int id_user,boolean isUser){
         this.doctor = doctor;
-        this.user = user;
+        this.id_user = id_user;
         this.isUser = isUser;
         this.listMess = new ArrayList<>();
         getData();
@@ -99,11 +98,12 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                 listMess.clear();
                 for(DataSnapshot data: snapshot.getChildren()){
                     Message m = data.getValue(Message.class);
-                    if(m.getId_Doctor() == doctor.getId() && m.getId_User() == user.getId()){
+                    if(m.getId_Doctor() == doctor.getId() && m.getId_User() == id_user){
                         listMess.add(m);
                     }
                 }
                 notifyDataSetChanged();
+                
             }
 
             @Override

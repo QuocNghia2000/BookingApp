@@ -35,7 +35,7 @@ public class DetailDepartmentFragment extends Fragment {
     private RecyclerView rvDetailDeparts;
     private ArrayList<Doctor> mDoctors;
     private DetailDepartAdapter detailDepartAdapter;
-    private User user;
+    private int id_user;
     private DatabaseReference dbReference;
 
     @Override
@@ -43,7 +43,7 @@ public class DetailDepartmentFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             department= (Department) getArguments().getSerializable("detailDepart");
-            user= (User) getArguments().getSerializable("user");
+            id_user= getArguments().getInt("id_user");
             dbReference= FirebaseDatabase.getInstance().getReference("Doctor");
         }
     }
@@ -52,7 +52,7 @@ public class DetailDepartmentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mDoctors=new ArrayList<>();
-        detailDepartAdapter = new DetailDepartAdapter(mDoctors,user,getContext());
+        detailDepartAdapter = new DetailDepartAdapter(mDoctors,id_user,getContext());
         rvDetailDeparts.setLayoutManager(new GridLayoutManager(getContext(),1));
         rvDetailDeparts.setAdapter(detailDepartAdapter);
         getDoctor();
