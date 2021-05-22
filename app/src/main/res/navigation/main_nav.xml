@@ -71,10 +71,17 @@
         <action
             android:id="@+id/action_listChatFragment_to_detailMessFragment"
             app:destination="@id/detailMessFragment" />
+        <action
+            android:id="@+id/action_listChatFragment_to_docMainFragment"
+            app:destination="@id/docMainFragment" />
     </fragment>
     <fragment
         android:id="@+id/detailMessFragment"
         android:name="com.android.bookingapp.fragment.DetailMessFragment"
         android:label="fragment_detail_mess"
-        tools:layout="@layout/fragment_detail_mess" />
+        tools:layout="@layout/fragment_detail_mess" >
+        <action
+            android:id="@+id/action_detailMessFragment_to_listChatFragment"
+            app:destination="@id/listChatFragment" />
+    </fragment>
 </navigation>

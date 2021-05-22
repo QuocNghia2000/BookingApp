@@ -36,7 +36,7 @@ public class DetailMessFragment extends Fragment {
     private boolean isUser;
     private TextView tvName;
     private EditText edtContent;
-    private ImageView imvSend;
+    private ImageView imvSend,imvBack;
     private DatabaseReference myRef;
 
     @Override
@@ -86,6 +86,12 @@ public class DetailMessFragment extends Fragment {
             }
         });
 
+        imvBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
 
         scrollRecycleView();
         return v;
