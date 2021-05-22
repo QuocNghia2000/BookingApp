@@ -30,6 +30,7 @@
                 android:background="@drawable/cicle_img">
 
                 <ImageView
+                    android:id="@+id/imv_chat_docMain"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:src="@drawable/messenger"
@@ -92,7 +93,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/back"
                 android:orientation="horizontal"
-                android:layout_marginLeft="20dp">
+                android:layout_marginLeft="10dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -108,16 +109,19 @@
                     android:orientation="horizontal"
                     tools:ignore="MissingConstraints">
                     <Spinner
-                        android:id="@+id/spinner_date"
-                        android:layout_width="75dp"
+                        android:id="@+id/spinner_date_docMain"
+                        android:layout_gravity="center"
+                        android:layout_width="85dp"
                         android:layout_height="50dp" />
                     <Spinner
-                        android:id="@+id/spinner_month"
-                        android:layout_width="75dp"
+                        android:id="@+id/spinner_month_docMain"
+                        android:layout_width="85dp"
+                        android:layout_gravity="center"
                         android:layout_height="50dp" />
                     <Spinner
-                        android:id="@+id/spinner_year"
+                        android:id="@+id/spinner_year_docMain"
                         android:layout_width="100dp"
+                        android:layout_gravity="center"
                         android:layout_height="50dp" />
 
                 </LinearLayout>
@@ -131,7 +135,7 @@
                 android:background="@drawable/button">
 
                 <Button
-                    android:id="@+id/bt_register"
+                    android:id="@+id/bt_search_docMain"
                     android:layout_width="70dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
@@ -144,6 +148,7 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcv_docMain"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="10dp">

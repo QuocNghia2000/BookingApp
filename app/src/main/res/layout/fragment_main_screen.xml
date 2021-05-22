@@ -104,11 +104,11 @@
                 android:background="@drawable/cicle_img">
 
                 <ImageView
+                    android:id="@+id/imv_listchat_main"
                     android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/messenger"
-                    android:layout_gravity="center">
-                </ImageView>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/messenger"></ImageView>
             </FrameLayout>
         </LinearLayout>
 

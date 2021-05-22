@@ -23,23 +23,6 @@
             </ImageView>
 
 
-            <FrameLayout
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="140dp"
-                android:background="@drawable/cicle_img">
-
-                <ImageView
-                    android:id="@+id/iv_ogout"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/logout"
-                    android:layout_gravity="center">
-                </ImageView>
-
-            </FrameLayout>
-
         </LinearLayout>
 
         <LinearLayout
@@ -77,6 +60,7 @@
         </androidx.appcompat.widget.SearchView>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcv_listchat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="10dp">

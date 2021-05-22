@@ -1,123 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    android:layout_marginTop="10dp"
-    android:layout_height="match_parent">
+<layout>
+    <data>
+        <variable
+            name="user"
+            type="com.android.bookingapp.model.User" />
+    </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-
-        android:background="@drawable/button"
-        tools:ignore="MissingConstraints">
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:orientation="vertical"
 
-            <FrameLayout
-                android:layout_width="90dp"
-                android:layout_height="90dp"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/circle_person">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@drawable/ic_person_24"
-                    android:layout_gravity="center">
-                </ImageView>
-            </FrameLayout>
+            android:background="@drawable/button"
+            tools:ignore="MissingConstraints">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/circle_person">
+
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:src="@drawable/ic_person_24"
+                        android:layout_gravity="center">
+                    </ImageView>
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_time_docMain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="09:30"
+                        android:textColor="@color/black"
+                        android:textSize="20dp"
+                        android:textStyle="bold">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{user.fullname}"
+                        android:textSize="35dp"
+                        android:textColor="#1976D2">
+                    </TextView>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PHONE"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:textSize="20dp"
+                    android:textColor="@color/black">
+                </TextView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{user.phone}"
+                    android:textSize="20dp"
+                    android:layout_gravity="center"
+                    android:textColor="#808080"
+                    android:layout_marginLeft="50dp">
+                </TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="9:00 - 9:30"
-                    android:textColor="@color/black"
+                    android:text="TRIỆU CHỨNG"
+                    android:textStyle="bold"
                     android:textSize="20dp"
-                    android:textStyle="bold">
-
+                    android:textColor="@color/black">
                 </TextView>
 
                 <TextView
+                    android:id="@+id/tv_symptom_docMain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ông Bá Rôn"
-                    android:textSize="35dp"
-                    android:textColor="#1976D2">
+                    android:text="zzzzz"
+                    android:textSize="20dp"
+                    android:layout_marginBottom="15dp"
+                    android:textColor="#808080"
+                    android:layout_marginLeft="50dp">
                 </TextView>
             </LinearLayout>
+
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PHONE"
-                android:textStyle="bold"
-                android:layout_gravity="center"
-                android:textSize="20dp"
-                android:textColor="@color/black">
-            </TextView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="123456789"
-                android:textSize="20dp"
-                android:layout_gravity="center"
-                android:textColor="#808080"
-                android:layout_marginLeft="50dp">
-            </TextView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="20dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TRIỆU CHỨNG"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                android:textColor="@color/black">
-            </TextView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đau đầu, sổ mũi, buồn nôn"
-                android:textSize="20dp"
-                android:layout_marginBottom="15dp"
-                android:textColor="#808080"
-                android:layout_marginLeft="50dp">
-            </TextView>
-        </LinearLayout>
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

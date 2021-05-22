@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class BookFragment extends Fragment {
     private List<String> listTime,listDate,listReser;
     private Spinner spBook;
     private Doctor doctor;
+    private ImageView back;
     DatabaseReference myRef;
     private FragmentBookBinding binding;
     private EditText edtSymptom,edtMedicine;
@@ -78,6 +80,7 @@ public class BookFragment extends Fragment {
         edtSymptom = view.findViewById(R.id.edt_symptom_book);
         edtMedicine = view.findViewById(R.id.edt_medicine_book);
         btnDone = view.findViewById(R.id.btn_done_book);
+        back = view.findViewById(R.id.img_back);
 
         listTime = new ArrayList<>();
         listDate = new ArrayList<>();
@@ -91,6 +94,12 @@ public class BookFragment extends Fragment {
         getAvailableTime();
         getDateInSpinner();
 
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
 
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override

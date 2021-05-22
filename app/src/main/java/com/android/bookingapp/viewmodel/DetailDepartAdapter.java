@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -23,9 +24,10 @@ public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapte
     private User user;
     private ArrayList<Doctor> mDoctors;
 
-    public DetailDepartAdapter(ArrayList<Doctor> mDoctors,User user){
+    public DetailDepartAdapter(ArrayList<Doctor> mDoctors,User user,Context context){
         this.user = user;
         this.mDoctors=mDoctors;
+        this.context = context;
     }
 
     @NonNull
@@ -42,6 +44,15 @@ public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapte
 
         holder.binding.setDoctor(mDoctors.get(position));
         holder.doctor=mDoctors.get(position);
+        holder.imvChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("doctor",mDoctors.get(position));
+                bundle.putBoolean("isUser",true);
+                Navigation.findNavController(v).navigate(R.id.action_detailDepartmentFragment_to_detailMessFragment, bundle);
+            }
+        });
 
     }
 
@@ -55,11 +66,13 @@ public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapte
         View view;
         private Doctor doctor;
         private ItemRvDepartmentBinding binding;
+        private ImageView imvChat;
 
         public MyViewHolder(@NonNull View itemView,ItemRvDepartmentBinding binding) {
             super(itemView);
             view=itemView;
             this.binding=binding;
+            imvChat = itemView.findViewById(R.id.imv_chat_detailDepart);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -104,6 +104,7 @@
                 android:background="@drawable/cicle_img">
 
                 <ImageView
+                    android:id="@+id/imv_chat_detailDepart"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/messenger"

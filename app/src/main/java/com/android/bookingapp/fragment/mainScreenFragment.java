@@ -1,6 +1,7 @@
 package com.android.bookingapp.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Department;
+import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.User;
+import com.android.bookingapp.view.MainActivity;
 import com.android.bookingapp.viewmodel.DepartAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,7 +40,7 @@ public class mainScreenFragment extends Fragment {
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
     private User user;
-    private boolean check_logout=true;
+    private ImageView imvChat;
 
 
     @Override
@@ -48,6 +51,14 @@ public class mainScreenFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if(getActivity().getIntent().getSerializableExtra("doctor")!=null)
+        {
+            Doctor doctor= (Doctor) getActivity().getIntent().getSerializableExtra("doctor");
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("doctor",doctor);
+            Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_docMainFragment,bundle);
+        }
 
         if(getActivity().getIntent()!=null)
         {
@@ -64,7 +75,6 @@ public class mainScreenFragment extends Fragment {
         rvDeparts.setAdapter(departAdapter);
         getAllDepart();
 
-
         ivLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,6 +89,14 @@ public class mainScreenFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_infoAccountFragment, bundle);
             }
         });
+        imvChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user",user);
+                Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_listChatFragment,bundle);
+            }
+        });
     }
     public void showLogoutDialog(){
         dialogBuilder.setMessage("Bạn có muốn đăng xuất?");
@@ -87,18 +105,19 @@ public class mainScreenFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
+
             }
         });
         dialogBuilder.setNegativeButton("Có", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-                getActivity().finish();
-                check_logout=false;
+                getActivity().onBackPressed();
             }
         });
         dialog = dialogBuilder.create();
         dialog.show();
+
     }
 
     public void getAllDepart()
@@ -130,7 +149,7 @@ public class mainScreenFragment extends Fragment {
         rvDeparts=view.findViewById(R.id.rv_department);
         ivAccount=view.findViewById(R.id.iv_account);
         ivLogout=view.findViewById(R.id.iv_ogout);
-
+        imvChat = view.findViewById(R.id.imv_listchat_main);
         return view;
     }
 }
