@@ -62,16 +62,6 @@ public class LoginFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         dialogBuilder=new AlertDialog.Builder(getContext());
 
-        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        if(isLogining())
-        {
-            String email=sharedpreferences.getString(USERNAME,"");
-            String pass=sharedpreferences.getString(PASS,"");
-            Intent intent =new Intent(getActivity(), MainActivity.class);
-            intent.putExtra("id",sharedpreferences.getString(ID_USER,""));
-            getActivity().finish();
-            startActivity(intent);
-        }
         myRef = database.getReference("User");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -155,6 +145,16 @@ public class LoginFragment extends Fragment {
         resetpass=view.findViewById(R.id.resetpass);
         bt_login=view.findViewById(R.id.bt_login);
         bt_register=view.findViewById(R.id.bt_register);
+        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        if(isLogining())
+        {
+            String email=sharedpreferences.getString(USERNAME,"");
+            String pass=sharedpreferences.getString(PASS,"");
+            Intent intent =new Intent(getActivity(), MainActivity.class);
+            intent.putExtra("id",sharedpreferences.getInt(ID_USER,1));
+            getActivity().finish();
+            startActivity(intent);
+        }
         return view;
     }
 
