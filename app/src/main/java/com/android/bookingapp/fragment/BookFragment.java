@@ -104,33 +104,43 @@ public class BookFragment extends Fragment {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
+                com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
+                System.out.print(isTrueTime(time,date));
                 if (bookAdapter.getItemSelected() == -1)
                 {
                     Toast.makeText(getContext(),"Hãy chọn giờ muốn đặt lịch!", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-                    String symptom = edtSymptom.getText().toString();
-                    String medicine = edtMedicine.getText().toString();
-                    Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
-                    com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
-                    Reservation reservation = new Reservation(++idReservation,user.getId(),doctor.getId(),symptom,medicine,time,date);
+//                    Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
+//                    com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
 
-                    myRef = FirebaseDatabase.getInstance().getReference();
-                    myRef.child("Reservation").push().setValue(reservation).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull  Task<Void> task) {
-                            if(task.isSuccessful())
-                            {
-                                Toast.makeText(getContext(),"Đặt lịch thành công!", Toast.LENGTH_SHORT).show();
-                                Navigation.findNavController(v).navigate(R.id.action_bookFragment_to_mainScreenFragment);
+                    if(isTrueTime(time,date)==1)
+                    {
+                        String symptom = edtSymptom.getText().toString();
+                        String medicine = edtMedicine.getText().toString();
+
+
+                        Reservation reservation = new Reservation(++idReservation,user.getId(),doctor.getId(),symptom,medicine,time,date);
+
+                        myRef = FirebaseDatabase.getInstance().getReference();
+                        myRef.child("Reservation").push().setValue(reservation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull  Task<Void> task) {
+                                if(task.isSuccessful())
+                                {
+                                    Toast.makeText(getContext(),"Đặt lịch thành công!", Toast.LENGTH_SHORT).show();
+                                    Navigation.findNavController(v).navigate(R.id.action_bookFragment_to_mainScreenFragment);
+                                }
+                                else
+                                {
+                                    Toast.makeText(getContext(),"Lỗi", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                            else
-                            {
-                                Toast.makeText(getContext(),"Lỗi", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                        });
+                    }
+                    else Toast.makeText(getContext(),"Da trung gio!!",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -189,6 +199,7 @@ public class BookFragment extends Fragment {
                                     Time t = reservation.getTime();
                                     String time = ((t.getHour()<10)?"0":"") + t.getHour() + ":" + ((t.getMinute()<10)?"0":"") + t.getMinute();
                                     listReser.add(time);
+
                                 }
                             }
                         }
@@ -221,4 +232,44 @@ public class BookFragment extends Fragment {
         return new com.android.bookingapp.model.Date(temp[0],temp[1],temp[2]);
     }
 
+
+    public int isTrueTime(Time time, com.android.bookingapp.model.Date dateTemp) {
+        List<Time> timeList = new ArrayList<>();
+        myRef = FirebaseDatabase.getInstance().getReference("Reservation");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Reservation reservation = data.getValue(Reservation.class);
+                    if(isSameDate(reservation.getDate(),dateTemp)){
+                        timeList.add(reservation.getTime());
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        for(Time t : timeList){
+            if(isSameTime(t,time)) return 0;
+        }
+        return 1;
+    }
+
+    public boolean isSameDate(com.android.bookingapp.model.Date d1, com.android.bookingapp.model.Date d2){
+        if(!d1.getDay().equals(d2.getDay())) return false;
+        if(!d1.getMonth().equals(d2.getMonth())) return false;
+        if(!d1.getYear().equals(d2.getYear())) return false;
+        return true;
+    }
+
+    public boolean isSameTime(Time t1,Time t2){
+        if(t1.getHour()!=t2.getHour()) return false;
+        if(t1.getMinute()!=t2.getMinute()) return false;
+        return true;
+    }
 }
