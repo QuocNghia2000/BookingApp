@@ -116,6 +116,7 @@ public class LoginFragment extends Fragment {
 
     }
 
+
     public int posCurrent(String email, String pass) {
         if(users!=null){
             for (int i = 0; i < users.size(); i++) {
