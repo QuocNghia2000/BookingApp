@@ -75,7 +75,7 @@ public class BookFragment extends Fragment {
         View view =binding.getRoot();
         binding.setDoctor(doctor);
         //getUser->set
-
+        myRef = FirebaseDatabase.getInstance().getReference();
         //Toast.makeText(getContext(),String.valueOf(id_user),Toast.LENGTH_SHORT).show();
         myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("User").addValueEventListener(new ValueEventListener() {
@@ -127,21 +127,6 @@ public class BookFragment extends Fragment {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myRef = FirebaseDatabase.getInstance().getReference();
-                myRef.child("Reservation").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot data : snapshot.getChildren()) {
-                            Reservation reservation = data.getValue(Reservation.class);
-                            //listRes.add(reservation);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
-                System.out.print(listRes.size());
                 if (bookAdapter.getItemSelected() == -1)
                 {
                     Toast.makeText(getContext(),"Hãy chọn giờ muốn đặt lịch!", Toast.LENGTH_SHORT).show();
@@ -151,7 +136,7 @@ public class BookFragment extends Fragment {
                     Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
                     com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
 
-                    if(isTrueTime(time,date)==-1)
+                    if(isTrueTime(time)==-1)
                     {
                         String symptom = edtSymptom.getText().toString();
                         String medicine = edtMedicine.getText().toString();
@@ -268,28 +253,14 @@ public class BookFragment extends Fragment {
     }
 
 
-    public int isTrueTime(Time time, com.android.bookingapp.model.Date dateTemp) {
-        if(listRes!=null){
-            for (int i = 0; i < listRes.size(); i++) {
-                if (isSameDate(listRes.get(i).getDate(),dateTemp)) {
-                    if (isSameTime(listRes.get(i).getTime(),time))
-                        return i;
-                }
+    public int isTrueTime(Time t) {
+        if(listReser!=null){
+            for (int i = 0; i < listReser.size(); i++) {
+                String time = ((t.getHour()<10)?"0":"") + t.getHour() + ":" + ((t.getMinute()<10)?"0":"") + t.getMinute();
+                if(time.equals(listReser.get(i)))
+                    return i;
             }
         }
         return -1;
-    }
-
-    public boolean isSameDate(com.android.bookingapp.model.Date d1, com.android.bookingapp.model.Date d2){
-        if(!d1.getDay().equals(d2.getDay())) return false;
-        if(!d1.getMonth().equals(d2.getMonth())) return false;
-        if(!d1.getYear().equals(d2.getYear())) return false;
-        return true;
-    }
-
-    public boolean isSameTime(Time t1,Time t2){
-        if(t1.getHour()!=t2.getHour()) return false;
-        if(t1.getMinute()!=t2.getMinute()) return false;
-        return true;
     }
 }
