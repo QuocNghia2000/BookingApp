@@ -1,6 +1,8 @@
 package com.android.bookingapp.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -13,14 +15,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.android.bookingapp.R;
-import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Doctor;
-import com.android.bookingapp.model.Message;
-import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.view.MainActivity;
 import com.google.firebase.database.DataSnapshot;
@@ -39,17 +39,16 @@ public class LoginFragment extends Fragment {
     private Doctor doctor;
     FirebaseDatabase database;
     DatabaseReference myRef;
+    AlertDialog.Builder dialogBuilder;
+    AlertDialog dialog;
 
-    public LoginFragment() {
-        // Required empty public constructor
-    }
+    public static final String MyPREFERENCES = "MyPrefs";
+    public static final String USERNAME = "userNameKey";
+    public static final String PASS = "passKey";
+    public static final String ID_USER = "ID_USER";
+    public static final String REMEMBER = "remember";
+    SharedPreferences sharedpreferences;
 
-    public static LoginFragment newInstance(String param1, String param2) {
-        LoginFragment fragment = new LoginFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,8 +60,18 @@ public class LoginFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         users=new ArrayList<>();
         database = FirebaseDatabase.getInstance();
+        dialogBuilder=new AlertDialog.Builder(getContext());
 
-
+        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        if(isLogining())
+        {
+            String email=sharedpreferences.getString(USERNAME,"");
+            String pass=sharedpreferences.getString(PASS,"");
+            Intent intent =new Intent(getActivity(), MainActivity.class);
+            intent.putExtra("id",sharedpreferences.getString(ID_USER,""));
+            getActivity().finish();
+            startActivity(intent);
+        }
         myRef = database.getReference("User");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -82,6 +91,7 @@ public class LoginFragment extends Fragment {
 
     }
     private void handle() {
+
         bt_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,9 +104,11 @@ public class LoginFragment extends Fragment {
                     int index=posCurrent(username.getText().toString(),pass.getText().toString());
                     if(index!=-1)
                     {
+                        saveData(username.getText().toString(),pass.getText().toString(),users.get(index).getId());
                         //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
                         Intent intent =new Intent(getActivity(), MainActivity.class);
                         intent.putExtra("user",users.get(index));
+                        getActivity().finish();
                         startActivity(intent);
                     }
                     else
@@ -159,8 +171,10 @@ public class LoginFragment extends Fragment {
                     }
                 }
                 if(doctor!=null){
+                    saveData(doctor.getEmail(),doctor.getPassword(),doctor.getId());
                     Intent intent =new Intent(getActivity(), MainActivity.class);
                     intent.putExtra("doctor",doctor);
+                    getActivity().finish();
                     startActivity(intent);
                 }
                 else
@@ -174,5 +188,18 @@ public class LoginFragment extends Fragment {
             }
         });
     }
+
+    private void saveData(String username, String Pass,int idUser) {
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString(USERNAME, username);
+        editor.putString(PASS, Pass);
+        editor.putInt(ID_USER,idUser);
+        editor.commit();
+    }
+
+    private boolean isLogining() {
+    return sharedpreferences.contains(USERNAME);
+    }
+
 
 }

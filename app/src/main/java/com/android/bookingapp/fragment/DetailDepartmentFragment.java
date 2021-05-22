@@ -59,7 +59,7 @@ public class DetailDepartmentFragment extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().onBackPressed();
+                Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_detailDepartmentFragment);
             }
         });
     }

@@ -1,7 +1,9 @@
 package com.android.bookingapp.fragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +22,7 @@ import com.android.bookingapp.R;
 import com.android.bookingapp.model.Department;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.User;
-import com.android.bookingapp.view.MainActivity;
+import com.android.bookingapp.view.LoginActivity;
 import com.android.bookingapp.viewmodel.DepartAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +43,9 @@ public class mainScreenFragment extends Fragment {
     AlertDialog dialog;
     private User user;
     private ImageView imvChat;
+    SharedPreferences sharedpreferences;
+    public static final String MyPREFERENCES = "MyPrefs";
+    private int idUser;
 
 
     @Override
@@ -52,6 +57,7 @@ public class mainScreenFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         if(getActivity().getIntent().getSerializableExtra("doctor")!=null)
         {
             Doctor doctor= (Doctor) getActivity().getIntent().getSerializableExtra("doctor");
@@ -105,19 +111,26 @@ public class mainScreenFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-
             }
         });
         dialogBuilder.setNegativeButton("Có", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-                getActivity().onBackPressed();
+                clearData();
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                getActivity().finish();
+
             }
         });
         dialog = dialogBuilder.create();
         dialog.show();
 
+    }
+    private void clearData() {
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.clear();
+        editor.commit();
     }
 
     public void getAllDepart()

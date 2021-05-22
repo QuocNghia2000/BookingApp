@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class BookFragment extends Fragment {
     private RecyclerView rvBook;
@@ -97,7 +96,7 @@ public class BookFragment extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().onBackPressed();
+                Navigation.findNavController(v).navigate(R.id.action_detailDepartmentFragment_to_bookFragment);
             }
         });
 

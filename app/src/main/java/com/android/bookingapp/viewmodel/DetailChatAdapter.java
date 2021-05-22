@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
-import com.android.bookingapp.fragment.DetailMessFragment;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.User;
@@ -29,11 +28,9 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
     private DatabaseReference myRef;
     private List<Message> listMess;
     private boolean isUser;
-    private DetailMessFragment detailMessFragment;
 
-    public DetailChatAdapter(Doctor doctor,User user,boolean isUser,DetailMessFragment detailMessFragment){
+    public DetailChatAdapter(Doctor doctor,User user,boolean isUser){
         this.doctor = doctor;
-        this.detailMessFragment = detailMessFragment;
         this.user = user;
         this.isUser = isUser;
         this.listMess = new ArrayList<>();
@@ -107,7 +104,6 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                     }
                 }
                 notifyDataSetChanged();
-                detailMessFragment.scrollRecycleView();
             }
 
             @Override
