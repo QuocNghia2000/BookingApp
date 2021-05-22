@@ -54,6 +54,7 @@ public class BookFragment extends Fragment {
     private Button btnDone;
     private int idReservation = 0;
     private User user;
+    private List<Reservation> listRes;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +64,20 @@ public class BookFragment extends Fragment {
             doctor=(Doctor) getArguments().getSerializable("doctor");
             user = (User) getArguments().getSerializable("user");
         }
+        myRef = FirebaseDatabase.getInstance().getReference("Reservation");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Reservation reservation = data.getValue(Reservation.class);
+                    listRes.add(reservation);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
     @Override
@@ -103,19 +118,17 @@ public class BookFragment extends Fragment {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
-                com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
-                System.out.print(isTrueTime(time,date));
+                System.out.print(listRes.size());
                 if (bookAdapter.getItemSelected() == -1)
                 {
                     Toast.makeText(getContext(),"Hãy chọn giờ muốn đặt lịch!", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-//                    Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
-//                    com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
+                    Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
+                    com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
 
-                    if(isTrueTime(time,date)==1)
+                    if(isTrueTime(time,date)==-1)
                     {
                         String symptom = edtSymptom.getText().toString();
                         String medicine = edtMedicine.getText().toString();
@@ -139,7 +152,7 @@ public class BookFragment extends Fragment {
                             }
                         });
                     }
-                    else Toast.makeText(getContext(),"Da trung gio!!",Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(getContext(),"Giờ đã được đặt!!",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -233,30 +246,15 @@ public class BookFragment extends Fragment {
 
 
     public int isTrueTime(Time time, com.android.bookingapp.model.Date dateTemp) {
-        List<Time> timeList = new ArrayList<>();
-        myRef = FirebaseDatabase.getInstance().getReference("Reservation");
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    Reservation reservation = data.getValue(Reservation.class);
-                    if(isSameDate(reservation.getDate(),dateTemp)){
-                        timeList.add(reservation.getTime());
-                    }
+        if(listRes!=null){
+            for (int i = 0; i < listRes.size(); i++) {
+                if (isSameDate(listRes.get(i).getDate(),dateTemp)) {
+                    if (isSameTime(listRes.get(i).getTime(),time))
+                        return i;
                 }
-
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        for(Time t : timeList){
-            if(isSameTime(t,time)) return 0;
         }
-        return 1;
+        return -1;
     }
 
     public boolean isSameDate(com.android.bookingapp.model.Date d1, com.android.bookingapp.model.Date d2){
