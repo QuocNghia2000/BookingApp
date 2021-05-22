@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
-import com.android.bookingapp.model.User;
 import com.android.bookingapp.viewmodel.ListChatAdapter;
 import com.google.firebase.database.DatabaseReference;
 
@@ -43,8 +42,7 @@ public class ListChatFragment extends Fragment {
         rcvListChat = v.findViewById(R.id.rcv_listchat);
         imvBack=v.findViewById(R.id.imv_back_listChat);
         rcvListChat.setLayoutManager(new GridLayoutManager(getContext(),1));
-
-        if(getArguments().getInt("id_user")!=-1)
+        if(getArguments().getInt("id_user",-1)!=-1)
         {
             id_user = getArguments().getInt("id_user");
             listChatAdapter = new ListChatAdapter(id_user,getContext());

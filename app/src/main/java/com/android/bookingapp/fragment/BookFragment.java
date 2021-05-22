@@ -77,6 +77,7 @@ public class BookFragment extends Fragment {
         //getUser->set
 
         //Toast.makeText(getContext(),String.valueOf(id_user),Toast.LENGTH_SHORT).show();
+        myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("User").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -119,7 +120,7 @@ public class BookFragment extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(v).navigate(R.id.action_detailDepartmentFragment_to_bookFragment);
+                getActivity().onBackPressed();
             }
         });
 
