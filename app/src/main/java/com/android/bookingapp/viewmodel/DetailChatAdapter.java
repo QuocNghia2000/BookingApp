@@ -1,16 +1,25 @@
 package com.android.bookingapp.viewmodel;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.bookingapp.NotificationApplication;
 import com.android.bookingapp.R;
+import com.android.bookingapp.fragment.DetailMessFragment;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
+import com.android.bookingapp.model.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -19,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.MyViewHolder> {
 
@@ -26,13 +36,21 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
     private int id_user;
     private DatabaseReference myRef;
     private List<Message> listMess;
+    private List<Message> messageList;
     private boolean isUser;
+    private Context context;
+    private DetailMessFragment detailMessFragment;
+    private User user;
+    String content="";
 
-    public DetailChatAdapter(Doctor doctor,int id_user,boolean isUser){
+    public DetailChatAdapter(Doctor doctor,int id_user,boolean isUser,Context context, DetailMessFragment detailMessFragment){
         this.doctor = doctor;
         this.id_user = id_user;
         this.isUser = isUser;
         this.listMess = new ArrayList<>();
+        messageList=new ArrayList<>();
+        this.context=context;
+        this.detailMessFragment=detailMessFragment;
         getData();
     }
 
@@ -89,12 +107,15 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
             tvReceive = itemView.findViewById(R.id.sms_receive);
         }
     }
-
     public void getData(){
-        myRef = FirebaseDatabase.getInstance().getReference("Message");
-        myRef.addValueEventListener(new ValueEventListener() {
+        List<Message> messages=new ArrayList<>();
+        myRef = FirebaseDatabase.getInstance().getReference();
+        myRef.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                messageList.clear();
+                if(listMess!=null)
+                    messages.addAll(listMess);
                 listMess.clear();
                 for(DataSnapshot data: snapshot.getChildren()){
                     Message m = data.getValue(Message.class);
@@ -102,8 +123,34 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                         listMess.add(m);
                     }
                 }
+                if(messages.size()!=0)
+                {
+                    for(int i=messages.size();i<listMess.size();i++)
+                    {
+                        messageList.add(listMess.get(i));
+                        content=listMess.get(i).getContent();
+                    }
+                    myRef.child("User").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for(DataSnapshot data: snapshot.getChildren())
+                            {
+                                User user1 = data.getValue(User.class);
+                                if(user1.getId()==id_user)
+                                {
+                                    user=new User(user1.getId(),user1.getEmail(),user1.getPassword(),user1.getFullname(),user1.getPhone());
+                                }
+                            }
+                            sendNotification();
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
+
+                }
+                detailMessFragment.scrollView();
                 notifyDataSetChanged();
-                
             }
 
             @Override
@@ -111,5 +158,20 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
 
             }
         });
+    }
+    private void sendNotification()
+    {
+        Bitmap bitmap= BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher_round);
+        Notification notification=new NotificationCompat.Builder(context, NotificationApplication.CHANNEL_ID)
+                .setContentTitle(user.getFullname())
+                .setContentText(content)
+                .setSmallIcon(R.drawable.messenger).setLargeIcon(bitmap).build();
+        NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if(notificationManager!=null)
+        {
+            Random random=new Random();
+
+            notificationManager.notify(random.nextInt(),notification);
+        }
     }
 }

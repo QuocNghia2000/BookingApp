@@ -1,9 +1,15 @@
 package com.android.bookingapp;
 
 import android.app.Application;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
+
+import androidx.core.app.NotificationCompat;
 
 public class NotificationApplication extends Application {
 
@@ -28,6 +34,19 @@ public class NotificationApplication extends Application {
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
+        }
+    }
+    private void sendNotification()
+    {
+        Bitmap bitmap= BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher_round);
+        Notification notification=new NotificationCompat.Builder(this,NotificationApplication.CHANNEL_ID)
+                .setContentTitle("")
+                .setContentText("")
+                .setSmallIcon(R.drawable.messenger).setLargeIcon(bitmap).build();
+        NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        if(notificationManager!=null)
+        {
+            notificationManager.notify(1,notification);
         }
     }
 }

@@ -44,7 +44,7 @@ public class mainScreenFragment extends Fragment {
     private ImageView imvChat;
     SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
-    private int idUser;
+    private int idUser=-1;
 
 
     @Override
@@ -57,6 +57,7 @@ public class mainScreenFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
         if(getActivity().getIntent().getSerializableExtra("doctor")!=null)
         {
             Doctor doctor= (Doctor) getActivity().getIntent().getSerializableExtra("doctor");
@@ -67,7 +68,7 @@ public class mainScreenFragment extends Fragment {
 
         if(getActivity().getIntent()!=null)
         {
-            idUser= getActivity().getIntent().getIntExtra("id",1);
+            idUser= getActivity().getIntent().getIntExtra("id",-1);
         }
 
         mDeparts=new ArrayList<>();
@@ -119,7 +120,6 @@ public class mainScreenFragment extends Fragment {
                 clearData();
                 startActivity(new Intent(getActivity(), LoginActivity.class));
                 getActivity().finish();
-
             }
         });
         dialog = dialogBuilder.create();

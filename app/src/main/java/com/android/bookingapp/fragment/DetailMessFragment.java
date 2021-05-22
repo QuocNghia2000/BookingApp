@@ -39,7 +39,7 @@ public class DetailMessFragment extends Fragment {
     private boolean isUser;
     private TextView tvName;
     private EditText edtContent;
-    private ImageView imvSend,imvBack;
+    private ImageView imvSend,ivBack;
     private DatabaseReference myRef;
     private User user;
 
@@ -56,7 +56,7 @@ public class DetailMessFragment extends Fragment {
             isUser = getArguments().getBoolean("isUser");
         }
         myRef = FirebaseDatabase.getInstance().getReference();
-        myAdapter = new DetailChatAdapter(doctor,id_user,isUser);
+        myAdapter = new DetailChatAdapter(doctor,id_user,isUser,getContext(),this);
         rcvDetailMess = v.findViewById(R.id.rcv_detail_mess);
         rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(),1));
         rcvDetailMess.setAdapter(myAdapter);
@@ -64,7 +64,7 @@ public class DetailMessFragment extends Fragment {
         tvName = v.findViewById(R.id.tv_name_detailMess);
         edtContent = v.findViewById(R.id.edt_text_detailMess);
         imvSend = v.findViewById(R.id.imv_send_listMess);
-
+        ivBack=v.findViewById(R.id.imv_back_detailMess);
 
         //getdata->fullname
         myRef.child("User").addValueEventListener(new ValueEventListener() {
@@ -75,19 +75,20 @@ public class DetailMessFragment extends Fragment {
                     User user1 = data.getValue(User.class);
                     if(user1.getId()==id_user)
                     {
-                        user=user1;
+                        user=new User(user1.getId(),user1.getEmail(),user1.getPassword(),user1.getFullname(),user1.getPhone());
+                        break;
                     }
                 }
+                if(isUser){
+                    tvName.setText(doctor.getFullname());
+                }
+                else tvName.setText(user.getFullname());
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-        if(isUser){
-            tvName.setText(doctor.getFullname());
-        }
-        else tvName.setText(user.getFullname());
 
         imvSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,9 +109,7 @@ public class DetailMessFragment extends Fragment {
                 }
             }
         });
-
-        imvBack = v.findViewById(R.id.imv_back_detailMess);
-        imvBack.setOnClickListener(new View.OnClickListener() {
+        ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
@@ -122,6 +121,10 @@ public class DetailMessFragment extends Fragment {
         return v;
     }
 
+    public void scrollView()
+    {
+        rcvDetailMess.scrollToPosition(rcvDetailMess.getAdapter().getItemCount() - 1);
+    }
     public Date getDateNow(){
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");

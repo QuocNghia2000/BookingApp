@@ -77,6 +77,7 @@ public class BookFragment extends Fragment {
         //getUser->set
         myRef = FirebaseDatabase.getInstance().getReference();
         //Toast.makeText(getContext(),String.valueOf(id_user),Toast.LENGTH_SHORT).show();
+        myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("User").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

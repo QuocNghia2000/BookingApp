@@ -32,7 +32,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
     //private  User user;
     private Doctor doctor;
     private Context context;
-    private int id_user;
+    private int id_user=-1;
 
     public ListChatAdapter(int id_user,Context context){
         this.id_user = id_user;
@@ -271,10 +271,6 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
 
             }
         });
-
-
-
-
 
     }
 
