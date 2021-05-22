@@ -68,7 +68,7 @@ public class LoginFragment extends Fragment {
             String email=sharedpreferences.getString(USERNAME,"");
             String pass=sharedpreferences.getString(PASS,"");
             Intent intent =new Intent(getActivity(), MainActivity.class);
-            intent.putExtra("id",sharedpreferences.getString(ID_USER,""));
+            intent.putExtra("id",sharedpreferences.getInt(ID_USER,1));
             getActivity().finish();
             startActivity(intent);
         }

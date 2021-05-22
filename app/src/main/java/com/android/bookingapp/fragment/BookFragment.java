@@ -65,20 +65,6 @@ public class BookFragment extends Fragment {
             doctor=(Doctor) getArguments().getSerializable("doctor");
             id_user = getArguments().getInt("id_user");
         }
-        myRef = FirebaseDatabase.getInstance().getReference();
-        myRef.child("Reservation").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    Reservation reservation = data.getValue(Reservation.class);
-                    //listRes.add(reservation);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
     }
 
     @Override
@@ -140,6 +126,20 @@ public class BookFragment extends Fragment {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                myRef = FirebaseDatabase.getInstance().getReference();
+                myRef.child("Reservation").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot data : snapshot.getChildren()) {
+                            Reservation reservation = data.getValue(Reservation.class);
+                            //listRes.add(reservation);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
                 System.out.print(listRes.size());
                 if (bookAdapter.getItemSelected() == -1)
                 {
