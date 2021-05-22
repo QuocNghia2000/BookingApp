@@ -121,13 +121,15 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
     }
 
     public void getListMessUser(){
-        List<Integer> idDoctor = new ArrayList<>();
-        List<Integer> idDoctorFirst = new ArrayList<>();
+//        List<Integer> idDoctor = new ArrayList<>();
+//        List<Integer> idDoctorFirst = new ArrayList<>();
 
         dbRef = FirebaseDatabase.getInstance().getReference("Message");
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Integer> idDoctor = new ArrayList<>();
+                List<Integer> idDoctorFirst = new ArrayList<>();
                 for(DataSnapshot data: snapshot.getChildren())
                 {
                     Message mess = data.getValue(Message.class);
@@ -146,7 +148,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                         }
                     }
                 }
-
+                listContact = new ArrayList<>();
                 for (int i=idDoctorFirst.size()-1;i>=0;i--){
                     if(!isConstrainList(idDoctor,idDoctorFirst.get(i))){
                         idDoctor.add(idDoctorFirst.get(i));
@@ -200,13 +202,12 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
 
 
     public void getListMessDoctor(){
-        List<Integer> idUser = new ArrayList<>();
-        List<Integer> idUserFirst = new ArrayList<>();
-
         dbRef = FirebaseDatabase.getInstance().getReference("Message");
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Integer> idUser = new ArrayList<>();
+                List<Integer> idUserFirst = new ArrayList<>();
                 for(DataSnapshot data: snapshot.getChildren())
                 {
                     Message mess = data.getValue(Message.class);
@@ -231,7 +232,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                         idUser.add(idUserFirst.get(i));
                     }
                 }
-
+                listContactDoc = new ArrayList<>();
                 dbRef = FirebaseDatabase.getInstance().getReference("User");
                 dbRef.addValueEventListener(new ValueEventListener() {
                     @Override

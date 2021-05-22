@@ -49,6 +49,7 @@ public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapte
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("doctor",mDoctors.get(position));
+                bundle.putSerializable("user",user);
                 bundle.putBoolean("isUser",true);
                 Navigation.findNavController(v).navigate(R.id.action_detailDepartmentFragment_to_detailMessFragment, bundle);
             }

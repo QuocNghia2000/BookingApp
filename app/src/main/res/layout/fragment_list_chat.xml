@@ -31,6 +31,7 @@
             android:background="#fe7801">
 
             <ImageView
+                android:id="@+id/imv_back_listChat"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center"

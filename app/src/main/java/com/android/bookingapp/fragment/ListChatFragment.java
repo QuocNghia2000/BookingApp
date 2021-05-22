@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.bookingapp.R;
@@ -42,6 +44,7 @@ public class ListChatFragment extends Fragment {
     private DatabaseReference dbRef;
     private boolean isPerson;
     private boolean person;
+    private ImageView imvBack;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,9 +74,15 @@ public class ListChatFragment extends Fragment {
 //        myRef = FirebaseDatabase.getInstance().getReference();
 //        myRef.child("Message").push().setValue(m);
 
-
+        imvBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
 
         return v;
     }
+
 
 }
