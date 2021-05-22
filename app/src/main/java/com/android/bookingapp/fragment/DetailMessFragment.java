@@ -1,6 +1,11 @@
 package com.android.bookingapp.fragment;
 
 import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,11 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Doctor;
@@ -21,16 +21,11 @@ import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.viewmodel.DetailChatAdapter;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 
 public class DetailMessFragment extends Fragment {
@@ -43,7 +38,6 @@ public class DetailMessFragment extends Fragment {
     private EditText edtContent;
     private ImageView imvSend;
     private DatabaseReference myRef;
-    private List<Message> listMess;;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,12 +50,10 @@ public class DetailMessFragment extends Fragment {
             user = (User) getArguments().getSerializable("user");
             isUser = getArguments().getBoolean("isUser");
         }
-        listMess=new ArrayList<>();
-        myAdapter = new DetailChatAdapter(doctor,user,isUser,listMess);
+        myAdapter = new DetailChatAdapter(doctor,user,isUser);
         rcvDetailMess = v.findViewById(R.id.rcv_detail_mess);
         rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(),1));
         rcvDetailMess.setAdapter(myAdapter);
-        getMessage();
 
         tvName = v.findViewById(R.id.tv_name_detailMess);
         edtContent = v.findViewById(R.id.edt_text_detailMess);
@@ -84,7 +76,6 @@ public class DetailMessFragment extends Fragment {
                     Message message = new Message(0, user.getId(), doctor.getId(), content,getDateNow(),getTimeNow(),check);
                     myRef = FirebaseDatabase.getInstance().getReference();
                     myRef.child("Message").push().setValue(message);
-                    rcvDetailMess.scrollToPosition(rcvDetailMess.getAdapter().getItemCount() - 1);
                     edtContent.setText("");
                 }
                 else
@@ -94,32 +85,11 @@ public class DetailMessFragment extends Fragment {
             }
         });
 
+
+
         return v;
     }
 
-    public void getMessage(){
-        myRef = FirebaseDatabase.getInstance().getReference("Message");
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listMess.clear();
-                for(DataSnapshot data: snapshot.getChildren()){
-                    Message m = data.getValue(Message.class);
-                    if(m.getId_Doctor() == doctor.getId() && m.getId_User() == user.getId()){
-                        listMess.add(m);
-                    }
-
-                }
-                myAdapter.notifyDataSetChanged();
-                rcvDetailMess.scrollToPosition(rcvDetailMess.getAdapter().getItemCount() - 1);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
     public Date getDateNow(){
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
