@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class DetailMessFragment extends Fragment {
     private ImageView imvSend,ivBack;
     private DatabaseReference myRef;
     private User user;
+    private SearchView searchView;
 
 
     @Override
@@ -65,6 +67,7 @@ public class DetailMessFragment extends Fragment {
         edtContent = v.findViewById(R.id.edt_text_detailMess);
         imvSend = v.findViewById(R.id.imv_send_listMess);
         ivBack=v.findViewById(R.id.imv_back_detailMess);
+        searchView=v.findViewById(R.id.sv_detailMess);
 
         //getdata->fullname
         myRef.child("User").addValueEventListener(new ValueEventListener() {
@@ -113,6 +116,19 @@ public class DetailMessFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
+            }
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                myAdapter.getFilter().filter(newText);
+                return false;
             }
         });
 

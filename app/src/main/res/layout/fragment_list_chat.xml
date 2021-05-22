@@ -50,15 +50,15 @@
             </TextView>
         </LinearLayout>
 
-        <androidx.appcompat.widget.SearchView
+        <SearchView
+            android:id="@+id/sv_listChat"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/button">
-
-        </androidx.appcompat.widget.SearchView>
+        </SearchView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcv_listchat"
