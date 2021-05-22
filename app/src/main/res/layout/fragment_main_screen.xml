@@ -88,7 +88,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="0dp"
                 android:textSize="25dp"
                 android:layout_marginLeft="20dp"
                 android:layout_gravity="center"
@@ -99,7 +99,7 @@
             <FrameLayout
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="0dp"
                 android:layout_marginLeft="230dp"
                 android:background="@drawable/cicle_img">
 
