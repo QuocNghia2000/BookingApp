@@ -1,42 +1,29 @@
 package com.android.bookingapp.fragment;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
-import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
-import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.viewmodel.ListChatAdapter;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 
 public class ListChatFragment extends Fragment {
     private List<Message> listMess;
-    private User user;
+    //private User user;
     private Doctor doctor;
     private RecyclerView rcvListChat;
     private ListChatAdapter listChatAdapter;
@@ -45,6 +32,7 @@ public class ListChatFragment extends Fragment {
     private boolean isPerson;
     private boolean person;
     private ImageView imvBack;
+    private int id_user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,12 +41,13 @@ public class ListChatFragment extends Fragment {
 
         listMess = new ArrayList<>();
         rcvListChat = v.findViewById(R.id.rcv_listchat);
+        imvBack=v.findViewById(R.id.imv_back_listChat);
         rcvListChat.setLayoutManager(new GridLayoutManager(getContext(),1));
 
-        if(getArguments().getSerializable("user")!=null)
+        if(getArguments().getInt("id_user")!=-1)
         {
-            user = (User) getArguments().getSerializable("user");
-            listChatAdapter = new ListChatAdapter(user,getContext());
+            id_user = getArguments().getInt("id_user");
+            listChatAdapter = new ListChatAdapter(id_user,getContext());
         }
         else
         {

@@ -15,17 +15,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.databinding.ItemRvDepartmentBinding;
 import com.android.bookingapp.model.Doctor;
-import com.android.bookingapp.model.User;
 
 import java.util.ArrayList;
 
 public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapter.MyViewHolder> {
     private Context context;
-    private User user;
+    private int id_user;
     private ArrayList<Doctor> mDoctors;
 
-    public DetailDepartAdapter(ArrayList<Doctor> mDoctors,User user,Context context){
-        this.user = user;
+    public DetailDepartAdapter(ArrayList<Doctor> mDoctors,int id_user,Context context){
+        this.id_user = id_user;
         this.mDoctors=mDoctors;
         this.context = context;
     }
@@ -49,7 +48,7 @@ public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapte
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("doctor",mDoctors.get(position));
-                bundle.putSerializable("user",user);
+                bundle.putInt("id_user",id_user);
                 bundle.putBoolean("isUser",true);
                 Navigation.findNavController(v).navigate(R.id.action_detailDepartmentFragment_to_detailMessFragment, bundle);
             }
@@ -80,7 +79,7 @@ public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapte
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("doctor", doctor);
-                    bundle.putSerializable("user",user);
+                    bundle.putInt("id_user",id_user);
                     Navigation.findNavController(v).navigate(R.id.action_detailDepartmentFragment_to_bookFragment, bundle);
                 }
             });

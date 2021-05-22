@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
@@ -30,12 +29,13 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
     private List<User> listContactDoc;
     private List<Message> listMess;
     private DatabaseReference dbRef;
-    private  User user;
+    //private  User user;
     private Doctor doctor;
     private Context context;
+    private int id_user;
 
-    public ListChatAdapter(User user,Context context){
-        this.user = user;
+    public ListChatAdapter(int id_user,Context context){
+        this.id_user = id_user;
         this.listMess = new ArrayList<>();
         this.listContact = new ArrayList<>();
         this.context = context;
@@ -60,7 +60,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull ListChatAdapter.MyViewHolder holder, int position) {
-        if(this.user!=null){
+        if(this.id_user!=-1){
             holder.name.setText(listContact.get(position).getFullname());
             for(Message mess: listMess){
                 if (mess.getId_Doctor() == listContact.get(position).getId() ){
@@ -81,7 +81,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
 
     @Override
     public int getItemCount() {
-        if(this.user!=null){
+        if(this.id_user!=-1){
             return listContact.size();
         }
         else return listContactDoc.size();
@@ -101,16 +101,16 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                 @Override
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
-                    if(user!=null)
+                    if(id_user!=-1)
                     {
-                        bundle.putSerializable("user",user);
+                        bundle.putInt("id_user",id_user);
                         bundle.putSerializable("doctor",listContact.get(getAdapterPosition()));
                         bundle.putBoolean("isUser",true);
                     }
                     else
                     {
                         bundle.putSerializable("doctor",doctor);
-                        bundle.putSerializable("user",listContactDoc.get(getAdapterPosition()));
+                        bundle.putInt("id_user",listContactDoc.get(getAdapterPosition()).getId());
                         bundle.putBoolean("isUser",false);
                     }
                     Navigation.findNavController(v).navigate(R.id.action_listChatFragment_to_detailMessFragment,bundle);
@@ -133,7 +133,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                 for(DataSnapshot data: snapshot.getChildren())
                 {
                     Message mess = data.getValue(Message.class);
-                    if(mess.getId_User() == user.getId())
+                    if(mess.getId_User() == id_user)
                     {
                         idDoctorFirst.add(mess.getId_Doctor());
                         int t = getPositionList(listMess,mess.getId_Doctor());
@@ -197,9 +197,6 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
             }
         });
     }
-
-
-
 
     public void getListMessDoctor(){
         dbRef = FirebaseDatabase.getInstance().getReference("Message");

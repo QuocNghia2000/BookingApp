@@ -107,7 +107,7 @@ public class LoginFragment extends Fragment {
                         saveData(username.getText().toString(),pass.getText().toString(),users.get(index).getId());
                         //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
                         Intent intent =new Intent(getActivity(), MainActivity.class);
-                        intent.putExtra("user",users.get(index));
+                        intent.putExtra("id",users.get(index).getId());
                         getActivity().finish();
                         startActivity(intent);
                     }
@@ -171,7 +171,6 @@ public class LoginFragment extends Fragment {
                     }
                 }
                 if(doctor!=null){
-                    saveData(doctor.getEmail(),doctor.getPassword(),doctor.getId());
                     Intent intent =new Intent(getActivity(), MainActivity.class);
                     intent.putExtra("doctor",doctor);
                     getActivity().finish();

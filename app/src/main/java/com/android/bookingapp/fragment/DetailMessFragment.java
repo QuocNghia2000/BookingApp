@@ -1,11 +1,6 @@
 package com.android.bookingapp.fragment;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +9,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Doctor;
@@ -21,15 +21,18 @@ import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.viewmodel.DetailChatAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 
 public class DetailMessFragment extends Fragment {
-    private User user;
+    private int id_user;
     private Doctor doctor;
     private RecyclerView rcvDetailMess;
     private DetailChatAdapter myAdapter;
@@ -38,6 +41,8 @@ public class DetailMessFragment extends Fragment {
     private EditText edtContent;
     private ImageView imvSend;
     private DatabaseReference myRef;
+    private User user;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,10 +52,11 @@ public class DetailMessFragment extends Fragment {
         if(getArguments()!=null)
         {
             doctor = (Doctor) getArguments().getSerializable("doctor");
-            user = (User) getArguments().getSerializable("user");
+            id_user = getArguments().getInt("id_user");
             isUser = getArguments().getBoolean("isUser");
         }
-        myAdapter = new DetailChatAdapter(doctor,user,isUser);
+        myRef = FirebaseDatabase.getInstance().getReference();
+        myAdapter = new DetailChatAdapter(doctor,id_user,isUser);
         rcvDetailMess = v.findViewById(R.id.rcv_detail_mess);
         rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(),1));
         rcvDetailMess.setAdapter(myAdapter);
@@ -59,6 +65,24 @@ public class DetailMessFragment extends Fragment {
         edtContent = v.findViewById(R.id.edt_text_detailMess);
         imvSend = v.findViewById(R.id.imv_send_listMess);
 
+        //getdata->fullname
+        myRef.child("User").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot data: snapshot.getChildren())
+                {
+                    User user1 = data.getValue(User.class);
+                    if(user1.getId()==id_user)
+                    {
+                        user=user1;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
         if(isUser){
             tvName.setText(doctor.getFullname());
         }
@@ -73,8 +97,7 @@ public class DetailMessFragment extends Fragment {
                     boolean check;
                     if(isUser) check = true;
                     else check = false;
-                    Message message = new Message(0, user.getId(), doctor.getId(), content,getDateNow(),getTimeNow(),check);
-                    myRef = FirebaseDatabase.getInstance().getReference();
+                    Message message = new Message(0, id_user, doctor.getId(), content,getDateNow(),getTimeNow(),check);
                     myRef.child("Message").push().setValue(message);
                     edtContent.setText("");
                 }
