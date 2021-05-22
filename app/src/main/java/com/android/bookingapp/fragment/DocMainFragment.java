@@ -1,8 +1,12 @@
 package com.android.bookingapp.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -22,7 +26,10 @@ import com.android.bookingapp.R;
 import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.User;
+import com.android.bookingapp.view.LoginActivity;
 import com.android.bookingapp.viewmodel.DocMainAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +37,7 @@ import java.util.Calendar;
 
 
 public class DocMainFragment extends Fragment {
-    private ImageView imgChat;
+    private ImageView imgChat, imgLogout;
     private Doctor doctor;
     private Spinner spinner_day, spinner_month, spinner_year;
     private RecyclerView rcvDocMain;
@@ -38,6 +45,8 @@ public class DocMainFragment extends Fragment {
     private DocMainAdapter mainAdapter;
     private Button btnSearch;
     private Date date;
+    AlertDialog.Builder dialogBuilder;
+    AlertDialog dialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,12 +55,13 @@ public class DocMainFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_doc_main, container, false);
 
         imgChat = view.findViewById(R.id.imv_chat_docMain);
+        imgLogout = view.findViewById(R.id.iv_logout);
         spinner_day = view.findViewById(R.id.spinner_date_docMain);
         spinner_month = view.findViewById(R.id.spinner_month_docMain);
         spinner_year = view.findViewById(R.id.spinner_year_docMain);
         rcvDocMain = view.findViewById(R.id.rcv_docMain);
         btnSearch = view.findViewById(R.id.bt_search_docMain);
-
+        dialogBuilder=new AlertDialog.Builder(getContext());
         date = getDateNow();
 
         if(getArguments()!=null)
@@ -67,6 +77,12 @@ public class DocMainFragment extends Fragment {
 
 
 //        Toast.makeText(getContext(),String.valueOf(doctor.getFullname()),Toast.LENGTH_SHORT).show();
+        imgLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLogoutDialog();
+            }
+        });
 
         imgChat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +103,27 @@ public class DocMainFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    public void showLogoutDialog(){
+        dialogBuilder.setMessage("Bạn có chắc chắn không?");
+        dialogBuilder.setCancelable(false);
+        dialogBuilder.setPositiveButton("Không", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        dialogBuilder.setNegativeButton("Có", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                startActivity(new Intent(getActivity(), LoginActivity.class));
+                getActivity().finish();
+            }
+        });
+        dialog = dialogBuilder.create();
+        dialog.show();
     }
 
     public void addItemsOnSpinner() {
