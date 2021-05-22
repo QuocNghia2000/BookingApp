@@ -39,7 +39,7 @@ public class DetailMessFragment extends Fragment {
     private boolean isUser;
     private TextView tvName;
     private EditText edtContent;
-    private ImageView imvSend;
+    private ImageView imvSend,imvBack;
     private DatabaseReference myRef;
     private User user;
 
@@ -64,6 +64,7 @@ public class DetailMessFragment extends Fragment {
         tvName = v.findViewById(R.id.tv_name_detailMess);
         edtContent = v.findViewById(R.id.edt_text_detailMess);
         imvSend = v.findViewById(R.id.imv_send_listMess);
+
 
         //getdata->fullname
         myRef.child("User").addValueEventListener(new ValueEventListener() {
@@ -105,6 +106,14 @@ public class DetailMessFragment extends Fragment {
                 {
                     Toast.makeText(getContext(),"Hãy nhập nội dung tin nhắn!!",Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        imvBack = v.findViewById(R.id.imv_back_detailMess);
+        imvBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
             }
         });
 
