@@ -50,7 +50,7 @@ public class DetailMessFragment extends Fragment {
             user = (User) getArguments().getSerializable("user");
             isUser = getArguments().getBoolean("isUser");
         }
-        myAdapter = new DetailChatAdapter(doctor,user,isUser);
+        myAdapter = new DetailChatAdapter(doctor,user,isUser,this);
         rcvDetailMess = v.findViewById(R.id.rcv_detail_mess);
         rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(),1));
         rcvDetailMess.setAdapter(myAdapter);
@@ -77,6 +77,7 @@ public class DetailMessFragment extends Fragment {
                     myRef = FirebaseDatabase.getInstance().getReference();
                     myRef.child("Message").push().setValue(message);
                     edtContent.setText("");
+                    scrollRecycleView();
                 }
                 else
                 {
@@ -86,7 +87,7 @@ public class DetailMessFragment extends Fragment {
         });
 
 
-
+        scrollRecycleView();
         return v;
     }
 
@@ -100,6 +101,15 @@ public class DetailMessFragment extends Fragment {
         String[] temp =  day.split("-");
         Date date = new Date(temp[0],temp[1],temp[2]);
         return date;
+    }
+
+    public void scrollRecycleView() {
+        rcvDetailMess.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                rcvDetailMess.scrollToPosition(rcvDetailMess.getAdapter().getItemCount() - 1);
+            }
+        }, 1000);
     }
 
     public Time getTimeNow(){
