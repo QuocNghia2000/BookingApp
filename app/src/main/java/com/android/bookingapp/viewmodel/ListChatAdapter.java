@@ -2,6 +2,7 @@ package com.android.bookingapp.viewmodel;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
         this.id_user = id_user;
         this.listMess = new ArrayList<>();
         this.listContact = new ArrayList<>();
+        this.listContactAll = new ArrayList<>();
         this.context = context;
         getListMessUser();
     }
@@ -51,6 +53,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
         this.doctor = doctor;
         this.listMess = new ArrayList<>();
         this.listContactDoc = new ArrayList<>();
+        this.listContactDocAll = new ArrayList<>();
         this.context = context;
         getListMessDoctor();
     }
