@@ -141,7 +141,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                                     user=new User(user1.getId(),user1.getEmail(),user1.getPassword(),user1.getFullname(),user1.getPhone());
                                 }
                             }
-                            sendNotification();
+                            if(!messageList.get(0).isFromPerson()) sendNotification();
                         }
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
