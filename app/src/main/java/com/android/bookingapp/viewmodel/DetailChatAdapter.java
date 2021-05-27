@@ -8,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,13 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.MyViewHolder> {
+public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.MyViewHolder> implements Filterable {
 
     private Doctor doctor;
     private int id_user;
     private DatabaseReference myRef;
     private List<Message> listMess;
     private List<Message> messageList;
+    private List<Message> listMessAll;
     private boolean isUser;
     private Context context;
     private DetailMessFragment detailMessFragment;
@@ -48,6 +51,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
         this.id_user = id_user;
         this.isUser = isUser;
         this.listMess = new ArrayList<>();
+        this.listMessAll = listMess;
         messageList=new ArrayList<>();
         this.context=context;
         this.detailMessFragment=detailMessFragment;
@@ -96,6 +100,8 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
     public int getItemCount() {
         return listMess.size();
     }
+
+
 
     class MyViewHolder extends RecyclerView.ViewHolder{
         private TextView tvSend;
@@ -173,5 +179,40 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
 
             notificationManager.notify(random.nextInt(),notification);
         }
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String strSearch = constraint.toString();
+                if (strSearch.isEmpty())
+                {
+                    listMess = listMessAll;
+                }
+                else
+                {
+                    List<Message> list = new ArrayList<>();
+                    for(Message m: listMessAll)
+                    {
+                        if(m.getContent().toLowerCase().contains(strSearch.toLowerCase()))
+                        {
+                            list.add(m);
+                        }
+                    }
+                    listMess = list;
+                }
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = listMess;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                listMess = (List<Message>) results.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 }

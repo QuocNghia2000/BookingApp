@@ -5,14 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".fragment.mainScreenFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/ll_bia_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:orientation="horizontal">
 
             <ImageView
@@ -42,8 +44,10 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_searchview"
             android:layout_width="match_parent"
-            android:layout_height="230dp"
+            android:layout_height="200dp"
+            android:layout_below="@+id/ll_bia_main"
             android:orientation="vertical"
             android:background="@drawable/pic_nen">
 
@@ -81,8 +85,10 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_khoa_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_searchview"
             android:orientation="horizontal">
 
             <TextView
@@ -116,18 +122,25 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_department"
+            android:layout_below="@+id/ll_khoa_main"
+            android:layout_above="@id/fl_line"
             android:layout_width="match_parent"
-            android:layout_height="310dp" />
+            android:layout_height="match_parent" />
 
         <FrameLayout
+            android:id="@+id/fl_line"
             android:layout_width="match_parent"
             android:layout_height="2dp"
+            android:layout_above="@id/ll_bottom_main"
             android:background="@color/black">
         </FrameLayout>
         
         <LinearLayout
+            android:id="@+id/ll_bottom_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="2dp"
             android:layout_marginRight="10dp"
             android:orientation="vertical">
             <LinearLayout
@@ -166,9 +179,6 @@
                     </TextView>
 
                 </LinearLayout>
-
-
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -217,7 +227,7 @@
             </LinearLayout>
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
 </FrameLayout>

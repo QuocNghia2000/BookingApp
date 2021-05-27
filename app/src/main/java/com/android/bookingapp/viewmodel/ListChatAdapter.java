@@ -2,10 +2,14 @@ package com.android.bookingapp.viewmodel;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
@@ -24,10 +28,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyViewHolder> {
+public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyViewHolder> implements Filterable {
     private List<Doctor> listContact;
     private List<User> listContactDoc;
     private List<Message> listMess;
+    private List<Doctor> listContactAll;
+    private List<User> listContactDocAll;
     private DatabaseReference dbRef;
     //private  User user;
     private Doctor doctor;
@@ -38,6 +44,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
         this.id_user = id_user;
         this.listMess = new ArrayList<>();
         this.listContact = new ArrayList<>();
+        this.listContactAll = new ArrayList<>();
         this.context = context;
         getListMessUser();
     }
@@ -46,6 +53,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
         this.doctor = doctor;
         this.listMess = new ArrayList<>();
         this.listContactDoc = new ArrayList<>();
+        this.listContactDocAll = new ArrayList<>();
         this.context = context;
         getListMessDoctor();
     }
@@ -87,6 +95,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
         else return listContactDoc.size();
 
     }
+
 
     class MyViewHolder extends RecyclerView.ViewHolder{
         private TextView name;
@@ -178,7 +187,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                             }
                         }
                         listContact = new ArrayList<>(doctemp);
-                        //DaoList();
+                        listContactAll = new ArrayList<>(listContact);
                         notifyDataSetChanged();
                     }
 
@@ -254,6 +263,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                             }
                         }
                         listContactDoc = new ArrayList<>(usertemp);
+                        listContactDocAll = new ArrayList<>(listContactDoc);
                         //DaoList();
                         notifyDataSetChanged();
                     }
@@ -290,11 +300,70 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
         return -1;
     }
 
-    public void DaoList(){
-        List<Doctor> doc = new ArrayList<>(listContact);
-        listContact.clear();
-        for (int i=doc.size()-1;i>=0;i--){
-            listContact.add(doc.get(i));
-        }
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                String strSearch = constraint.toString();
+                if(id_user!=-1)
+                {
+                    if (strSearch.isEmpty())
+                    {
+                        listContact = listContactAll;
+                    }
+                    else
+                    {
+                        List<Doctor> list = new ArrayList<>();
+                        for(Doctor d: listContactAll)
+                        {
+                            if(d.getFullname().toLowerCase().contains(strSearch.toLowerCase()))
+                            {
+                                list.add(d);
+                            }
+                        }
+                        listContact = list;
+                    }
+                    FilterResults filterResults = new FilterResults();
+                    filterResults.values = listContact;
+                    return filterResults;
+                }
+                else
+                {
+                    if (strSearch.isEmpty())
+                    {
+                        listContactDoc = listContactDocAll;
+                    }
+                    else
+                    {
+                        List<User> list = new ArrayList<>();
+                        for(User u: listContactDocAll)
+                        {
+                            if(u.getFullname().toLowerCase().contains(strSearch.toLowerCase()))
+                            {
+                                list.add(u);
+                            }
+                        }
+                        listContactDoc = list;
+                    }
+                    FilterResults filterResults = new FilterResults();
+                    filterResults.values = listContactDoc;
+                    return filterResults;
+                }
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                if(id_user!=-1){
+                    listContact = (List<Doctor>) results.values;
+                    notifyDataSetChanged();
+                }
+                else
+                {
+                    listContactDoc = (List<User>) results.values;
+                    notifyDataSetChanged();
+                }
+            }
+        };
     }
 }

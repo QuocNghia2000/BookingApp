@@ -8,12 +8,14 @@
             type="com.android.bookingapp.model.User" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
+            android:layout_alignParentTop="true"
+            android:id="@+id/ll_bia_book"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -28,8 +30,10 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_name_book"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_below="@+id/ll_bia_book"
             android:background="#fe7801">
 
             <ImageView
@@ -53,11 +57,13 @@
         </LinearLayout>
 
         <FrameLayout
+            android:id="@+id/fr_doctor_book"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_below="@+id/ll_name_book"
             android:background="@drawable/button">
 
             <LinearLayout
@@ -149,10 +155,12 @@
         </FrameLayout>
 
         <LinearLayout
+            android:id="@+id/ll_nameUser_book"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
             android:background="@drawable/back"
             android:orientation="horizontal"
+            android:layout_below="@+id/fr_doctor_book"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp">
@@ -175,10 +183,12 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_phone_book"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
             android:background="@drawable/back"
             android:orientation="horizontal"
+            android:layout_below="@+id/ll_nameUser_book"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp">
@@ -200,11 +210,15 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_date_book"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:background="@drawable/back"
             android:layout_gravity="center"
             android:orientation="horizontal"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/ll_phone_book"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp">
@@ -227,10 +241,12 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_rc_book"
             android:layout_width="fill_parent"
             android:layout_height="170dp"
             android:background="@drawable/back"
             android:orientation="horizontal"
+            android:layout_below="@+id/ll_date_book"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp">
@@ -255,10 +271,12 @@
 
 
         <LinearLayout
+            android:id="@+id/ll_symptom_book"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
             android:background="@drawable/back"
             android:orientation="horizontal"
+            android:layout_below="@+id/ll_rc_book"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp">
@@ -284,10 +302,12 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_medicine_book"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
             android:background="@drawable/back"
             android:orientation="horizontal"
+            android:layout_below="@+id/ll_symptom_book"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp">
@@ -314,12 +334,15 @@
 
         <Button
             android:id="@+id/btn_done_book"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_medicine_book"
+            android:layout_marginRight="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="20dp"
             android:backgroundTint="#fe7801"
-            android:layout_marginTop="10dp"
-            android:text="Hoàn tất"
-            android:layout_gravity="center" />
-    </LinearLayout>
+            android:text="Hoàn tất" />
+
+    </RelativeLayout>
 
 </layout>
