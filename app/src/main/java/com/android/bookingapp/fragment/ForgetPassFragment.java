@@ -2,18 +2,17 @@ package com.android.bookingapp.fragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.User;
@@ -43,13 +42,8 @@ public class ForgetPassFragment extends Fragment {
     private ArrayList<User> users;
     FirebaseDatabase database;
     DatabaseReference myRef;
+    int idUserCurrent;
 
-    public static ForgetPassFragment newInstance(String param1, String param2) {
-        ForgetPassFragment fragment = new ForgetPassFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
@@ -87,7 +81,10 @@ public class ForgetPassFragment extends Fragment {
                 for(DataSnapshot data: snapshot.getChildren())
                 {
                     User user = data.getValue(User.class);
-                    users.add(user);
+                    if(user.getEmail()==email.getText().toString())
+                    {
+                        idUserCurrent=user.getId();
+                    }
                 }
                 handle();
             }
@@ -108,7 +105,7 @@ public class ForgetPassFragment extends Fragment {
             public void onClick(View v) {
                 if(email.getText().toString().equals("")) {
                     Toast.makeText(getContext(),"Vui lòng nhập đẩy đủ thông tin",Toast.LENGTH_SHORT).show();
-                } else if(posCurrent(email.getText().toString())!=-1) {
+                } else if(idUserCurrent!=-1) {
                     rec = email.getText().toString();
                     textMessage = randomCode();
                     subject = "Mật khẩu mới";
@@ -130,24 +127,13 @@ public class ForgetPassFragment extends Fragment {
 
                     HashMap hashMap = new HashMap();
                     hashMap.put("password", textMessage);
-                    String userId = String.valueOf(users.get(posCurrent(email.getText().toString())).getId());
+                    String userId = String.valueOf(idUserCurrent);
                     myRef.child("User"+userId).updateChildren(hashMap);
                 } else {
                     Toast.makeText(getContext(),"Vui lòng kiểm tra lại thông tin",Toast.LENGTH_SHORT).show();
                 }
             }
         });
-    }
-
-    public int posCurrent(String email) {
-        if(users!=null){
-            for (int i = 0; i < users.size(); i++) {
-                if (email.equals(users.get(i).getEmail())) {
-                    return i;
-                }
-            }
-        }
-        return -1;
     }
 
     class RetreiveFeedTask extends AsyncTask<String, Void, String> {

@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.databinding.FragmentBookBinding;
 import com.android.bookingapp.model.Doctor;
+import com.android.bookingapp.model.ImportFunction;
 import com.android.bookingapp.model.Reservation;
 import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
@@ -56,6 +57,7 @@ public class BookFragment extends Fragment {
     private int id_user;
     private User user;
     private List<Reservation> listRes;
+    ImportFunction importFunction;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class BookFragment extends Fragment {
         //getUser->set
         myRef = FirebaseDatabase.getInstance().getReference();
         //Toast.makeText(getContext(),String.valueOf(id_user),Toast.LENGTH_SHORT).show();
+        importFunction=new ImportFunction(getContext());
         myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("User").addValueEventListener(new ValueEventListener() {
             @Override
@@ -133,34 +136,41 @@ public class BookFragment extends Fragment {
                 }
                 else
                 {
-                    Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
-                    com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
+                   if(importFunction.checkInternet())
+                   {
+                       Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
+                       com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
 
-                    if(isTrueTime(time)==-1)
-                    {
-                        String symptom = edtSymptom.getText().toString();
-                        String medicine = edtMedicine.getText().toString();
+                       if(isTrueTime(time)==-1)
+                       {
+                           String symptom = edtSymptom.getText().toString();
+                           String medicine = edtMedicine.getText().toString();
 
 
-                        Reservation reservation = new Reservation(++idReservation,id_user,doctor.getId(),symptom,medicine,time,date);
+                           Reservation reservation = new Reservation(++idReservation,id_user,doctor.getId(),symptom,medicine,time,date);
 
-                        myRef = FirebaseDatabase.getInstance().getReference();
-                        myRef.child("Reservation").push().setValue(reservation).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull  Task<Void> task) {
-                                if(task.isSuccessful())
-                                {
-                                    Toast.makeText(getContext(),"Đặt lịch thành công!", Toast.LENGTH_SHORT).show();
-                                    Navigation.findNavController(v).navigate(R.id.action_bookFragment_to_mainScreenFragment);
-                                }
-                                else
-                                {
-                                    Toast.makeText(getContext(),"Lỗi", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    }
-                    else Toast.makeText(getContext(),"Giờ đã được đặt!!",Toast.LENGTH_SHORT).show();
+                           myRef = FirebaseDatabase.getInstance().getReference();
+                           myRef.child("Reservation").push().setValue(reservation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                               @Override
+                               public void onComplete(@NonNull Task<Void> task) {
+                                   if(task.isSuccessful())
+                                   {
+                                       Toast.makeText(getContext(),"Đặt lịch thành công!", Toast.LENGTH_SHORT).show();
+                                       Navigation.findNavController(v).navigate(R.id.action_bookFragment_to_mainScreenFragment);
+                                   }
+                                   else
+                                   {
+                                       Toast.makeText(getContext(),"Lỗi", Toast.LENGTH_SHORT).show();
+                                   }
+                               }
+                           });
+                       }
+                       else Toast.makeText(getContext(),"Giờ đã được đặt!!",Toast.LENGTH_SHORT).show();
+                   }
+                   else
+                   {
+                       Toast.makeText(getContext(),"No Internet",Toast.LENGTH_SHORT).show();
+                   }
                 }
             }
         });
