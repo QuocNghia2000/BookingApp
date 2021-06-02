@@ -21,6 +21,7 @@ import androidx.navigation.Navigation;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Doctor;
+import com.android.bookingapp.model.ImportFunction;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.view.MainActivity;
 import com.google.firebase.database.DataSnapshot;
@@ -40,14 +41,13 @@ public class LoginFragment extends Fragment {
     FirebaseDatabase database;
     DatabaseReference myRef;
     AlertDialog.Builder dialogBuilder;
-    AlertDialog dialog;
 
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String USERNAME = "userNameKey";
     public static final String PASS = "passKey";
     public static final String ID_USER = "ID_USER";
-    public static final String REMEMBER = "remember";
     SharedPreferences sharedpreferences;
+    ImportFunction importFunction;
 
 
     @Override
@@ -61,6 +61,7 @@ public class LoginFragment extends Fragment {
         users=new ArrayList<>();
         database = FirebaseDatabase.getInstance();
         dialogBuilder=new AlertDialog.Builder(getContext());
+        importFunction=new ImportFunction(getContext());
 
         myRef = database.getReference("User");
         myRef.addValueEventListener(new ValueEventListener() {
@@ -91,19 +92,26 @@ public class LoginFragment extends Fragment {
                 }
                 else
                 {
-                    int index=posCurrent(username.getText().toString(),pass.getText().toString());
-                    if(index!=-1)
+                    if(importFunction.checkInternet())
                     {
-                        saveData(username.getText().toString(),pass.getText().toString(),users.get(index).getId());
-                        //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
-                        Intent intent =new Intent(getActivity(), MainActivity.class);
-                        intent.putExtra("id",users.get(index).getId());
-                        getActivity().finish();
-                        startActivity(intent);
+                        int index=importFunction.posCurrent(username.getText().toString(),pass.getText().toString(),users);
+                        if(index!=-1)
+                        {
+                            saveData(username.getText().toString(),pass.getText().toString(),users.get(index).getId());
+                            //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
+                            Intent intent =new Intent(getActivity(), MainActivity.class);
+                            intent.putExtra("id",users.get(index).getId());
+                            getActivity().finish();
+                            startActivity(intent);
+                        }
+                        else
+                        {
+                            getDoctor(username.getText().toString(),pass.getText().toString());
+                        }
                     }
                     else
                     {
-                        getDoctor(username.getText().toString(),pass.getText().toString());
+                        Toast.makeText(getContext(),"No Internet",Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -125,16 +133,6 @@ public class LoginFragment extends Fragment {
 
     }
 
-    public int posCurrent(String email, String pass) {
-        if(users!=null){
-            for (int i = 0; i < users.size(); i++) {
-                if (email.equals(users.get(i).getEmail()) && pass.equals(users.get(i).getPassword())) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -199,6 +197,7 @@ public class LoginFragment extends Fragment {
     private boolean isLogining() {
     return sharedpreferences.contains(USERNAME);
     }
+
 
 
 }

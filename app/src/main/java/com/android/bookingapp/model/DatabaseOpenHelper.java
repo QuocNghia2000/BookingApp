@@ -23,9 +23,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         createMessageTable();
-
+        createUserTable();
+        createDoctorTable();
+        createReservationTable();
+        createDepartmentTable();
     }
     private void createMessageTable()
     {

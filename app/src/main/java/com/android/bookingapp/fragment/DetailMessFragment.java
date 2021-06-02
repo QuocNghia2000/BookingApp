@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Doctor;
+import com.android.bookingapp.model.ImportFunction;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
@@ -44,6 +45,7 @@ public class DetailMessFragment extends Fragment {
     private DatabaseReference myRef;
     private User user;
     private SearchView searchView;
+    ImportFunction importFunction;
 
 
     @Override
@@ -68,6 +70,8 @@ public class DetailMessFragment extends Fragment {
         imvSend = v.findViewById(R.id.imv_send_listMess);
         ivBack=v.findViewById(R.id.imv_back_detailMess);
         searchView=v.findViewById(R.id.sv_detailMess);
+
+        importFunction=new ImportFunction(getContext());
 
         //getdata->fullname
         myRef.child("User").addValueEventListener(new ValueEventListener() {
@@ -99,12 +103,19 @@ public class DetailMessFragment extends Fragment {
                 String content = edtContent.getText().toString();
                 if (!content.equals(""))
                 {
-                    boolean check;
-                    if(isUser) check = true;
-                    else check = false;
-                    Message message = new Message(0, id_user, doctor.getId(), content,getDateNow(),getTimeNow(),check);
-                    myRef.child("Message").push().setValue(message);
-                    edtContent.setText("");
+                   if(importFunction.checkInternet())
+                   {
+                       boolean check;
+                       if(isUser) check = true;
+                       else check = false;
+                       Message message = new Message(0, id_user, doctor.getId(), content,getDateNow(),getTimeNow(),check);
+                       myRef.child("Message").push().setValue(message);
+                       edtContent.setText("");
+                   }
+                   else
+                   {
+                       //lưu tin nhắn vô Local, đợi có Internet thì cập nhật Local lên DB
+                   }
                 }
                 else
                 {

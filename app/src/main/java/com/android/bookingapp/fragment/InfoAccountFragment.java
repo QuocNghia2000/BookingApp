@@ -23,6 +23,7 @@ import androidx.navigation.Navigation;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Date;
+import com.android.bookingapp.model.ImportFunction;
 import com.android.bookingapp.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,9 +46,9 @@ public class InfoAccountFragment extends Fragment {
     private ImageView back;
     FirebaseDatabase database;
     DatabaseReference myRef;
-    private ArrayList<User> users;
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
+    ImportFunction importFunction;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,8 +125,8 @@ public class InfoAccountFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         addItemsOnSpinner();
+        importFunction=new ImportFunction(getContext());
         dialogBuilder=new AlertDialog.Builder(getContext());
-        users = new ArrayList<>();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("User");
         myRef.addValueEventListener(new ValueEventListener() {
@@ -133,7 +134,11 @@ public class InfoAccountFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot data : snapshot.getChildren()) {
                     User user = data.getValue(User.class);
-                    users.add(user);
+                    if(user.getId()==id)
+                    {
+                        user_now=user;
+                        break;
+                    }
                 }
                 handle();
             }
@@ -143,19 +148,8 @@ public class InfoAccountFragment extends Fragment {
             }
         });
     }
-    public int posCurrent(int id) {
-        if(users!=null){
-            for (int i = 0; i < users.size(); i++) {
-                if (id==users.get(i).getId()) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
 
     private void handle () {
-        user_now = users.get(posCurrent(id));
         name.setText(user_now.getFullname());
         mail.setText(user_now.getEmail());
         phone.setText(user_now.getPhone());
@@ -167,7 +161,6 @@ public class InfoAccountFragment extends Fragment {
         } else {
             female.setChecked(true);
         }
-        addItemsOnSpinner();
         int day = Integer.parseInt(user_now.getBirthday().getDay())-1;
         spinner_day.setSelection(day);
         int month = Integer.parseInt(user_now.getBirthday().getMonth())-1;
@@ -200,22 +193,30 @@ public class InfoAccountFragment extends Fragment {
         dialogBuilder.setNegativeButton("Có", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-                myRef.child("User" + user_now.getId()).setValue(new User(user_now.getId(),user_now.getEmail(),password.getText().toString(),
-                        name.getText().toString(),phone.getText().toString(),new Date(nDay, nMonth, nYear),male.isChecked(),
-                        job.getText().toString(),address.getText().toString())).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(getContext(),"Xác nhận thành công",Toast.LENGTH_SHORT).show();
+                if(importFunction.checkInternet())
+                {
+                    myRef.child("User" + user_now.getId()).setValue(new User(user_now.getId(),user_now.getEmail(),password.getText().toString(),
+                            name.getText().toString(),phone.getText().toString(),new Date(nDay, nMonth, nYear),male.isChecked(),
+                            job.getText().toString(),address.getText().toString())).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getContext(),"Xác nhận thành công",Toast.LENGTH_SHORT).show();
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(),"Lỗi",Toast.LENGTH_SHORT).show();
-                    }
-                });
-                Navigation.findNavController(getView()).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment, new Bundle());
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(),"Lỗi",Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    dialogInterface.dismiss();
+                    Navigation.findNavController(getView()).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment, new Bundle());
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"No Internet",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         dialog = dialogBuilder.create();
