@@ -93,7 +93,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/back"
                 android:orientation="horizontal"
-                android:layout_marginLeft="10dp">
+                android:layout_marginLeft="20dp">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -111,16 +111,19 @@
                     <Spinner
                         android:id="@+id/spinner_date_docMain"
                         android:layout_gravity="center"
-                        android:layout_width="85dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_width="60dp"
                         android:layout_height="50dp" />
                     <Spinner
                         android:id="@+id/spinner_month_docMain"
-                        android:layout_width="85dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="60dp"
                         android:layout_gravity="center"
                         android:layout_height="50dp" />
                     <Spinner
                         android:id="@+id/spinner_year_docMain"
-                        android:layout_width="100dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="90dp"
                         android:layout_gravity="center"
                         android:layout_height="50dp" />
 
