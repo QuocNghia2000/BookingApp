@@ -113,7 +113,7 @@
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="12dp"
                     android:background="@drawable/ic_keyboard_mess">
                 </ImageView>
 
@@ -121,6 +121,7 @@
                     android:id="@+id/edt_text_detailMess"
                     android:layout_width="match_parent"
                     android:layout_gravity="center"
+                    android:layout_marginLeft="15dp"
                     android:background="@android:color/transparent"
                     android:hint="Nhập tin nhắn"
                     android:textSize="22dp"
