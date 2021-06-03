@@ -168,18 +168,18 @@
                 </ImageView>
                 <Spinner
                     android:id="@+id/spinner_day"
-                    android:layout_marginLeft="30dp"
-                    android:layout_width="60dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="85dp"
                     android:layout_height="50dp" />
                 <Spinner
                     android:id="@+id/spinner_month"
-                    android:layout_marginLeft="30dp"
-                    android:layout_width="60dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="85dp"
                     android:layout_height="50dp" />
                 <Spinner
                     android:id="@+id/spinner_year"
-                    android:layout_marginLeft="30dp"
-                    android:layout_width="90dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="100dp"
                     android:layout_height="50dp" />
 
             </LinearLayout>
