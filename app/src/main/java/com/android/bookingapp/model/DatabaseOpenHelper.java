@@ -5,14 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class DatabaseOpenHelper extends SQLiteOpenHelper {
+    private static final String TAG=DatabaseOpenHelper.class.getSimpleName();
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "BookingApp.db";
-
+    private static final String EXAMPLE = "customer";
     SQLiteDatabase db;
 
 
@@ -24,12 +26,14 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         createMessageTable();
-        createUserTable();
-        createDoctorTable();
-        createReservationTable();
-        createDepartmentTable();
+//        createUserTable();
+//        createDoctorTable();
+//        createReservationTable();
+//        createDepartmentTable();
+        Log.d(TAG,"Database created succesfully!");
     }
-    private void createMessageTable()
+
+    public void createMessageTable()
     {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_MESSAGE+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
@@ -37,8 +41,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 DbContract.MenuEntry.COLUMN_ID_DOCTOR+" INTEGER NOT NULL,"+
                 DbContract.MenuEntry.COLUMN_CONTENT+" TEXT,"+
                 DbContract.MenuEntry.COLUMN_DATE_TIME+" TEXT ,"+
-                DbContract.MenuEntry.COLUMN_DATE_TIME+" TEXT,"+
-                DbContract.MenuEntry.COLUMN_FROM_PERSON+" INTEGER "+");";
+                DbContract.MenuEntry.COLUMN_FROM_PERSON+" INTEGER NOT NULL"+");";
 
         db.execSQL(SQL_CREATE_BUGS_TABLE);
     }
@@ -49,14 +52,21 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             contentValues.put(DbContract.MenuEntry.COLUMN_ID_USER,message.getId_User());
             contentValues.put(DbContract.MenuEntry.COLUMN_ID_DOCTOR,message.getId_Doctor());
             contentValues.put(DbContract.MenuEntry.COLUMN_CONTENT,message.getContent());
-            contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME,message.getDate().toString());
-            contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME,message.getTime().toString());
-            contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,message.isFromPerson());
+            contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME,message.getDate().getDay()+"-"+message.getDate().getMonth()+
+                    "-"+message.getDate().getYear()+" "+message.getTime().getHour()+":"+message.getTime().getMinute());
+            if(message.isFromPerson())
+                contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,1);
+            else
+                contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,0);
             db.insert(DbContract.MenuEntry.TABLE_MESSAGE,null,contentValues);
-
         }
     }
 
+    public Cursor getMessage()
+    {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE,null);
+        return cursor;
+    }
     private void createUserTable()
     {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_USER+"("+
@@ -142,11 +152,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             contentValues.put(DbContract.MenuEntry.COLUMN_NAME_DEPARTMENT,department.getName());
             db.insert(DbContract.MenuEntry.TABLE_DEPARTMENT,null,contentValues);
         }
-    }
-    public Cursor getMessage()
-    {
-        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE,null);
-        return cursor;
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

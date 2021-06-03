@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Department;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.view.LoginActivity;
@@ -45,6 +46,7 @@ public class mainScreenFragment extends Fragment {
     SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
     private int idUser=-1;
+    DatabaseOpenHelper db;
 
 
     @Override

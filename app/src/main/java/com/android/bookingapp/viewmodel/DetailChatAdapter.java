@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.NotificationApplication;
 import com.android.bookingapp.R;
 import com.android.bookingapp.fragment.DetailMessFragment;
+import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.User;
@@ -28,6 +29,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -37,14 +39,15 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
     private Doctor doctor;
     private int id_user;
     private DatabaseReference myRef;
-    private List<Message> listMess;
-    private List<Message> messageList;
-    private List<Message> listMessAll;
+    private ArrayList<Message> listMess;
+    private ArrayList<Message> messageList;
+    private ArrayList<Message> listMessAll;
     private boolean isUser;
     private Context context;
     private DetailMessFragment detailMessFragment;
     private User user;
     String content="";
+    DatabaseOpenHelper db;
 
     public DetailChatAdapter(Doctor doctor,int id_user,boolean isUser,Context context, DetailMessFragment detailMessFragment){
         this.doctor = doctor;
@@ -129,6 +132,13 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                         listMess.add(m);
                     }
                 }
+                try {
+                    db=new DatabaseOpenHelper(context);
+                    //db.createMessageTable();
+                    db.saveMessageTableToDB(listMess);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 if(messages.size()!=0)
                 {
                     for(int i=messages.size();i<listMess.size();i++)
@@ -193,7 +203,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                 }
                 else
                 {
-                    List<Message> list = new ArrayList<>();
+                    ArrayList<Message> list = new ArrayList<>();
                     for(Message m: listMessAll)
                     {
                         if(m.getContent().toLowerCase().contains(strSearch.toLowerCase()))
@@ -201,7 +211,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                             list.add(m);
                         }
                     }
-                    listMess = list;
+                    listMess =  list;
                 }
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = listMess;
@@ -210,7 +220,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                listMess = (List<Message>) results.values;
+                listMess = (ArrayList<Message>) results.values;
                 notifyDataSetChanged();
             }
         };

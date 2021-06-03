@@ -8,341 +8,353 @@
             type="com.android.bookingapp.model.User" />
     </data>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_alignParentTop="true"
-            android:id="@+id/ll_bia_book"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="100dp"
-                android:layout_marginLeft="20dp"
-                android:src="@drawable/logo2">
-            </ImageView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_name_book"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@+id/ll_bia_book"
-            android:background="#fe7801">
-
-            <ImageView
-                android:id="@+id/img_back"
-                android:layout_width="40dp"
-                android:layout_height="35dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:background="@drawable/ic_back">
-            </ImageView>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đặt lịch khám"
-                android:textColor="@color/white"
-                android:layout_gravity="center"
-                android:textSize="30dp"
-                android:layout_marginLeft="30dp">
-            </TextView>
-        </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/fr_doctor_book"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_below="@+id/ll_name_book"
-            android:background="@drawable/button">
-
+            android:orientation="vertical">
             <LinearLayout
+                android:layout_alignParentTop="true"
+                android:id="@+id/ll_bia_book"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal">
-
-                    <FrameLayout
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginLeft="10dp"
-                        android:background="@drawable/circle_person">
-
-                        <ImageView
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:src="@drawable/ic_person_24"
-                            android:layout_gravity="center">
-                        </ImageView>
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="10dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{doctor.fullname}"
-                            android:textSize="25dp"
-                            android:textColor="#1976D2">
-                        </TextView>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="18dp"
-                            android:text="@{doctor.achivement}">
-                        </TextView>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/black"
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginRight="20dp">
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="PHONE"
-                        android:textStyle="bold"
-                        android:textSize="20dp"
-                        android:textColor="@color/black">
-                    </TextView>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{doctor.phone}"
-                        android:textSize="20dp"
-                        android:textColor="#808080"
-                        android:layout_marginLeft="50dp">
-                    </TextView>
-                </LinearLayout>
+                    android:src="@drawable/logo2">
+                </ImageView>
 
             </LinearLayout>
-        </FrameLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_nameUser_book"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/back"
-            android:orientation="horizontal"
-            android:layout_below="@+id/fr_doctor_book"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_person_24">
-            </ImageView>
-
-            <TextView
+            <LinearLayout
+                android:id="@+id/ll_name_book"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:text="@{user.fullname}">
-            </TextView>
+                android:layout_height="40dp"
+                android:layout_below="@+id/ll_bia_book"
+                android:background="#fe7801">
 
+                <ImageView
+                    android:id="@+id/img_back"
+                    android:layout_width="40dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:background="@drawable/ic_back">
+                </ImageView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đặt lịch khám"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center"
+                    android:textSize="30dp"
+                    android:layout_marginLeft="30dp">
+                </TextView>
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_phone_book"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/back"
-            android:orientation="horizontal"
-            android:layout_below="@+id/ll_nameUser_book"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp">
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="5dp"
+           android:orientation="vertical">
+           <FrameLayout
+               android:id="@+id/fr_doctor_book"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="10dp"
+               android:layout_marginLeft="10dp"
+               android:layout_marginRight="10dp"
+               android:layout_below="@+id/ll_name_book"
+               android:background="@drawable/button">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_iphone_24">
-            </ImageView>
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:orientation="vertical">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:text="@{user.phone}">
-            </TextView>
-        </LinearLayout>
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="5dp"
+                       android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/ll_date_book"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:background="@drawable/back"
-            android:layout_gravity="center"
-            android:orientation="horizontal"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/ll_phone_book"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp">
+                       <FrameLayout
+                           android:layout_width="90dp"
+                           android:layout_height="90dp"
+                           android:layout_marginLeft="10dp"
+                           android:background="@drawable/circle_person">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_date_range_24">
-            </ImageView>
+                           <ImageView
+                               android:layout_width="70dp"
+                               android:layout_height="70dp"
+                               android:src="@drawable/ic_person_24"
+                               android:layout_gravity="center">
+                           </ImageView>
+                       </FrameLayout>
 
-            <Spinner
-                android:id="@+id/sp_book"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </Spinner>
+                       <LinearLayout
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_marginLeft="10dp"
+                           android:layout_marginTop="10dp"
+                           android:orientation="vertical">
 
-        </LinearLayout>
+                           <TextView
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:text="@{doctor.fullname}"
+                               android:textSize="25dp"
+                               android:textColor="#1976D2">
+                           </TextView>
 
-        <LinearLayout
-            android:id="@+id/ll_rc_book"
-            android:layout_width="fill_parent"
-            android:layout_height="170dp"
-            android:background="@drawable/back"
-            android:orientation="horizontal"
-            android:layout_below="@+id/ll_date_book"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp">
+                           <TextView
+                               android:layout_width="wrap_content"
+                               android:layout_height="wrap_content"
+                               android:textColor="@color/black"
+                               android:textSize="18dp"
+                               android:text="@{doctor.achivement}">
+                           </TextView>
+                       </LinearLayout>
+                   </LinearLayout>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_access_time_filled_24">
-            </ImageView>
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="1dp"
+                       android:background="@color/black"
+                       android:layout_marginLeft="20dp"
+                       android:layout_marginTop="5dp"
+                       android:layout_marginRight="20dp">
+                   </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_book"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="10dp"
-                >
-            </androidx.recyclerview.widget.RecyclerView>
+                   <LinearLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="30dp"
+                       android:layout_marginLeft="20dp"
+                       android:layout_marginTop="5dp"
+                       android:orientation="horizontal">
 
-        </LinearLayout>
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="PHONE"
+                           android:textStyle="bold"
+                           android:textSize="20dp"
+                           android:textColor="@color/black">
+                       </TextView>
+
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="@{doctor.phone}"
+                           android:textSize="20dp"
+                           android:textColor="#808080"
+                           android:layout_marginLeft="50dp">
+                       </TextView>
+                   </LinearLayout>
+
+               </LinearLayout>
+           </FrameLayout>
+
+           <LinearLayout
+               android:id="@+id/ll_nameUser_book"
+               android:layout_width="fill_parent"
+               android:layout_height="40dp"
+               android:background="@drawable/back"
+               android:orientation="horizontal"
+               android:layout_below="@+id/fr_doctor_book"
+               android:layout_marginLeft="20dp"
+               android:layout_marginRight="20dp"
+               android:layout_marginTop="10dp">
+
+               <ImageView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:src="@drawable/ic_person_24">
+               </ImageView>
+
+               <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:layout_marginLeft="10dp"
+                   android:text="@{user.fullname}">
+               </TextView>
+
+           </LinearLayout>
+
+           <LinearLayout
+               android:id="@+id/ll_phone_book"
+               android:layout_width="fill_parent"
+               android:layout_height="40dp"
+               android:background="@drawable/back"
+               android:orientation="horizontal"
+               android:layout_below="@+id/ll_nameUser_book"
+               android:layout_marginLeft="20dp"
+               android:layout_marginRight="20dp"
+               android:layout_marginTop="10dp">
+
+               <ImageView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:src="@drawable/ic_iphone_24">
+               </ImageView>
+
+               <TextView
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:layout_marginLeft="10dp"
+                   android:text="@{user.phone}">
+               </TextView>
+           </LinearLayout>
+
+           <LinearLayout
+               android:id="@+id/ll_date_book"
+               android:layout_width="wrap_content"
+               android:layout_height="40dp"
+               android:background="@drawable/back"
+               android:layout_gravity="center"
+               android:orientation="horizontal"
+               android:layout_alignParentRight="true"
+               android:layout_alignParentLeft="true"
+               android:layout_below="@+id/ll_phone_book"
+               android:layout_marginLeft="20dp"
+               android:layout_marginRight="20dp"
+               android:layout_marginTop="10dp">
+
+               <ImageView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:src="@drawable/ic_date_range_24">
+               </ImageView>
+
+               <Spinner
+                   android:id="@+id/sp_book"
+                   android:gravity="center"
+                   android:layout_gravity="center"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent">
+               </Spinner>
+
+           </LinearLayout>
+
+           <LinearLayout
+               android:id="@+id/ll_rc_book"
+               android:layout_width="fill_parent"
+               android:layout_height="170dp"
+               android:background="@drawable/back"
+               android:orientation="horizontal"
+               android:layout_below="@+id/ll_date_book"
+               android:layout_marginLeft="20dp"
+               android:layout_marginRight="20dp"
+               android:layout_marginTop="10dp">
+
+               <ImageView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:src="@drawable/ic_access_time_filled_24">
+               </ImageView>
+
+               <androidx.recyclerview.widget.RecyclerView
+                   android:id="@+id/rv_book"
+                   android:gravity="center"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:layout_marginLeft="10dp"
+                   >
+               </androidx.recyclerview.widget.RecyclerView>
+
+           </LinearLayout>
 
 
-        <LinearLayout
-            android:id="@+id/ll_symptom_book"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/back"
-            android:orientation="horizontal"
-            android:layout_below="@+id/ll_rc_book"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp">
+           <LinearLayout
+               android:id="@+id/ll_symptom_book"
+               android:layout_width="fill_parent"
+               android:layout_height="40dp"
+               android:background="@drawable/back"
+               android:orientation="horizontal"
+               android:layout_below="@+id/ll_rc_book"
+               android:layout_marginLeft="20dp"
+               android:layout_marginRight="20dp"
+               android:layout_marginTop="10dp">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/ic_hotel_24">
-            </ImageView>
+               <ImageView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:layout_marginLeft="5dp"
+                   android:src="@drawable/ic_hotel_24">
+               </ImageView>
 
-            <EditText
-                android:id="@+id/edt_symptom_book"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:background="@android:color/transparent"
-                android:hint="Triệu chứng">
-            </EditText>
+               <EditText
+                   android:id="@+id/edt_symptom_book"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:layout_marginLeft="10dp"
+                   android:background="@android:color/transparent"
+                   android:hint="Triệu chứng">
+               </EditText>
 
-        </LinearLayout>
+           </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_medicine_book"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/back"
-            android:orientation="horizontal"
-            android:layout_below="@+id/ll_symptom_book"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp">
+           <LinearLayout
+               android:id="@+id/ll_medicine_book"
+               android:layout_width="fill_parent"
+               android:layout_height="40dp"
+               android:background="@drawable/back"
+               android:orientation="horizontal"
+               android:layout_below="@+id/ll_symptom_book"
+               android:layout_marginLeft="20dp"
+               android:layout_marginRight="20dp"
+               android:layout_marginTop="10dp">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/ic_baseline_medical_services_24">
-            </ImageView>
+               <ImageView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:layout_marginLeft="5dp"
+                   android:src="@drawable/ic_baseline_medical_services_24">
+               </ImageView>
 
-            <EditText
-                android:id="@+id/edt_medicine_book"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:background="@android:color/transparent"
-                android:hint="Thuốc đang sử dụng">
-            </EditText>
+               <EditText
+                   android:id="@+id/edt_medicine_book"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:layout_marginLeft="10dp"
+                   android:background="@android:color/transparent"
+                   android:hint="Thuốc đang sử dụng">
+               </EditText>
 
-        </LinearLayout>
+           </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_done_book"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ll_medicine_book"
-            android:layout_marginRight="50dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="#fe7801"
-            android:text="Hoàn tất" />
+           <Button
+               android:id="@+id/btn_done_book"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_below="@+id/ll_medicine_book"
+               android:layout_marginRight="50dp"
+               android:layout_marginLeft="50dp"
+               android:layout_marginTop="20dp"
+               android:backgroundTint="#fe7801"
+               android:text="Hoàn tất" />
 
-    </RelativeLayout>
+
+       </LinearLayout>
+    </LinearLayout>
 
 </layout>
