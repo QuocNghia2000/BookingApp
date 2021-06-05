@@ -143,7 +143,12 @@ public class DetailMessFragment extends Fragment {
             }
         });
 
-
+        edtContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollView();
+            }
+        });
 
         return v;
     }
