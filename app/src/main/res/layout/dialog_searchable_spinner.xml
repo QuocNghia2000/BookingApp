@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <EditText
+        android:id="@+id/edt_search_mainScreen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="search"
+        android:padding="12dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/back">
+    </EditText>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/lv_search_mainScreen">
+    </ListView>
+
+</LinearLayout>
