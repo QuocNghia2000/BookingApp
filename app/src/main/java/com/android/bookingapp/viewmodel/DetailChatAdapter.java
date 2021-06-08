@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,9 +38,9 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
     private Doctor doctor;
     private int id_user;
     private DatabaseReference myRef;
-    private List<Message> listMess;
-    private List<Message> messageList;
-    private List<Message> listMessAll;
+    private ArrayList<Message> listMess;
+    private ArrayList<Message> messageList;
+    private ArrayList<Message> listMessAll;
     private boolean isUser;
     private Context context;
     private DetailMessFragment detailMessFragment;
@@ -49,13 +50,17 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
     public DetailChatAdapter(Doctor doctor,int id_user,boolean isUser,Context context, DetailMessFragment detailMessFragment){
         this.doctor = doctor;
         this.id_user = id_user;
-        this.isUser = isUser;
         this.listMess = new ArrayList<>();
         this.listMessAll = listMess;
         messageList=new ArrayList<>();
         this.context=context;
         this.detailMessFragment=detailMessFragment;
-        getData();
+//        getData();
+    }
+    public DetailChatAdapter(ArrayList<Message> messages,boolean isUser,Context context){
+        this.listMess = messages;
+        this.context=context;
+        this.isUser = isUser;
     }
 
     @NonNull
@@ -72,6 +77,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                 holder.tvSend.setText(listMess.get(position).getContent());
                 holder.tvSend.setVisibility(View.VISIBLE);
                 holder.tvReceive.setVisibility(View.INVISIBLE);
+                if(listMess.get(position).getCheckLocalMes()==1) holder.ivReload.setVisibility(View.VISIBLE);
             }
             else
             {
@@ -106,11 +112,13 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
     class MyViewHolder extends RecyclerView.ViewHolder{
         private TextView tvSend;
         private TextView tvReceive;
+        private ImageView ivReload;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSend = itemView.findViewById(R.id.sms_send);
             tvReceive = itemView.findViewById(R.id.sms_receive);
+            ivReload=itemView.findViewById(R.id.iv_reload);
         }
     }
     public void getData(){
@@ -129,6 +137,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                         listMess.add(m);
                     }
                 }
+
                 if(messages.size()!=0)
                 {
                     for(int i=messages.size();i<listMess.size();i++)
@@ -193,7 +202,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                 }
                 else
                 {
-                    List<Message> list = new ArrayList<>();
+                    ArrayList<Message> list = new ArrayList<>();
                     for(Message m: listMessAll)
                     {
                         if(m.getContent().toLowerCase().contains(strSearch.toLowerCase()))
@@ -201,7 +210,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                             list.add(m);
                         }
                     }
-                    listMess = list;
+                    listMess =  list;
                 }
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = listMess;
@@ -210,7 +219,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                listMess = (List<Message>) results.values;
+                listMess = (ArrayList<Message>) results.values;
                 notifyDataSetChanged();
             }
         };

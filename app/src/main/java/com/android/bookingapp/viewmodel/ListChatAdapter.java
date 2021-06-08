@@ -2,14 +2,12 @@ package com.android.bookingapp.viewmodel;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
@@ -29,11 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyViewHolder> implements Filterable {
-    private List<Doctor> listContact;
-    private List<User> listContactDoc;
-    private List<Message> listMess;
-    private List<Doctor> listContactAll;
-    private List<User> listContactDocAll;
+    private ArrayList<Doctor> listContact;
+    private ArrayList<User> listContactDoc;
+    private ArrayList<Message> listMess;
+    private ArrayList<Doctor> listContactAll;
+    private ArrayList<User> listContactDocAll;
     private DatabaseReference dbRef;
     //private  User user;
     private Doctor doctor;
@@ -137,8 +135,8 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<Integer> idDoctor = new ArrayList<>();
-                List<Integer> idDoctorFirst = new ArrayList<>();
+                ArrayList<Integer> idDoctor = new ArrayList<>();
+                ArrayList<Integer> idDoctorFirst = new ArrayList<>();
                 for(DataSnapshot data: snapshot.getChildren())
                 {
                     Message mess = data.getValue(Message.class);
@@ -314,7 +312,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                     }
                     else
                     {
-                        List<Doctor> list = new ArrayList<>();
+                        ArrayList<Doctor> list = new ArrayList<>();
                         for(Doctor d: listContactAll)
                         {
                             if(d.getFullname().toLowerCase().contains(strSearch.toLowerCase()))
@@ -336,7 +334,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                     }
                     else
                     {
-                        List<User> list = new ArrayList<>();
+                        ArrayList<User> list = new ArrayList<>();
                         for(User u: listContactDocAll)
                         {
                             if(u.getFullname().toLowerCase().contains(strSearch.toLowerCase()))
@@ -355,12 +353,12 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 if(id_user!=-1){
-                    listContact = (List<Doctor>) results.values;
+                    listContact = (ArrayList<Doctor>) results.values;
                     notifyDataSetChanged();
                 }
                 else
                 {
-                    listContactDoc = (List<User>) results.values;
+                    listContactDoc = (ArrayList<User>) results.values;
                     notifyDataSetChanged();
                 }
             }

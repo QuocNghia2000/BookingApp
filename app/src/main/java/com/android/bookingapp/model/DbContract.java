@@ -5,13 +5,14 @@ import android.provider.BaseColumns;
 public class DbContract {
     public static final class MenuEntry implements BaseColumns
     {
-        //tble Message
+        //table Message
         public static final String TABLE_MESSAGE="Message";
         public static final String COLUMN_ID_USER="id_user";
         public static final String COLUMN_ID_DOCTOR="id_doctor";
         public static final String COLUMN_CONTENT="content";
         public static final String COLUMN_DATE_TIME="date_time";
         public static final String COLUMN_FROM_PERSON="from_person";
+        public static final String COLUMN_CHECK_MESS_LOCAL_="MessLocal";
         //table User
         public static final String TABLE_USER="User";
         public static final String COLUMN_EMAIL="email";

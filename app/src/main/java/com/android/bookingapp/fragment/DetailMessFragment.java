@@ -1,5 +1,6 @@
 package com.android.bookingapp.fragment;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.ImportFunction;
@@ -29,7 +31,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -46,6 +50,9 @@ public class DetailMessFragment extends Fragment {
     private User user;
     private SearchView searchView;
     ImportFunction importFunction;
+    DatabaseOpenHelper db;
+    private ArrayList<Message> listMess;
+    private ArrayList<Message> messageList;
 
 
     @Override
@@ -59,9 +66,11 @@ public class DetailMessFragment extends Fragment {
             id_user = getArguments().getInt("id_user");
             isUser = getArguments().getBoolean("isUser");
         }
+        listMess = new ArrayList<>();
+        messageList= new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
-        myAdapter = new DetailChatAdapter(doctor,id_user,isUser,getContext(),this);
         rcvDetailMess = v.findViewById(R.id.rcv_detail_mess);
+        myAdapter = new DetailChatAdapter(listMess,isUser,getContext());
         rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(),1));
         rcvDetailMess.setAdapter(myAdapter);
 
@@ -70,8 +79,10 @@ public class DetailMessFragment extends Fragment {
         imvSend = v.findViewById(R.id.imv_send_listMess);
         ivBack=v.findViewById(R.id.imv_back_detailMess);
         searchView=v.findViewById(R.id.sv_detailMess);
+        db=new DatabaseOpenHelper(getContext());
 
         importFunction=new ImportFunction(getContext());
+        getData();
 
         //getdata->fullname
         myRef.child("User").addValueEventListener(new ValueEventListener() {
@@ -105,16 +116,22 @@ public class DetailMessFragment extends Fragment {
                 {
                    if(importFunction.checkInternet())
                    {
-                       boolean check;
-                       if(isUser) check = true;
-                       else check = false;
-                       Message message = new Message(0, id_user, doctor.getId(), content,getDateNow(),getTimeNow(),check);
+                       Message message = new Message(0, id_user, doctor.getId(), content,getDateNow(),getTimeNow(),isUser);
                        myRef.child("Message").push().setValue(message);
                        edtContent.setText("");
                    }
                    else
                    {
                        //lưu tin nhắn vô Local, đợi có Internet thì cập nhật Local lên DB
+                       Toast.makeText(getContext(),"Save Message to LocalDB!!",Toast.LENGTH_SHORT).show();
+                       Message message = new Message(0, id_user, doctor.getId(), content,getDateNow(),getTimeNow(),isUser);
+                       try {
+                           db.insertMessageToSqlite(message);
+                           getData();
+                       } catch (IOException e) {
+                           e.printStackTrace();
+                       }
+                       edtContent.setText("");
                    }
                 }
                 else
@@ -152,7 +169,55 @@ public class DetailMessFragment extends Fragment {
 
         return v;
     }
+    public void getData(){
+        if(importFunction.checkInternet())
+        {
+            myRef = FirebaseDatabase.getInstance().getReference();
+            myRef.child("Message").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    listMess.clear();
+                    for(DataSnapshot data: snapshot.getChildren()){
+                        Message m = data.getValue(Message.class);
+                        if(m.getId_Doctor() == doctor.getId() && m.getId_User() == id_user){
+                            listMess.add(m);
+                        }
+                    }
+                    scrollView();
+                    myAdapter.notifyDataSetChanged();
+                }
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
+        }
+        else
+        {
+            listMess.clear();
+           listMess.addAll(getDetailLocalMessage());
+            scrollView();
+            myAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public ArrayList<Message> getDetailLocalMessage()
+    {
+        ArrayList<Message> messages=new ArrayList<>();
+        Cursor cursor=db.getDetailFromMessage(doctor.getId());
+        while (cursor.moveToNext())
+        {
+            int id=cursor.getInt(0);
+            int idUser=cursor.getInt(1);
+            int idDoctor=cursor.getInt(2);
+            String content=cursor.getString(3);
+            int from_person=cursor.getInt(5);
+            int checkLocalMess=cursor.getInt(6);
+            Message message = new Message(id, idUser,idDoctor, content,getDateNow(),getTimeNow(),from_person==1?true:false,checkLocalMess);
+            messages.add(message);
+        }
+        return messages;
+    }
     public void scrollView()
     {
         rcvDetailMess.scrollToPosition(rcvDetailMess.getAdapter().getItemCount() - 1);
