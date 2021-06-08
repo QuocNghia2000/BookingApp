@@ -195,7 +195,7 @@ public class DetailMessFragment extends Fragment {
         else
         {
             listMess.clear();
-           listMess.addAll(getDetailLocalMessage());
+            listMess.addAll(getDetailLocalMessage());
             scrollView();
             myAdapter.notifyDataSetChanged();
         }

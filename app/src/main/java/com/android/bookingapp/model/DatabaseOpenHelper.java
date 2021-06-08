@@ -93,10 +93,10 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE,null);
         return cursor;
     }
-    public Cursor getDetailFromMessage(int id_user)
+    public Cursor getDetailFromMessage(int id_doctor)
     {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE+" where "+DbContract.MenuEntry.COLUMN_ID_DOCTOR
-                +"="+id_user,null);
+                +"="+id_doctor,null);
         return cursor;
     }
     private void createUserTable()
