@@ -301,7 +301,7 @@
                 android:layout_width="300dp"
                 android:layout_height="50dp"
                 android:backgroundTint="#fe7801"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="35dp"
                 android:text="Xác nhận"
                 android:shadowColor="@color/black"
                 android:layout_gravity="center" />
