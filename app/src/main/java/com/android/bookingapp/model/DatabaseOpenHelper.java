@@ -92,6 +92,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public void deleteInformationUser()
     {
         db.execSQL("drop table "+DbContract.MenuEntry.TABLE_MESSAGE);
+        db.execSQL("drop table "+DbContract.MenuEntry.TABLE_USER);
     }
     public ArrayList<Message> getMessageToUpdate()
     {
@@ -118,6 +119,51 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_+"=1");
     }
 
+    public void createUserTable()
+    {
+        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists  "+DbContract.MenuEntry.TABLE_USER+"("+
+                DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                DbContract.MenuEntry.COLUMN_EMAIL+" TEXT NOT NULL,"+
+                DbContract.MenuEntry.COLUMN_PASSWORD+" TEXT NOT NULL,"+
+                DbContract.MenuEntry.COLUMN_FULLNAME+" TEXT,"+
+                DbContract.MenuEntry.COLUMN_PHONE+" TEXT ,"+
+                DbContract.MenuEntry.COLUMN_GENDER+" INTEGER ,"+
+                DbContract.MenuEntry.COLUMN_JOB+" TEXT ,"+
+                DbContract.MenuEntry.COLUMN_ADDRESS+" TEXT ,"+
+                DbContract.MenuEntry.COLUMN_BIRTHDAY+" TEXT "+");";
+        db.execSQL(SQL_CREATE_BUGS_TABLE);
+    }
+    public void saveUserTableToDB(ArrayList<User> users) throws IOException {
+        ContentValues contentValues=new ContentValues();
+        for(User user:users)
+        {
+            int gender;
+            if(user.isGender()==true) gender = 1; else gender = 0;
+            String birthday = user.getBirthday().day +"/"+user.getBirthday().month +"/"+ user.getBirthday().year;
+            contentValues.put(DbContract.MenuEntry.COLUMN_EMAIL,user.getEmail());
+            contentValues.put(DbContract.MenuEntry.COLUMN_PASSWORD,user.getPassword());
+            contentValues.put(DbContract.MenuEntry.COLUMN_FULLNAME,user.getFullname());
+            contentValues.put(DbContract.MenuEntry.COLUMN_PHONE,user.getPassword());
+            contentValues.put(DbContract.MenuEntry.COLUMN_GENDER,gender);
+            contentValues.put(DbContract.MenuEntry.COLUMN_JOB,user.getJob());
+            contentValues.put(DbContract.MenuEntry.COLUMN_ADDRESS,user.getAddress());
+            contentValues.put(DbContract.MenuEntry.COLUMN_BIRTHDAY,birthday);
+            db.insert(DbContract.MenuEntry.TABLE_USER,null,contentValues);
+        }
+    }
+
+    public Cursor getUserFromSqlite()
+    {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_USER,null);
+        return cursor;
+    }
+    public Cursor getUserFromUser(int id_user)
+    {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_USER+" where "+DbContract.MenuEntry._ID
+                +"="+id_user,null);
+        return cursor;
+    }
+
     private void createDoctorTable()
     {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_DOCTOR+"("+
@@ -131,6 +177,23 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 DbContract.MenuEntry.COLUMN_ADDRESS_DOCTOR+" TEXT "+");";
         db.execSQL(SQL_CREATE_BUGS_TABLE);
     }
+
+    public void updateUserSqlite(User user)
+    {
+        int gender;
+        if(user.isGender()==true) gender=1; else gender=0;
+        String birthday = user.getBirthday().day+"/"+user.getBirthday().month+"/"+user.getBirthday().year;
+        db.execSQL("update "+DbContract.MenuEntry.TABLE_USER+" set "+DbContract.MenuEntry.COLUMN_EMAIL+"= '"+user.getEmail()+"', "
+                +DbContract.MenuEntry.COLUMN_PASSWORD+"= '"+user.getPassword()+"', "
+                +DbContract.MenuEntry.COLUMN_FULLNAME+"= '"+user.getFullname()+"', "
+                +DbContract.MenuEntry.COLUMN_PHONE+"= '"+user.getPhone()+"', "
+                +DbContract.MenuEntry.COLUMN_JOB+"= '"+user.getJob()+"', "
+                +DbContract.MenuEntry.COLUMN_ADDRESS+"= '"+user.getAddress()+"', "
+                +DbContract.MenuEntry.COLUMN_BIRTHDAY+"= '"+birthday+"', "
+                +DbContract.MenuEntry.COLUMN_GENDER+"="+gender+
+                " where "+ DbContract.MenuEntry._ID+"=1");
+    }
+
     public void saveDoctorTableToDB(ArrayList<Doctor> doctors) throws IOException {
         ContentValues contentValues=new ContentValues();
         for(Doctor doctor:doctors)

@@ -2,6 +2,7 @@ package com.android.bookingapp.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.User;
@@ -49,6 +51,7 @@ public class InfoAccountFragment extends Fragment {
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
     CheckInternet importFunction;
+    DatabaseOpenHelper db;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,6 +128,17 @@ public class InfoAccountFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         addItemsOnSpinner();
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(v).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment);
+            }
+        });
+        if(importFunction.checkInternet(getContext())) {}
+        else {
+            user_now = getDetailLocalUser();
+            handle();
+        }
         dialogBuilder=new AlertDialog.Builder(getContext());
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("User");
@@ -140,6 +154,12 @@ public class InfoAccountFragment extends Fragment {
                     }
                 }
                 handle();
+                confirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showLogoutDialog();
+                    }
+                });
             }
 
             @Override
@@ -166,18 +186,6 @@ public class InfoAccountFragment extends Fragment {
         spinner_month.setSelection(month);
         int year = Integer.parseInt(user_now.getBirthday().getYear()) - 1930;
         spinner_year.setSelection(year);
-        confirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showLogoutDialog();
-            }
-        });
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Navigation.findNavController(v).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment);
-            }
-        });
     }
 
     public void showLogoutDialog(){
@@ -209,6 +217,7 @@ public class InfoAccountFragment extends Fragment {
                         }
                     });
                     dialogInterface.dismiss();
+                    db.updateUserSqlite(user_now);;
                     Navigation.findNavController(getView()).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment, new Bundle());
                 }
                 else
@@ -220,6 +229,28 @@ public class InfoAccountFragment extends Fragment {
         });
         dialog = dialogBuilder.create();
         dialog.show();
+    }
+
+    public User getDetailLocalUser() {
+        User user = new User();
+        Cursor cursor=db.getUserFromUser(1);
+        while (cursor.moveToNext())
+        {
+            int idUser=cursor.getInt(0);
+            String email = cursor.getString(1);
+            String password=cursor.getString(2);
+            String fullname=cursor.getString(3);
+            String phone=cursor.getString(4);
+            String birth=cursor.getString(8);
+            String[] date = birth.split("/");
+            Date birthday= new Date(date[0],date[1],date[2]);
+            int gender = Integer.valueOf(cursor.getString(5));
+            String job=cursor.getString(6);
+            String address=cursor.getString(7);
+
+            user = new User(idUser,email, password,fullname,phone,birthday,gender==1?true:false,job,address);
+        }
+        return user;
     }
 
     @Override
@@ -239,6 +270,7 @@ public class InfoAccountFragment extends Fragment {
         spinner_year = view.findViewById(R.id.spinner_year);
         confirm = view.findViewById(R.id.confirm);
         back = view.findViewById(R.id.img_back);
+        db=new DatabaseOpenHelper(getContext());
         return view;
     }
 }
