@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.NotificationApplication;
 import com.android.bookingapp.R;
 import com.android.bookingapp.fragment.DetailMessFragment;
-import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.User;
@@ -29,7 +29,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -47,18 +46,21 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
     private DetailMessFragment detailMessFragment;
     private User user;
     String content="";
-    DatabaseOpenHelper db;
 
     public DetailChatAdapter(Doctor doctor,int id_user,boolean isUser,Context context, DetailMessFragment detailMessFragment){
         this.doctor = doctor;
         this.id_user = id_user;
-        this.isUser = isUser;
         this.listMess = new ArrayList<>();
         this.listMessAll = listMess;
         messageList=new ArrayList<>();
         this.context=context;
         this.detailMessFragment=detailMessFragment;
-        getData();
+//        getData();
+    }
+    public DetailChatAdapter(ArrayList<Message> messages,boolean isUser,Context context){
+        this.listMess = messages;
+        this.context=context;
+        this.isUser = isUser;
     }
 
     @NonNull
@@ -75,6 +77,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                 holder.tvSend.setText(listMess.get(position).getContent());
                 holder.tvSend.setVisibility(View.VISIBLE);
                 holder.tvReceive.setVisibility(View.INVISIBLE);
+                if(listMess.get(position).getCheckLocalMes()==1) holder.ivReload.setVisibility(View.VISIBLE);
             }
             else
             {
@@ -109,11 +112,13 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
     class MyViewHolder extends RecyclerView.ViewHolder{
         private TextView tvSend;
         private TextView tvReceive;
+        private ImageView ivReload;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSend = itemView.findViewById(R.id.sms_send);
             tvReceive = itemView.findViewById(R.id.sms_receive);
+            ivReload=itemView.findViewById(R.id.iv_reload);
         }
     }
     public void getData(){
@@ -132,13 +137,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                         listMess.add(m);
                     }
                 }
-                try {
-                    db=new DatabaseOpenHelper(context);
-                    //db.createMessageTable();
-                    db.saveMessageTableToDB(listMess);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
                 if(messages.size()!=0)
                 {
                     for(int i=messages.size();i<listMess.size();i++)

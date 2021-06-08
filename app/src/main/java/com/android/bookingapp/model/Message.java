@@ -8,6 +8,7 @@ public class Message {
     private Date date;
     private Time time;
     private boolean fromPerson;
+    private int checkLocalMess;
     //true: User , false: Doctor
 
     public Message(){}
@@ -20,6 +21,25 @@ public class Message {
         this.date = date;
         this.time = time;
         this.fromPerson = fromPerson;
+    }
+
+    public Message(int id, int id_User, int id_Doctor, String content, Date date, Time time, boolean fromPerson, int checkLocalMess) {
+        this.id = id;
+        this.id_User = id_User;
+        this.id_Doctor = id_Doctor;
+        this.content = content;
+        this.date = date;
+        this.time = time;
+        this.fromPerson = fromPerson;
+        this.checkLocalMess = checkLocalMess;
+    }
+
+    public int getCheckLocalMes() {
+        return checkLocalMess;
+    }
+
+    public void setCheckLocalMes(int checkLocalMes) {
+        this.checkLocalMess = checkLocalMes;
     }
 
     public boolean isFromPerson() {

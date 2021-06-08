@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.android.bookingapp.R;
 import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Department;
 import com.android.bookingapp.model.Doctor;
+import com.android.bookingapp.model.Message;
 import com.android.bookingapp.view.LoginActivity;
 import com.android.bookingapp.viewmodel.DepartAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -38,15 +41,14 @@ public class mainScreenFragment extends Fragment {
     private RecyclerView rvDeparts;
     private DepartAdapter departAdapter;
     private DatabaseReference dbReference;
-    private ImageView ivAccount,ivLogout;
+    private ImageView ivAccount,ivLogout,imvChat;
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
-    //private User user;
-    private ImageView imvChat;
     SharedPreferences sharedpreferences;
     public static final String MyPREFERENCES = "MyPrefs";
     private int idUser=-1;
     DatabaseOpenHelper db;
+    ArrayList<Message> messages;
 
 
     @Override
@@ -59,7 +61,6 @@ public class mainScreenFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-
         if(getActivity().getIntent().getSerializableExtra("doctor")!=null)
         {
             Doctor doctor= (Doctor) getActivity().getIntent().getSerializableExtra("doctor");
@@ -74,8 +75,9 @@ public class mainScreenFragment extends Fragment {
         }
 
         mDeparts=new ArrayList<>();
-        dbReference= FirebaseDatabase.getInstance().getReference("Department");
+        dbReference= FirebaseDatabase.getInstance().getReference();
 
+        getAllMessage();
         dialogBuilder=new AlertDialog.Builder(getContext());
 
         departAdapter = new DepartAdapter(mDeparts,idUser);
@@ -103,6 +105,37 @@ public class mainScreenFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putInt("id_user",idUser);
                 Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_listChatFragment,bundle);
+            }
+        });
+    }
+    private void getAllMessage()
+    {
+        messages=new ArrayList<>();
+        dbReference.child("Message").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                messages.clear();
+                for(DataSnapshot data: snapshot.getChildren()){
+                    Message message = data.getValue(Message.class);
+                    if(message.getId_User()==idUser)  messages.add(message);
+
+                }
+                try {
+                    //db.createMessageTable();]
+                    //Toast.makeText(getContext(),String.valueOf(messages.size()),Toast.LENGTH_SHORT).show();
+                    db=new DatabaseOpenHelper(getContext());
+                    db.createMessageTable();
+                    Cursor cursor=db.getMessageFromSqlite();
+                    if(cursor.getCount()==0) db.saveMessageTableToDB(messages);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -136,7 +169,7 @@ public class mainScreenFragment extends Fragment {
 
     public void getAllDepart()
     {
-        dbReference.addValueEventListener(new ValueEventListener() {
+        dbReference.child("Department").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 mDeparts.clear();

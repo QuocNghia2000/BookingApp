@@ -25,7 +25,16 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
-        createMessageTable();
+        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_MESSAGE+"("+
+                DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                DbContract.MenuEntry.COLUMN_ID_USER+" INTEGER NOT NULL,"+
+                DbContract.MenuEntry.COLUMN_ID_DOCTOR+" INTEGER NOT NULL,"+
+                DbContract.MenuEntry.COLUMN_CONTENT+" TEXT,"+
+                DbContract.MenuEntry.COLUMN_DATE_TIME+" TEXT ,"+
+                DbContract.MenuEntry.COLUMN_FROM_PERSON+" INTEGER NOT NULL,"+
+                DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_+" INTEGER "+");";
+        db.execSQL(SQL_CREATE_BUGS_TABLE);
+//        createMessageTable();
 //        createUserTable();
 //        createDoctorTable();
 //        createReservationTable();
@@ -35,17 +44,18 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     public void createMessageTable()
     {
-        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_MESSAGE+"("+
+        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_MESSAGE+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 DbContract.MenuEntry.COLUMN_ID_USER+" INTEGER NOT NULL,"+
                 DbContract.MenuEntry.COLUMN_ID_DOCTOR+" INTEGER NOT NULL,"+
                 DbContract.MenuEntry.COLUMN_CONTENT+" TEXT,"+
                 DbContract.MenuEntry.COLUMN_DATE_TIME+" TEXT ,"+
-                DbContract.MenuEntry.COLUMN_FROM_PERSON+" INTEGER NOT NULL"+");";
-
+                DbContract.MenuEntry.COLUMN_FROM_PERSON+" INTEGER NOT NULL,"+
+                DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_+" INTEGER "+");";
         db.execSQL(SQL_CREATE_BUGS_TABLE);
     }
     public void saveMessageTableToDB(ArrayList<Message> messages) throws IOException {
+
         ContentValues contentValues=new ContentValues();
         for(Message message:messages)
         {
@@ -58,13 +68,35 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,1);
             else
                 contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,0);
+            contentValues.put(DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_,0);
             db.insert(DbContract.MenuEntry.TABLE_MESSAGE,null,contentValues);
         }
     }
+    public void insertMessageToSqlite(Message message) throws IOException {
 
-    public Cursor getMessage()
+        ContentValues contentValues=new ContentValues();
+        contentValues.put(DbContract.MenuEntry.COLUMN_ID_USER,message.getId_User());
+        contentValues.put(DbContract.MenuEntry.COLUMN_ID_DOCTOR,message.getId_Doctor());
+        contentValues.put(DbContract.MenuEntry.COLUMN_CONTENT,message.getContent());
+        contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME,message.getDate().getDay()+"-"+message.getDate().getMonth()+
+                "-"+message.getDate().getYear()+" "+message.getTime().getHour()+":"+message.getTime().getMinute());
+        if(message.isFromPerson())
+            contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,1);
+        else
+            contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,0);
+        contentValues.put(DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_,1);
+        db.insert(DbContract.MenuEntry.TABLE_MESSAGE,null,contentValues);
+    }
+
+    public Cursor getMessageFromSqlite()
     {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE,null);
+        return cursor;
+    }
+    public Cursor getDetailFromMessage(int id_user)
+    {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE+" where "+DbContract.MenuEntry.COLUMN_ID_DOCTOR
+                +"="+id_user,null);
         return cursor;
     }
     private void createUserTable()
@@ -156,5 +188,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists "+DbContract.MenuEntry.TABLE_MESSAGE);
+        onCreate(db);
     }
 }
