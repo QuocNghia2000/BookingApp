@@ -1,4 +1,4 @@
-package com.android.bookingapp;
+package com.android.bookingapp.view;
 
 import android.app.Application;
 import android.app.Notification;
@@ -10,6 +10,8 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
+
+import com.android.bookingapp.R;
 
 public class NotificationApplication extends Application {
 
@@ -38,7 +40,7 @@ public class NotificationApplication extends Application {
     }
     private void sendNotification()
     {
-        Bitmap bitmap= BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher_round);
+        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
         Notification notification=new NotificationCompat.Builder(this,NotificationApplication.CHANNEL_ID)
                 .setContentTitle("")
                 .setContentText("")

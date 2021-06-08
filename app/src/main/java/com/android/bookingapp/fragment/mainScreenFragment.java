@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -68,7 +69,6 @@ public class mainScreenFragment extends Fragment {
             bundle.putSerializable("doctor",doctor);
             Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_docMainFragment,bundle);
         }
-
         if(getActivity().getIntent()!=null)
         {
             idUser= getActivity().getIntent().getIntExtra("id",-1);
@@ -76,7 +76,7 @@ public class mainScreenFragment extends Fragment {
 
         mDeparts=new ArrayList<>();
         dbReference= FirebaseDatabase.getInstance().getReference();
-
+        db=new DatabaseOpenHelper(getContext());
         getAllMessage();
         dialogBuilder=new AlertDialog.Builder(getContext());
 
@@ -108,6 +108,7 @@ public class mainScreenFragment extends Fragment {
             }
         });
     }
+
     private void getAllMessage()
     {
         messages=new ArrayList<>();
@@ -119,24 +120,23 @@ public class mainScreenFragment extends Fragment {
                     Message message = data.getValue(Message.class);
                     if(message.getId_User()==idUser)  messages.add(message);
                 }
-
+                try {
+                    //db.createMessageTable();]
+           Toast.makeText(getContext(),String.valueOf(messages.size()),Toast.LENGTH_SHORT).show();
+                    db.createMessageTable();
+                    Cursor cursor=db.getMessageFromSqlite();
+                    if(cursor.getCount()==0) db.saveMessageTableToDB(messages);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Toast.makeText(getContext(),"String.valueOf(messages.size())",Toast.LENGTH_SHORT).show();
             }
         });
-        try {
-            //db.createMessageTable();]
-            //Toast.makeText(getContext(),String.valueOf(messages.size()),Toast.LENGTH_SHORT).show();
-            db=new DatabaseOpenHelper(getContext());
-            db.createMessageTable();
-            Cursor cursor=db.getMessageFromSqlite();
-            if(cursor.getCount()==0) db.saveMessageTableToDB(messages);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
     public void showLogoutDialog(){
         dialogBuilder.setMessage("Bạn có muốn đăng xuất?");
@@ -151,6 +151,7 @@ public class mainScreenFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
+                db.deleteInformationUser();
                 clearData();
                 startActivity(new Intent(getActivity(), LoginActivity.class));
                 getActivity().finish();

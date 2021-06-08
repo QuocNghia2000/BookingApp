@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.User;
@@ -47,7 +48,7 @@ public class LoginFragment extends Fragment {
     public static final String PASS = "passKey";
     public static final String ID_USER = "ID_USER";
     SharedPreferences sharedpreferences;
-    CheckInternet importFunction;
+    DatabaseOpenHelper db;
 
 
     @Override
@@ -97,6 +98,8 @@ public class LoginFragment extends Fragment {
                         if(index!=-1)
                         {
                             saveData(username.getText().toString(),pass.getText().toString(),users.get(index).getId());
+                            db=new DatabaseOpenHelper(getContext());
+                            db.createMessageTable();
                             //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
                             Intent intent =new Intent(getActivity(), MainActivity.class);
                             intent.putExtra("id",users.get(index).getId());

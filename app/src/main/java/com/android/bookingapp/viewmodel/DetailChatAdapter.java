@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.bookingapp.NotificationApplication;
+import com.android.bookingapp.view.NotificationApplication;
 import com.android.bookingapp.R;
 import com.android.bookingapp.fragment.DetailMessFragment;
 import com.android.bookingapp.model.Doctor;

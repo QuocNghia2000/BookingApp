@@ -33,6 +33,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         Log.d(TAG,"Database created succesfully!");
     }
 
+
     public void createMessageTable()
     {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_MESSAGE+"("+
@@ -87,6 +88,10 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE+" where "+DbContract.MenuEntry.COLUMN_ID_DOCTOR
                 +"="+id_doctor,null);
         return cursor;
+    }
+    public void deleteInformationUser()
+    {
+        db.execSQL("drop table "+DbContract.MenuEntry.TABLE_MESSAGE);
     }
     public ArrayList<Message> getMessageToUpdate()
     {
