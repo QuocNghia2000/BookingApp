@@ -24,6 +24,7 @@ import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Department;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
+import com.android.bookingapp.model.User;
 import com.android.bookingapp.view.LoginActivity;
 import com.android.bookingapp.viewmodel.DepartAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -49,6 +50,7 @@ public class mainScreenFragment extends Fragment {
     private int idUser=-1;
     DatabaseOpenHelper db;
     ArrayList<Message> messages;
+    ArrayList<User> users;
 
 
     @Override
@@ -76,8 +78,10 @@ public class mainScreenFragment extends Fragment {
 
         mDeparts=new ArrayList<>();
         dbReference= FirebaseDatabase.getInstance().getReference();
+        db=new DatabaseOpenHelper(getContext());
 
         getAllMessage();
+        getUserLogin();
         dialogBuilder=new AlertDialog.Builder(getContext());
 
         departAdapter = new DepartAdapter(mDeparts,idUser);
@@ -120,25 +124,47 @@ public class mainScreenFragment extends Fragment {
                     if(message.getId_User()==idUser)  messages.add(message);
 
                 }
-                try {
-                    //db.createMessageTable();]
-                    //Toast.makeText(getContext(),String.valueOf(messages.size()),Toast.LENGTH_SHORT).show();
-                    db=new DatabaseOpenHelper(getContext());
-                    db.createMessageTable();
-                    Cursor cursor=db.getMessageFromSqlite();
-                    if(cursor.getCount()==0) db.saveMessageTableToDB(messages);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
+        try {
+            //db.createMessageTable();]
+            //Toast.makeText(getContext(),String.valueOf(messages.size()),Toast.LENGTH_SHORT).show();
+            db.createMessageTable();
+            Cursor cursor=db.getMessageFromSqlite();
+            if(cursor.getCount()==0) db.saveMessageTableToDB(messages);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    private void getUserLogin()
+    {
+        users=new ArrayList<>();
+        dbReference.child("User").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                users.clear();
+                for(DataSnapshot data: snapshot.getChildren()){
+                    User user = data.getValue(User.class);
+                    if(user.getId()==idUser) {
+                        users.add(user);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) { }
+        });
+        try {
+            db.createUserTable();
+            Cursor cursor=db.getUserFromSqlite();
+            if(cursor.getCount()==0) db.saveUserTableToDB(users);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void showLogoutDialog(){
         dialogBuilder.setMessage("Bạn có muốn đăng xuất?");
         dialogBuilder.setCancelable(false);
@@ -180,12 +206,9 @@ public class mainScreenFragment extends Fragment {
                 }
                 departAdapter.notifyDataSetChanged();
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
-
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
