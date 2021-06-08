@@ -5,31 +5,28 @@ public class Message {
     private int id_User;
     private int id_Doctor;
     private String content;
-    private Date date;
-    private Time time;
+    private String date_time;
     private boolean fromPerson;
     private int checkLocalMess;
     //true: User , false: Doctor
 
     public Message(){}
 
-    public Message(int id, int id_User, int id_Doctor, String content, Date date, Time time,boolean fromPerson) {
+    public Message(int id, int id_User, int id_Doctor, String content,String date_time,boolean fromPerson) {
         this.id = id;
         this.id_User = id_User;
         this.id_Doctor = id_Doctor;
         this.content = content;
-        this.date = date;
-        this.time = time;
         this.fromPerson = fromPerson;
+        this.date_time=date_time;
     }
 
-    public Message(int id, int id_User, int id_Doctor, String content, Date date, Time time, boolean fromPerson, int checkLocalMess) {
+    public Message(int id, int id_User, int id_Doctor, String content, String date_time, boolean fromPerson, int checkLocalMess) {
         this.id = id;
         this.id_User = id_User;
         this.id_Doctor = id_Doctor;
         this.content = content;
-        this.date = date;
-        this.time = time;
+        this.date_time=date_time;
         this.fromPerson = fromPerson;
         this.checkLocalMess = checkLocalMess;
     }
@@ -82,19 +79,11 @@ public class Message {
         this.content = content;
     }
 
-    public Date getDate() {
-        return date;
+    public String getDate_time() {
+        return date_time;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public Time getTime() {
-        return time;
-    }
-
-    public void setTime(Time time) {
-        this.time = time;
+    public void setDate_time(String date_time) {
+        this.date_time = date_time;
     }
 }

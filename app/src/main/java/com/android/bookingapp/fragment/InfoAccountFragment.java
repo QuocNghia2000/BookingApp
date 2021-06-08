@@ -23,7 +23,7 @@ import androidx.navigation.Navigation;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Date;
-import com.android.bookingapp.model.ImportFunction;
+import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,7 +48,7 @@ public class InfoAccountFragment extends Fragment {
     DatabaseReference myRef;
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
-    ImportFunction importFunction;
+    CheckInternet importFunction;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,7 +125,6 @@ public class InfoAccountFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         addItemsOnSpinner();
-        importFunction=new ImportFunction(getContext());
         dialogBuilder=new AlertDialog.Builder(getContext());
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("User");
@@ -193,7 +192,7 @@ public class InfoAccountFragment extends Fragment {
         dialogBuilder.setNegativeButton("Có", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if(importFunction.checkInternet())
+                if(CheckInternet.checkInternet(getContext()))
                 {
                     myRef.child("User" + user_now.getId()).setValue(new User(user_now.getId(),user_now.getEmail(),password.getText().toString(),
                             name.getText().toString(),phone.getText().toString(),new Date(nDay, nMonth, nYear),male.isChecked(),

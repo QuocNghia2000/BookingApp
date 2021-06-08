@@ -118,17 +118,6 @@ public class mainScreenFragment extends Fragment {
                 for(DataSnapshot data: snapshot.getChildren()){
                     Message message = data.getValue(Message.class);
                     if(message.getId_User()==idUser)  messages.add(message);
-
-                }
-                try {
-                    //db.createMessageTable();]
-                    //Toast.makeText(getContext(),String.valueOf(messages.size()),Toast.LENGTH_SHORT).show();
-                    db=new DatabaseOpenHelper(getContext());
-                    db.createMessageTable();
-                    Cursor cursor=db.getMessageFromSqlite();
-                    if(cursor.getCount()==0) db.saveMessageTableToDB(messages);
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
 
             }
@@ -138,6 +127,16 @@ public class mainScreenFragment extends Fragment {
 
             }
         });
+        try {
+            //db.createMessageTable();]
+            //Toast.makeText(getContext(),String.valueOf(messages.size()),Toast.LENGTH_SHORT).show();
+            db=new DatabaseOpenHelper(getContext());
+            db.createMessageTable();
+            Cursor cursor=db.getMessageFromSqlite();
+            if(cursor.getCount()==0) db.saveMessageTableToDB(messages);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public void showLogoutDialog(){
         dialogBuilder.setMessage("Bạn có muốn đăng xuất?");
@@ -199,4 +198,5 @@ public class mainScreenFragment extends Fragment {
         imvChat = view.findViewById(R.id.imv_listchat_main);
         return view;
     }
+
 }

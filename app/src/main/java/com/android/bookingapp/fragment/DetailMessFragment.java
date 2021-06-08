@@ -17,11 +17,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
-import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Doctor;
-import com.android.bookingapp.model.ImportFunction;
 import com.android.bookingapp.model.Message;
+import com.android.bookingapp.model.NetWorkChangeListener;
 import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.viewmodel.DetailChatAdapter;
@@ -49,10 +49,10 @@ public class DetailMessFragment extends Fragment {
     private DatabaseReference myRef;
     private User user;
     private SearchView searchView;
-    ImportFunction importFunction;
     DatabaseOpenHelper db;
     private ArrayList<Message> listMess;
     private ArrayList<Message> messageList;
+    NetWorkChangeListener netWorkChangeListener;
 
 
     @Override
@@ -66,6 +66,8 @@ public class DetailMessFragment extends Fragment {
             id_user = getArguments().getInt("id_user");
             isUser = getArguments().getBoolean("isUser");
         }
+//        Toast.makeText(getContext(),getDateNow(),Toast.LENGTH_SHORT).show();
+        netWorkChangeListener=new NetWorkChangeListener();
         listMess = new ArrayList<>();
         messageList= new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
@@ -81,7 +83,6 @@ public class DetailMessFragment extends Fragment {
         searchView=v.findViewById(R.id.sv_detailMess);
         db=new DatabaseOpenHelper(getContext());
 
-        importFunction=new ImportFunction(getContext());
         getData();
 
         //getdata->fullname
@@ -114,9 +115,9 @@ public class DetailMessFragment extends Fragment {
                 String content = edtContent.getText().toString();
                 if (!content.equals(""))
                 {
-                   if(importFunction.checkInternet())
+                   if(CheckInternet.checkInternet(getContext()))
                    {
-                       Message message = new Message(0, id_user, doctor.getId(), content,getDateNow(),getTimeNow(),isUser);
+                       Message message = new Message(0, id_user, doctor.getId(), content,getDateTimeNow(),isUser);
                        myRef.child("Message").push().setValue(message);
                        edtContent.setText("");
                    }
@@ -124,7 +125,7 @@ public class DetailMessFragment extends Fragment {
                    {
                        //lưu tin nhắn vô Local, đợi có Internet thì cập nhật Local lên DB
                        Toast.makeText(getContext(),"Save Message to LocalDB!!",Toast.LENGTH_SHORT).show();
-                       Message message = new Message(0, id_user, doctor.getId(), content,getDateNow(),getTimeNow(),isUser);
+                       Message message = new Message(0, id_user, doctor.getId(), content,getDateTimeNow(),isUser);
                        try {
                            db.insertMessageToSqlite(message);
                            getData();
@@ -170,7 +171,7 @@ public class DetailMessFragment extends Fragment {
         return v;
     }
     public void getData(){
-        if(importFunction.checkInternet())
+        if(CheckInternet.checkInternet(getContext()))
         {
             myRef = FirebaseDatabase.getInstance().getReference();
             myRef.child("Message").addValueEventListener(new ValueEventListener() {
@@ -213,7 +214,7 @@ public class DetailMessFragment extends Fragment {
             String content=cursor.getString(3);
             int from_person=cursor.getInt(5);
             int checkLocalMess=cursor.getInt(6);
-            Message message = new Message(id, idUser,idDoctor, content,getDateNow(),getTimeNow(),from_person==1?true:false,checkLocalMess);
+            Message message = new Message(id, idUser,idDoctor, content,getDateTimeNow(),from_person==1?true:false,checkLocalMess);
             messages.add(message);
         }
         return messages;
@@ -222,16 +223,14 @@ public class DetailMessFragment extends Fragment {
     {
         rcvDetailMess.scrollToPosition(rcvDetailMess.getAdapter().getItemCount() - 1);
     }
-    public Date getDateNow(){
+    public String getDateTimeNow(){
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        java.util.Date d  = calendar.getTime();
-        String day = simpleDateFormat.format(d);
+        SimpleDateFormat simpleTimeFormat = new SimpleDateFormat("HH:mm");
+        String time = simpleTimeFormat.format(calendar.getTime());
+        java.util.Date day  = calendar.getTime();
+        return  simpleDateFormat.format(day)+" "+time;
 
-
-        String[] temp =  day.split("-");
-        Date date = new Date(temp[0],temp[1],temp[2]);
-        return date;
     }
 
     public Time getTimeNow(){
@@ -243,4 +242,5 @@ public class DetailMessFragment extends Fragment {
         Time t = new Time(Integer.parseInt(temp[0]) ,Integer.parseInt(temp[1]));
         return t;
     }
+
 }

@@ -25,15 +25,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
-        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_MESSAGE+"("+
-                DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                DbContract.MenuEntry.COLUMN_ID_USER+" INTEGER NOT NULL,"+
-                DbContract.MenuEntry.COLUMN_ID_DOCTOR+" INTEGER NOT NULL,"+
-                DbContract.MenuEntry.COLUMN_CONTENT+" TEXT,"+
-                DbContract.MenuEntry.COLUMN_DATE_TIME+" TEXT ,"+
-                DbContract.MenuEntry.COLUMN_FROM_PERSON+" INTEGER NOT NULL,"+
-                DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_+" INTEGER "+");";
-        db.execSQL(SQL_CREATE_BUGS_TABLE);
 //        createMessageTable();
 //        createUserTable();
 //        createDoctorTable();
@@ -62,8 +53,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             contentValues.put(DbContract.MenuEntry.COLUMN_ID_USER,message.getId_User());
             contentValues.put(DbContract.MenuEntry.COLUMN_ID_DOCTOR,message.getId_Doctor());
             contentValues.put(DbContract.MenuEntry.COLUMN_CONTENT,message.getContent());
-            contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME,message.getDate().getDay()+"-"+message.getDate().getMonth()+
-                    "-"+message.getDate().getYear()+" "+message.getTime().getHour()+":"+message.getTime().getMinute());
+            contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME,message.getDate_time());
             if(message.isFromPerson())
                 contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,1);
             else
@@ -78,8 +68,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         contentValues.put(DbContract.MenuEntry.COLUMN_ID_USER,message.getId_User());
         contentValues.put(DbContract.MenuEntry.COLUMN_ID_DOCTOR,message.getId_Doctor());
         contentValues.put(DbContract.MenuEntry.COLUMN_CONTENT,message.getContent());
-        contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME,message.getDate().getDay()+"-"+message.getDate().getMonth()+
-                "-"+message.getDate().getYear()+" "+message.getTime().getHour()+":"+message.getTime().getMinute());
+        contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME,message.getDate_time());
         if(message.isFromPerson())
             contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,1);
         else
@@ -99,27 +88,31 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 +"="+id_doctor,null);
         return cursor;
     }
-    private void createUserTable()
+    public ArrayList<Message> getMessageToUpdate()
     {
-        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_USER+"("+
-                DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                DbContract.MenuEntry.COLUMN_EMAIL+" INTEGER NOT NULL,"+
-                DbContract.MenuEntry.COLUMN_PASSWORD+" INTEGER NOT NULL,"+
-                DbContract.MenuEntry.COLUMN_FULLNAME+" TEXT,"+
-                DbContract.MenuEntry.COLUMN_PHONE+" TEXT "+");";
-        db.execSQL(SQL_CREATE_BUGS_TABLE);
-    }
-    public void saveUserTableToDB(ArrayList<User> users) throws IOException {
-        ContentValues contentValues=new ContentValues();
-        for(User user:users)
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE+" where "+DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_
+                +"=1",null);
+        ArrayList<Message> messages=new ArrayList<>();
+        while (cursor.moveToNext())
         {
-            contentValues.put(DbContract.MenuEntry.COLUMN_EMAIL,user.getEmail());
-            contentValues.put(DbContract.MenuEntry.COLUMN_PASSWORD,user.getPassword());
-            contentValues.put(DbContract.MenuEntry.COLUMN_FULLNAME,user.getFullname());
-            contentValues.put(DbContract.MenuEntry.COLUMN_PHONE,user.getPassword());
-            db.insert(DbContract.MenuEntry.TABLE_USER,null,contentValues);
+            int id=cursor.getInt(0);
+            int idUser=cursor.getInt(1);
+            int idDoctor=cursor.getInt(2);
+            String content=cursor.getString(3);
+            String date_time=cursor.getString(4);
+            int from_person=cursor.getInt(5);
+            int checkLocalMess=cursor.getInt(6);
+            Message message = new Message(id, idUser,idDoctor, content,date_time,from_person==1?true:false,checkLocalMess);
+            messages.add(message);
         }
+        return messages;
     }
+    public void updateMessageSqlite()
+    {
+        db.execSQL("update "+DbContract.MenuEntry.TABLE_MESSAGE+" set "+DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_+"=0 where "+
+                DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_+"=1");
+    }
+
     private void createDoctorTable()
     {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_DOCTOR+"("+
