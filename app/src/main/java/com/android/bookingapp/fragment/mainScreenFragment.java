@@ -266,7 +266,7 @@ public class mainScreenFragment extends Fragment {
                     list.add(d.getFullname());
                 }
                 try {
-                    //db.createDoctorTable();
+                    db.createDoctorTable();
                     Cursor cursor=db.getDoctorFromSqlite();
                     if(cursor.getCount()==0) db.saveDoctorTableToDB(listDoc);
                 } catch (IOException e) {

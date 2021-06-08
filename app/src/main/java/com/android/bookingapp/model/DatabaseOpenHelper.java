@@ -120,7 +120,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     public void createDoctorTable()
     {
-        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_DOCTOR+"("+
+        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_DOCTOR+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 DbContract.MenuEntry.COLUMN_ID_DEPARTMENT+" INTERGER,"+
                 DbContract.MenuEntry.COLUMN_EMAIL_DOCTOR+" INTEGER NOT NULL,"+
