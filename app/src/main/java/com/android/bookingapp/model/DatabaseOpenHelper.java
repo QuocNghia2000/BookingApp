@@ -118,7 +118,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_+"=1");
     }
 
-    private void createDoctorTable()
+    public void createDoctorTable()
     {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_DOCTOR+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
@@ -145,6 +145,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             db.insert(DbContract.MenuEntry.TABLE_DOCTOR,null,contentValues);
         }
     }
+    public Cursor getDoctorFromSqlite()
+    {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_DOCTOR,null);
+        return cursor;
+    }
     private void createReservationTable()
     {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_RESERVATION+"("+
@@ -168,12 +173,17 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             db.insert(DbContract.MenuEntry.TABLE_RESERVATION,null,contentValues);
         }
     }
-    private void createDepartmentTable()
+    public void createDepartmentTable()
     {
-        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_RESERVATION+"("+
+        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_DEPARTMENT+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 DbContract.MenuEntry.COLUMN_NAME_DEPARTMENT+" TEXT "+");";
         db.execSQL(SQL_CREATE_BUGS_TABLE);
+    }
+    public Cursor getDepartmentFromSqlite()
+    {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_DEPARTMENT,null);
+        return cursor;
     }
     public void saveDepartmentTableToDB(ArrayList<Department> departments) throws IOException {
         ContentValues contentValues=new ContentValues();
