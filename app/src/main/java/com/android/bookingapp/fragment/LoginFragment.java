@@ -21,7 +21,7 @@ import androidx.navigation.Navigation;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Doctor;
-import com.android.bookingapp.model.ImportFunction;
+import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.view.MainActivity;
 import com.google.firebase.database.DataSnapshot;
@@ -47,7 +47,7 @@ public class LoginFragment extends Fragment {
     public static final String PASS = "passKey";
     public static final String ID_USER = "ID_USER";
     SharedPreferences sharedpreferences;
-    ImportFunction importFunction;
+    CheckInternet importFunction;
 
 
     @Override
@@ -61,7 +61,6 @@ public class LoginFragment extends Fragment {
         users=new ArrayList<>();
         database = FirebaseDatabase.getInstance();
         dialogBuilder=new AlertDialog.Builder(getContext());
-        importFunction=new ImportFunction(getContext());
 
         myRef = database.getReference("User");
         myRef.addValueEventListener(new ValueEventListener() {
@@ -92,9 +91,9 @@ public class LoginFragment extends Fragment {
                 }
                 else
                 {
-                    if(importFunction.checkInternet())
+                    if(CheckInternet.checkInternet(getContext()))
                     {
-                        int index=importFunction.posCurrent(username.getText().toString(),pass.getText().toString(),users);
+                        int index=posCurrent(username.getText().toString(),pass.getText().toString(),users);
                         if(index!=-1)
                         {
                             saveData(username.getText().toString(),pass.getText().toString(),users.get(index).getId());
@@ -198,6 +197,15 @@ public class LoginFragment extends Fragment {
     return sharedpreferences.contains(USERNAME);
     }
 
-
+    public int posCurrent(String email, String pass, ArrayList<User> users) {
+        if(users!=null){
+            for (int i = 0; i < users.size(); i++) {
+                if (email.equals(users.get(i).getEmail()) && pass.equals(users.get(i).getPassword())) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
 
 }

@@ -59,6 +59,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
     }
     public DetailChatAdapter(ArrayList<Message> messages,boolean isUser,Context context){
         this.listMess = messages;
+        this.listMessAll = messages;
         this.context=context;
         this.isUser = isUser;
     }

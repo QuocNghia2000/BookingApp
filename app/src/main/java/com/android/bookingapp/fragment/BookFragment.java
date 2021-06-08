@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.databinding.FragmentBookBinding;
 import com.android.bookingapp.model.Doctor;
-import com.android.bookingapp.model.ImportFunction;
+import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.Reservation;
 import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
@@ -57,7 +57,6 @@ public class BookFragment extends Fragment {
     private int id_user;
     private User user;
     private List<Reservation> listRes;
-    ImportFunction importFunction;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,7 +78,6 @@ public class BookFragment extends Fragment {
         //getUser->set
         myRef = FirebaseDatabase.getInstance().getReference();
         //Toast.makeText(getContext(),String.valueOf(id_user),Toast.LENGTH_SHORT).show();
-        importFunction=new ImportFunction(getContext());
         myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("User").addValueEventListener(new ValueEventListener() {
             @Override
@@ -136,7 +134,7 @@ public class BookFragment extends Fragment {
                 }
                 else
                 {
-                   if(importFunction.checkInternet())
+                   if(CheckInternet.checkInternet(getContext()))
                    {
                        Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
                        com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
@@ -206,7 +204,7 @@ public class BookFragment extends Fragment {
         listDate.add(day);
 
 
-        ArrayAdapter spinnerAdapter = new ArrayAdapter(getContext(),R.layout.support_simple_spinner_dropdown_item,listDate);
+        ArrayAdapter spinnerAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_dropdown_item,listDate);
         spBook.setAdapter(spinnerAdapter);
         spBook.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
