@@ -93,33 +93,57 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE,null);
         return cursor;
     }
-    public Cursor getDetailFromMessage(int id_user)
+    public Cursor getDetailFromMessage(int id_doctor)
     {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE+" where "+DbContract.MenuEntry.COLUMN_ID_DOCTOR
-                +"="+id_user,null);
+                +"="+id_doctor,null);
         return cursor;
     }
-    private void createUserTable()
+    public void createUserTable()
     {
-        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_USER+"("+
+        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists  "+DbContract.MenuEntry.TABLE_USER+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                DbContract.MenuEntry.COLUMN_EMAIL+" INTEGER NOT NULL,"+
-                DbContract.MenuEntry.COLUMN_PASSWORD+" INTEGER NOT NULL,"+
+                DbContract.MenuEntry.COLUMN_EMAIL+" TEXT NOT NULL,"+
+                DbContract.MenuEntry.COLUMN_PASSWORD+" TEXT NOT NULL,"+
                 DbContract.MenuEntry.COLUMN_FULLNAME+" TEXT,"+
-                DbContract.MenuEntry.COLUMN_PHONE+" TEXT "+");";
+                DbContract.MenuEntry.COLUMN_PHONE+" TEXT ,"+
+                DbContract.MenuEntry.COLUMN_GENDER+" INTEGER ,"+
+                DbContract.MenuEntry.COLUMN_JOB+" TEXT ,"+
+                DbContract.MenuEntry.COLUMN_ADDRESS+" TEXT ,"+
+                DbContract.MenuEntry.COLUMN_BIRTHDAY+" TEXT "+");";
         db.execSQL(SQL_CREATE_BUGS_TABLE);
     }
     public void saveUserTableToDB(ArrayList<User> users) throws IOException {
         ContentValues contentValues=new ContentValues();
         for(User user:users)
         {
+            int gender;
+            if(user.isGender()==true) gender = 1; else gender = 0;
+            String birthday = user.getBirthday().day +"/"+user.getBirthday().month +"/"+ user.getBirthday().year;
             contentValues.put(DbContract.MenuEntry.COLUMN_EMAIL,user.getEmail());
             contentValues.put(DbContract.MenuEntry.COLUMN_PASSWORD,user.getPassword());
             contentValues.put(DbContract.MenuEntry.COLUMN_FULLNAME,user.getFullname());
             contentValues.put(DbContract.MenuEntry.COLUMN_PHONE,user.getPassword());
+            contentValues.put(DbContract.MenuEntry.COLUMN_GENDER,gender);
+            contentValues.put(DbContract.MenuEntry.COLUMN_JOB,user.getJob());
+            contentValues.put(DbContract.MenuEntry.COLUMN_ADDRESS,user.getAddress());
+            contentValues.put(DbContract.MenuEntry.COLUMN_BIRTHDAY,birthday);
             db.insert(DbContract.MenuEntry.TABLE_USER,null,contentValues);
         }
     }
+
+    public Cursor getUserFromSqlite()
+    {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_USER,null);
+        return cursor;
+    }
+    public Cursor getUserFromUser(int id_user)
+    {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_USER+" where "+DbContract.MenuEntry._ID
+                +"="+id_user,null);
+        return cursor;
+    }
+
     private void createDoctorTable()
     {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_DOCTOR+"("+

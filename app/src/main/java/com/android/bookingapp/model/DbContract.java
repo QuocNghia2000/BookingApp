@@ -19,6 +19,10 @@ public class DbContract {
         public static final String COLUMN_PASSWORD="password";
         public static final String COLUMN_FULLNAME="fullname";
         public static final String COLUMN_PHONE="phone";
+        public static final String COLUMN_GENDER = "gender";
+        public static final String COLUMN_JOB = "job";
+        public static final String COLUMN_ADDRESS = "address";
+        public static final String COLUMN_BIRTHDAY = "birthday";
 
         //table Doctor
         public static final String TABLE_DOCTOR="Doctor";
@@ -40,6 +44,5 @@ public class DbContract {
         //table Department
         public static final String TABLE_DEPARTMENT="Department";
         public static final String COLUMN_NAME_DEPARTMENT="name";
-
     }
 }
