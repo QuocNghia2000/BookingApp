@@ -74,14 +74,19 @@
                 android:textSize="20dp">
             </TextView>
 
-            <SearchView
+            <TextView
+                android:id="@+id/tv_search_mainScreen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:hint="Tìm kiếm bác sĩ"
+                android:gravity="center_vertical"
                 android:layout_marginTop="15dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
-                android:background="@drawable/shape_search">
-            </SearchView>
+                android:background="@drawable/shape_search"
+                android:drawableEnd="@drawable/ic_search">
+            </TextView>
         </LinearLayout>
 
         <LinearLayout
@@ -175,6 +180,7 @@
                         android:textColor="#fe7801"
                         android:layout_marginLeft="5dp"
                         android:textSize="13dp"
+                        android:textStyle="bold"
                         android:text="Tài khoản">
                     </TextView>
 
