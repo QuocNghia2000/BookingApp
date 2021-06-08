@@ -51,7 +51,7 @@ public class DetailMessFragment extends Fragment {
     private SearchView searchView;
     DatabaseOpenHelper db;
     private ArrayList<Message> listMess;
-    private ArrayList<Message> messageList;
+    ArrayList<Message> messages;
     NetWorkChangeListener netWorkChangeListener;
 
 
@@ -69,12 +69,12 @@ public class DetailMessFragment extends Fragment {
 //        Toast.makeText(getContext(),getDateNow(),Toast.LENGTH_SHORT).show();
         netWorkChangeListener=new NetWorkChangeListener();
         listMess = new ArrayList<>();
-        messageList= new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
         rcvDetailMess = v.findViewById(R.id.rcv_detail_mess);
         myAdapter = new DetailChatAdapter(listMess,isUser,getContext());
         rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(),1));
         rcvDetailMess.setAdapter(myAdapter);
+
 
         tvName = v.findViewById(R.id.tv_name_detailMess);
         edtContent = v.findViewById(R.id.edt_text_detailMess);
@@ -82,7 +82,6 @@ public class DetailMessFragment extends Fragment {
         ivBack=v.findViewById(R.id.imv_back_detailMess);
         searchView=v.findViewById(R.id.sv_detailMess);
         db=new DatabaseOpenHelper(getContext());
-
         getData();
 
         //getdata->fullname
@@ -117,15 +116,20 @@ public class DetailMessFragment extends Fragment {
                 {
                    if(CheckInternet.checkInternet(getContext()))
                    {
-                       Message message = new Message(0, id_user, doctor.getId(), content,getDateTimeNow(),isUser);
+                       Message message = new Message(id_user, doctor.getId(), content,getDateTimeNow(),isUser);
                        myRef.child("Message").push().setValue(message);
+                       try {
+                           db.insertMessageToSqlite(message);
+                       } catch (IOException e) {
+                           e.printStackTrace();
+                       }
                        edtContent.setText("");
                    }
                    else
                    {
                        //lưu tin nhắn vô Local, đợi có Internet thì cập nhật Local lên DB
-                       Toast.makeText(getContext(),"Save Message to LocalDB!!",Toast.LENGTH_SHORT).show();
-                       Message message = new Message(0, id_user, doctor.getId(), content,getDateTimeNow(),isUser);
+//                       Toast.makeText(getContext(),"Save Message to LocalDB!!",Toast.LENGTH_SHORT).show();
+                       Message message = new Message(0, id_user, doctor.getId(), content,getDateTimeNow(),isUser,1);
                        try {
                            db.insertMessageToSqlite(message);
                            getData();
@@ -170,6 +174,7 @@ public class DetailMessFragment extends Fragment {
 
         return v;
     }
+
     public void getData(){
         if(CheckInternet.checkInternet(getContext()))
         {
@@ -183,6 +188,15 @@ public class DetailMessFragment extends Fragment {
                         if(m.getId_Doctor() == doctor.getId() && m.getId_User() == id_user){
                             listMess.add(m);
                         }
+                    }
+                    if(listMess.size()!=getDetailLocalMessage().size())
+                    {
+                        for(Message message:db.getMessageToUpdate())
+                        {
+                            myRef.child("Message").push().setValue(message);
+                        }
+                        db.updateMessageSqlite();
+
                     }
                     scrollView();
                     myAdapter.notifyDataSetChanged();

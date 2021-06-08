@@ -122,7 +122,7 @@ public class mainScreenFragment extends Fragment {
                 }
                 try {
                     //db.createMessageTable();]
-           Toast.makeText(getContext(),String.valueOf(messages.size()),Toast.LENGTH_SHORT).show();
+//           Toast.makeText(getContext(),String.valueOf(messages.size()),Toast.LENGTH_SHORT).show();
                     db.createMessageTable();
                     Cursor cursor=db.getMessageFromSqlite();
                     if(cursor.getCount()==0) db.saveMessageTableToDB(messages);

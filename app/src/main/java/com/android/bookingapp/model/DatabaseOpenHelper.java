@@ -74,7 +74,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,1);
         else
             contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,0);
-        contentValues.put(DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_,1);
+        contentValues.put(DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_,message.getCheckLocalMes());
         db.insert(DbContract.MenuEntry.TABLE_MESSAGE,null,contentValues);
     }
 
@@ -100,14 +100,12 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         ArrayList<Message> messages=new ArrayList<>();
         while (cursor.moveToNext())
         {
-            int id=cursor.getInt(0);
             int idUser=cursor.getInt(1);
             int idDoctor=cursor.getInt(2);
             String content=cursor.getString(3);
             String date_time=cursor.getString(4);
             int from_person=cursor.getInt(5);
-            int checkLocalMess=cursor.getInt(6);
-            Message message = new Message(id, idUser,idDoctor, content,date_time,from_person==1?true:false,checkLocalMess);
+            Message message = new Message(idUser,idDoctor, content,date_time,from_person==1?true:false);
             messages.add(message);
         }
         return messages;
