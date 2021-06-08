@@ -78,6 +78,7 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                 holder.tvSend.setVisibility(View.VISIBLE);
                 holder.tvReceive.setVisibility(View.INVISIBLE);
                 if(listMess.get(position).getCheckLocalMes()==1) holder.ivReload.setVisibility(View.VISIBLE);
+                else holder.ivReload.setVisibility(View.INVISIBLE);
             }
             else
             {
