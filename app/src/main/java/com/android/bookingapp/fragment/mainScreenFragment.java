@@ -105,13 +105,12 @@ public class mainScreenFragment extends Fragment {
             for(Doctor d : listDoc){
                 list.add(d.getFullname());
             }
-            Toast.makeText(getContext(),"offine",Toast.LENGTH_SHORT).show();
         }
         else{
+            getUserLogin();
             getAllDepart();
             getAllMessage();
             getAllDoctor();
-            getUserLogin();
         }
         dialogBuilder=new AlertDialog.Builder(getContext());
         departAdapter = new DepartAdapter(mDeparts,idUser);
@@ -121,7 +120,11 @@ public class mainScreenFragment extends Fragment {
         ivLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showLogoutDialog();
+                if(!CheckInternet.checkInternet(getContext())) {
+                    Toast.makeText(getContext(),"Offine",Toast.LENGTH_SHORT).show();
+                } else {
+                    showLogoutDialog();
+                }
             }
         });
         ivAccount.setOnClickListener(new View.OnClickListener() {

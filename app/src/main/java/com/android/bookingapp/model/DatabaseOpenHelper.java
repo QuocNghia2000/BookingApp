@@ -141,7 +141,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             contentValues.put(DbContract.MenuEntry.COLUMN_EMAIL,user.getEmail());
             contentValues.put(DbContract.MenuEntry.COLUMN_PASSWORD,user.getPassword());
             contentValues.put(DbContract.MenuEntry.COLUMN_FULLNAME,user.getFullname());
-            contentValues.put(DbContract.MenuEntry.COLUMN_PHONE,user.getPassword());
+            contentValues.put(DbContract.MenuEntry.COLUMN_PHONE,user.getPhone());
             contentValues.put(DbContract.MenuEntry.COLUMN_GENDER,gender);
             contentValues.put(DbContract.MenuEntry.COLUMN_JOB,user.getJob());
             contentValues.put(DbContract.MenuEntry.COLUMN_ADDRESS,user.getAddress());
@@ -156,6 +156,13 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         return cursor;
     }
     public Cursor getUserFromUser(int id_user)
+    {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_USER+" where "+DbContract.MenuEntry._ID
+                +"="+id_user,null);
+        return cursor;
+    }
+
+    public Cursor getUserBookFromUser(int id_user)
     {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_USER+" where "+DbContract.MenuEntry._ID
                 +"="+id_user,null);
@@ -204,7 +211,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             contentValues.put(DbContract.MenuEntry.COLUMN_EMAIL,doctor.getEmail());
             contentValues.put(DbContract.MenuEntry.COLUMN_PASSWORD,doctor.getPassword());
             contentValues.put(DbContract.MenuEntry.COLUMN_FULLNAME,doctor.getFullname());
-            contentValues.put(DbContract.MenuEntry.COLUMN_PHONE,doctor.getPassword());
+            contentValues.put(DbContract.MenuEntry.COLUMN_PHONE,doctor.getPhone());
             contentValues.put(DbContract.MenuEntry.COLUMN_ID_DEPARTMENT,doctor.getDepartment());
             contentValues.put(DbContract.MenuEntry.COLUMN_ACHIVEMENT,doctor.getAchivement());
             contentValues.put(DbContract.MenuEntry.COLUMN_ADDRESS_DOCTOR,doctor.getAddress());
