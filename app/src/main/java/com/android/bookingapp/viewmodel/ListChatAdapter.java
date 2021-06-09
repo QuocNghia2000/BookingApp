@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.User;
@@ -32,8 +33,6 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
     private ArrayList<Message> listMess;
     private ArrayList<Doctor> listContactAll;
     private ArrayList<User> listContactDocAll;
-    private DatabaseReference dbRef;
-    //private  User user;
     private Doctor doctor;
     private Context context;
     private int id_user=-1;
@@ -64,23 +63,33 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull ListChatAdapter.MyViewHolder holder, int position) {
-        if(this.id_user!=-1){
+        if(CheckInternet.checkInternet(context)){
+            if(this.id_user!=-1){
+                holder.name.setText(listContact.get(position).getFullname());
+                for(Message mess: listMess){
+                    if (mess.getId_Doctor() == listContact.get(position).getId() ){
+                        holder.content.setText(mess.getContent());
+                    }
+                }
+            }
+            else {
+                holder.name.setText(listContactDoc.get(position).getFullname());
+                for(Message mess: listMess){
+                    if (mess.getId_User() == listContactDoc.get(position).getId() ){
+                        holder.content.setText(mess.getContent());
+                    }
+                }
+            }
+        }
+        else
+        {
             holder.name.setText(listContact.get(position).getFullname());
             for(Message mess: listMess){
-                if (mess.getId_Doctor() == listContact.get(position).getId() ){
+                if (mess.getId_Doctor() == listContact.get(position).getId()-1 ){
                     holder.content.setText(mess.getContent());
                 }
             }
         }
-        else {
-            holder.name.setText(listContactDoc.get(position).getFullname());
-            for(Message mess: listMess){
-                if (mess.getId_User() == listContactDoc.get(position).getId() ){
-                    holder.content.setText(mess.getContent());
-                }
-            }
-        }
-
     }
 
     @Override
