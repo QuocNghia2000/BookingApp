@@ -124,7 +124,7 @@ public class DetailMessFragment extends Fragment {
                    }
                    else
                    {
-                       Message message = new Message(0, id_user, doctor.getId(), content,getDateTimeNow(),isUser,1);
+                       Message message = new Message(0, id_user, doctor.getId()-1, content,getDateTimeNow(),isUser,1);
                        try {
                            db.insertMessageToSqlite(message);
                            getData();
@@ -213,7 +213,7 @@ public class DetailMessFragment extends Fragment {
     public ArrayList<Message> getDetailLocalMessage()
     {
         ArrayList<Message> messages=new ArrayList<>();
-        Cursor cursor=db.getDetailFromMessage(doctor.getId());
+        Cursor cursor=db.getDetailFromMessage(doctor.getId()-1);
         while (cursor.moveToNext())
         {
             int id=cursor.getInt(0);

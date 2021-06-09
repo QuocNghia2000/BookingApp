@@ -66,6 +66,7 @@ public class mainScreenFragment extends Fragment {
     DatabaseOpenHelper db;
     ArrayList<Message> messages;
     ArrayList<User> users;
+    ArrayList<User> userAll;
     private TextView tvSearch;
     Dialog dialogSearch;
     private List<String> list;
@@ -184,7 +185,7 @@ public class mainScreenFragment extends Fragment {
                         newDialog.setContentView(binding.getRoot());
                         binding.setDoctor(listDoc.get(position));
                         for(Department d : mDeparts){
-                            if(listDoc.get(position).getDepartment() == d.getId()){
+                            if(listDoc.get(position).getDepartment() == d.getId()-1){
                                 binding.setDepartment(d);
                             }
                         }
@@ -261,22 +262,34 @@ public class mainScreenFragment extends Fragment {
     private void getUserLogin()
     {
         users=new ArrayList<>();
+        userAll = new ArrayList<>();
         dbReference.child("User").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 users.clear();
+                userAll.clear();
                 for(DataSnapshot data: snapshot.getChildren()){
                     User user = data.getValue(User.class);
+                    userAll.add(user);
                     if(user.getId()==idUser) {
                         users.add(user);
                     }
-                    try {
-                        db.createUserTable();
-                        Cursor cursor=db.getUserFromSqlite();
-                        if(cursor.getCount()==0) db.saveUserTableToDB(users);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                }
+                try {
+                    db.deleteInformationUser();
+                    db.createUserTable();
+                    Cursor cursor=db.getUserFromSqlite();
+                    if(getActivity().getIntent().getSerializableExtra("doctor")!=null){
+                        if(cursor.getCount()==0)
+                        {
+                            db.saveUserTableToDB(userAll);
+                            Toast.makeText(getContext(),"okok",Toast.LENGTH_SHORT).show();
+                        }
+
                     }
+                    else if(cursor.getCount()==0) db.saveUserTableToDB(users);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
             @Override

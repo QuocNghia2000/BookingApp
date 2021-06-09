@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
+import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.User;
@@ -77,6 +78,7 @@ public class ListChatFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_list_chat, container, false);
 
         listMess = new ArrayList<>();
+        db=new DatabaseOpenHelper(getContext());
         rcvListChat = v.findViewById(R.id.rcv_listchat);
         imvBack=v.findViewById(R.id.imv_back_listChat);
         rcvListChat.setLayoutManager(new GridLayoutManager(getContext(),1));
@@ -84,43 +86,18 @@ public class ListChatFragment extends Fragment {
         {
             id_user = getArguments().getInt("id_user");
             listContact = new ArrayList<>();
-            if(CheckInternet.checkInternet((getContext()))){
+            if(CheckInternet.checkInternet(getContext())){
                 getListMessUser();
             }
-            else
-            {
-//                listContact = new ArrayList<>(doctemp);
-//                listChatAdapter = new ListChatAdapter(id_user,getContext(),listContact, (ArrayList<Message>) listMess);
-//                rcvListChat.setAdapter(listChatAdapter);
-//                listChatAdapter.notifyDataSetChanged();
-            }
+            else getListMessUserOff();
+
         }
-
-        if(CheckInternet.checkInternet(getContext())){
-            if(getArguments().getInt("id_user",-1)!=-1)
-            {
-                id_user = getArguments().getInt("id_user");
-                listContact = new ArrayList<>();
-                getListMessUser();
-            }
-            else
-            {
-                doctor = (Doctor) getArguments().getSerializable("doctor");
-                listContactDoc = new ArrayList<>();
-                getListMessDoctor();
-            }
+        else
+        {
+            doctor = (Doctor) getArguments().getSerializable("doctor");
+            listContactDoc = new ArrayList<>();
+            getListMessDoctor();
         }
-
-
-
-
-        //rcvListChat.setAdapter(listChatAdapter);
-
-//        Date d = new Date("20","5","2021");
-//        Time t = new Time(22,04);
-//        Message m = new Message(0,1,2,"Banh kem Thanh Hien!!",d,t,true);
-//        myRef = FirebaseDatabase.getInstance().getReference();
-//        myRef.child("Message").push().setValue(m);
 
         imvBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,8 +115,6 @@ public class ListChatFragment extends Fragment {
     }
 
     public void getListMessUser(){
-//        List<Integer> idDoctor = new ArrayList<>();
-//        List<Integer> idDoctorFirst = new ArrayList<>();
         dbRef = FirebaseDatabase.getInstance().getReference("Message");
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -204,8 +179,6 @@ public class ListChatFragment extends Fragment {
 
                     }
                 });
-
-
             }
 
             @Override
@@ -214,6 +187,53 @@ public class ListChatFragment extends Fragment {
             }
         });
 
+    }
+
+    public void getListMessUserOff(){
+        ArrayList<Integer> idDoctor = new ArrayList<>();
+        ArrayList<Integer> idDoctorFirst = new ArrayList<>();
+        ArrayList<Message> messTemp = getDetailLocalMessage();
+        ArrayList<Doctor> docTemp = getDetailLocalDoctor();
+        for(Message mess : messTemp){
+            idDoctorFirst.add(mess.getId_Doctor());
+            int t = getPositionList(listMess,mess.getId_Doctor());
+            if(t > -1)
+            {
+                listMess.remove(t);
+                listMess.add(t,mess);
+            }
+            else
+            {
+                listMess.add(mess);
+            }
+        }
+        listContact = new ArrayList<>();
+        for (int i=idDoctorFirst.size()-1;i>=0;i--){
+            if(!isConstrainList(idDoctor,idDoctorFirst.get(i))){
+                idDoctor.add(idDoctorFirst.get(i));
+            }
+        }
+        for(Doctor d : docTemp){
+            if(isConstrainList(idDoctor,d.getId()-1))
+            {
+                listContact.add(d);
+            }
+        }
+        List<Doctor> doctemp = new ArrayList<>();
+
+        for(int i=0;i<idDoctor.size();i++){
+            for(Doctor d : listContact){
+                if (idDoctor.get(i)+1 == d.getId())
+                {
+                    doctemp.add(d);
+                    break;
+                }
+            }
+        }
+        listContact = new ArrayList<>(doctemp);
+        listChatAdapter = new ListChatAdapter(id_user,getContext(),listContact, (ArrayList<Message>) listMess);
+        rcvListChat.setAdapter(listChatAdapter);
+        listChatAdapter.notifyDataSetChanged();
     }
 
     public ArrayList<Message> getDetailLocalMessage()
@@ -233,6 +253,7 @@ public class ListChatFragment extends Fragment {
         }
         return messages;
     }
+
 
     public String getDateTimeNow(){
         Calendar calendar = Calendar.getInstance();
