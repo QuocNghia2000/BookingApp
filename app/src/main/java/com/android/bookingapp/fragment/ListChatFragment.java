@@ -80,6 +80,21 @@ public class ListChatFragment extends Fragment {
         rcvListChat = v.findViewById(R.id.rcv_listchat);
         imvBack=v.findViewById(R.id.imv_back_listChat);
         rcvListChat.setLayoutManager(new GridLayoutManager(getContext(),1));
+        if(getArguments().getInt("id_user",-1)!=-1)
+        {
+            id_user = getArguments().getInt("id_user");
+            listContact = new ArrayList<>();
+            if(CheckInternet.checkInternet((getContext()))){
+                getListMessUser();
+            }
+            else
+            {
+//                listContact = new ArrayList<>(doctemp);
+//                listChatAdapter = new ListChatAdapter(id_user,getContext(),listContact, (ArrayList<Message>) listMess);
+//                rcvListChat.setAdapter(listChatAdapter);
+//                listChatAdapter.notifyDataSetChanged();
+            }
+        }
 
         if(CheckInternet.checkInternet(getContext())){
             if(getArguments().getInt("id_user",-1)!=-1)
@@ -125,152 +140,80 @@ public class ListChatFragment extends Fragment {
     public void getListMessUser(){
 //        List<Integer> idDoctor = new ArrayList<>();
 //        List<Integer> idDoctorFirst = new ArrayList<>();
-        if(CheckInternet.checkInternet(getContext())){
-            dbRef = FirebaseDatabase.getInstance().getReference("Message");
-            dbRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    ArrayList<Integer> idDoctor = new ArrayList<>();
-                    ArrayList<Integer> idDoctorFirst = new ArrayList<>();
-                    for(DataSnapshot data: snapshot.getChildren())
+        dbRef = FirebaseDatabase.getInstance().getReference("Message");
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ArrayList<Integer> idDoctor = new ArrayList<>();
+                ArrayList<Integer> idDoctorFirst = new ArrayList<>();
+                for(DataSnapshot data: snapshot.getChildren())
+                {
+                    Message mess = data.getValue(Message.class);
+                    if(mess.getId_User() == id_user)
                     {
-                        Message mess = data.getValue(Message.class);
-                        if(mess.getId_User() == id_user)
+                        idDoctorFirst.add(mess.getId_Doctor());
+                        int t = getPositionList(listMess,mess.getId_Doctor());
+                        if(t > -1)
                         {
-                            idDoctorFirst.add(mess.getId_Doctor());
-                            int t = getPositionList(listMess,mess.getId_Doctor());
-                            if(t > -1)
-                            {
-                                listMess.remove(t);
-                                listMess.add(t,mess);
-                            }
-                            else
-                            {
-                                listMess.add(mess);
-                            }
+                            listMess.remove(t);
+                            listMess.add(t,mess);
+                        }
+                        else
+                        {
+                            listMess.add(mess);
                         }
                     }
-                    listContact = new ArrayList<>();
-                    for (int i=idDoctorFirst.size()-1;i>=0;i--){
-                        if(!isConstrainList(idDoctor,idDoctorFirst.get(i))){
-                            idDoctor.add(idDoctorFirst.get(i));
-                        }
+                }
+                listContact = new ArrayList<>();
+                for (int i=idDoctorFirst.size()-1;i>=0;i--){
+                    if(!isConstrainList(idDoctor,idDoctorFirst.get(i))){
+                        idDoctor.add(idDoctorFirst.get(i));
                     }
+                }
 
-                    dbRef = FirebaseDatabase.getInstance().getReference("Doctor");
-                    dbRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            for(DataSnapshot data: snapshot.getChildren())
+                dbRef = FirebaseDatabase.getInstance().getReference("Doctor");
+                dbRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot data: snapshot.getChildren())
+                        {
+                            Doctor d = data.getValue(Doctor.class);
+                            if(isConstrainList(idDoctor,d.getId()))
                             {
-                                Doctor d = data.getValue(Doctor.class);
-                                if(isConstrainList(idDoctor,d.getId()))
+                                listContact.add(d);
+                            }
+                        }
+                        List<Doctor> doctemp = new ArrayList<>();
+                        for(int i=0;i<idDoctor.size();i++){
+                            for(Doctor d : listContact){
+                                if (idDoctor.get(i) == d.getId())
                                 {
-                                    listContact.add(d);
+                                    doctemp.add(d);
+                                    break;
                                 }
                             }
-                            List<Doctor> doctemp = new ArrayList<>();
-                            for(int i=0;i<idDoctor.size();i++){
-                                for(Doctor d : listContact){
-                                    if (idDoctor.get(i) == d.getId())
-                                    {
-                                        doctemp.add(d);
-                                        break;
-                                    }
-                                }
-                            }
-                            listContact = new ArrayList<>(doctemp);
-                            listChatAdapter = new ListChatAdapter(id_user,getContext(),listContact, (ArrayList<Message>) listMess);
-                            rcvListChat.setAdapter(listChatAdapter);
-                            listChatAdapter.notifyDataSetChanged();
                         }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
-        else {
-            listMess.clear();
-            ArrayList<Integer> idDoctor = new ArrayList<>();
-            ArrayList<Integer> idDoctorFirst = new ArrayList<>();
-            List<Message> listTemp = getDetailLocalMessage();
-            for(Message mess : listTemp){
-                if(mess.getId_User() == id_user)
-                {
-                    idDoctorFirst.add(mess.getId_Doctor());
-                    int t = getPositionList(listMess,mess.getId_Doctor());
-                    if(t > -1)
-                    {
-                        listMess.remove(t);
-                        listMess.add(t,mess);
+                        listContact = new ArrayList<>(doctemp);
+                        listChatAdapter = new ListChatAdapter(id_user,getContext(),listContact, (ArrayList<Message>) listMess);
+                        rcvListChat.setAdapter(listChatAdapter);
+                        listChatAdapter.notifyDataSetChanged();
                     }
-                    else
-                    {
-                        listMess.add(mess);
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
                     }
-                }
-            }
-            listContact = new ArrayList<>();
-            for (int i=idDoctorFirst.size()-1;i>=0;i--){
-                if(!isConstrainList(idDoctor,idDoctorFirst.get(i))){
-                    idDoctor.add(idDoctorFirst.get(i));
-                }
-            }
-            List<Doctor> docTemp = getDetailLocalDoctor();
-            for(Doctor d : docTemp){
-                if(isConstrainList(idDoctor,d.getId()))
-                {
-                    listContact.add(d);
-                }
-            }
-            List<Doctor> doctemp = new ArrayList<>();
-            for(int i=0;i<idDoctor.size();i++){
-                for(Doctor d : listContact){
-                    if (idDoctor.get(i) == d.getId())
-                    {
-                        doctemp.add(d);
-                        break;
-                    }
-                }
-            }
-            listContact = new ArrayList<>(doctemp);
-            listChatAdapter = new ListChatAdapter(id_user,getContext(),listContact, (ArrayList<Message>) listMess);
-            rcvListChat.setAdapter(listChatAdapter);
-            listChatAdapter.notifyDataSetChanged();
-        }
+                });
 
 
-    }
+            }
 
-    public ArrayList<Doctor> getDetailLocalDoctor(){
-        ArrayList<Doctor> doctors=new ArrayList<>();
-        Cursor cursor=db.getDoctorFromSqlite();
-        while (cursor.moveToNext())
-        {
-            int id=cursor.getInt(0);
-            String email=cursor.getString(1);
-            String password=cursor.getString(2);
-            String fullname=cursor.getString(3);
-            String phone=cursor.getString(4);
-            int gender=cursor.getInt(5);
-            int id_Depart=cursor.getInt(6);
-            String achivement=cursor.getString(7);
-            String address=cursor.getString(8);
-            Doctor doctor = new Doctor(id, email,password, fullname,phone,id_Depart,achivement,address);
-            doctors.add(doctor);
-        }
-        return doctors;
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     public ArrayList<Message> getDetailLocalMessage()
@@ -392,6 +335,26 @@ public class ListChatFragment extends Fragment {
             i++;
         }
         return -1;
+    }
+
+    public ArrayList<Doctor> getDetailLocalDoctor(){
+        ArrayList<Doctor> doctors=new ArrayList<>();
+        Cursor cursor=db.getDoctorFromSqlite();
+        while (cursor.moveToNext())
+        {
+            int id=cursor.getInt(0);
+            int id_Depart=cursor.getInt(1);
+            String email=cursor.getString(2);
+            String password=cursor.getString(3);
+            String fullname=cursor.getString(4);
+            String phone=cursor.getString(5);
+            String achivement=cursor.getString(6);
+            String address=cursor.getString(7);
+
+            Doctor doctor = new Doctor(id, email,password, fullname,phone,id_Depart,achivement,address);
+            doctors.add(doctor);
+        }
+        return doctors;
     }
 
 }
