@@ -51,7 +51,6 @@ public class DetailMessFragment extends Fragment {
     private SearchView searchView;
     DatabaseOpenHelper db;
     private ArrayList<Message> listMess;
-    ArrayList<Message> messages;
     NetWorkChangeListener netWorkChangeListener;
 
 
@@ -66,7 +65,6 @@ public class DetailMessFragment extends Fragment {
             id_user = getArguments().getInt("id_user");
             isUser = getArguments().getBoolean("isUser");
         }
-//        Toast.makeText(getContext(),getDateNow(),Toast.LENGTH_SHORT).show();
         netWorkChangeListener=new NetWorkChangeListener();
         listMess = new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
@@ -84,7 +82,6 @@ public class DetailMessFragment extends Fragment {
         db=new DatabaseOpenHelper(getContext());
         getData();
 
-        //getdata->fullname
         myRef.child("User").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -127,8 +124,6 @@ public class DetailMessFragment extends Fragment {
                    }
                    else
                    {
-                       //lưu tin nhắn vô Local, đợi có Internet thì cập nhật Local lên DB
-//                       Toast.makeText(getContext(),"Save Message to LocalDB!!",Toast.LENGTH_SHORT).show();
                        Message message = new Message(0, id_user, doctor.getId(), content,getDateTimeNow(),isUser,1);
                        try {
                            db.insertMessageToSqlite(message);
@@ -196,7 +191,6 @@ public class DetailMessFragment extends Fragment {
                             myRef.child("Message").push().setValue(message);
                         }
                         db.updateMessageSqlite();
-
                     }
                     scrollView();
                     myAdapter.notifyDataSetChanged();
@@ -244,17 +238,5 @@ public class DetailMessFragment extends Fragment {
         String time = simpleTimeFormat.format(calendar.getTime());
         java.util.Date day  = calendar.getTime();
         return  simpleDateFormat.format(day)+" "+time;
-
     }
-
-    public Time getTimeNow(){
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
-        String time = simpleDateFormat.format(calendar.getTime());
-
-        String[] temp = time.split(":");
-        Time t = new Time(Integer.parseInt(temp[0]) ,Integer.parseInt(temp[1]));
-        return t;
-    }
-
 }
