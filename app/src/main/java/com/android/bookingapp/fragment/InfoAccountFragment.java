@@ -206,6 +206,7 @@ public class InfoAccountFragment extends Fragment {
                             job.getText().toString(),address.getText().toString())).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
+                            db.updateUserSqlite(user_now);
                             Toast.makeText(getContext(),"Xác nhận thành công",Toast.LENGTH_SHORT).show();
 
                         }
@@ -216,7 +217,6 @@ public class InfoAccountFragment extends Fragment {
                         }
                     });
                     dialogInterface.dismiss();
-                    db.updateUserSqlite(user_now);;
                     Navigation.findNavController(getView()).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment, new Bundle());
                 }
                 else

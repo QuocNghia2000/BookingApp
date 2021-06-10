@@ -18,14 +18,8 @@ import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.User;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyViewHolder> implements Filterable {
     private ArrayList<Doctor> listContact;
@@ -118,6 +112,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                     if(id_user!=-1)
                     {
                         bundle.putInt("id_user",id_user);
+                        bundle.putString("fullnameUser",listContact.get(getAdapterPosition()).getFullname());
                         bundle.putSerializable("doctor",listContact.get(getAdapterPosition()));
                         bundle.putBoolean("isUser",true);
                     }
