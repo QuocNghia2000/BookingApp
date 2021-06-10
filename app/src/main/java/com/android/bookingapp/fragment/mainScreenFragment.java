@@ -407,7 +407,6 @@ public class mainScreenFragment extends Fragment {
             String phone=cursor.getString(5);
             String achivement=cursor.getString(6);
             String address=cursor.getString(7);
-
             Doctor doctor = new Doctor(id, email,password, fullname,phone,id_Depart,achivement,address);
             doctors.add(doctor);
         }

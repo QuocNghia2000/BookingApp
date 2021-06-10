@@ -128,7 +128,8 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 DbContract.MenuEntry.COLUMN_GENDER+" INTEGER ,"+
                 DbContract.MenuEntry.COLUMN_JOB+" TEXT ,"+
                 DbContract.MenuEntry.COLUMN_ADDRESS+" TEXT ,"+
-                DbContract.MenuEntry.COLUMN_BIRTHDAY+" TEXT "+");";
+                DbContract.MenuEntry.COLUMN_BIRTHDAY+" TEXT ,"+
+                DbContract.MenuEntry.COLUMN_ID_USER+" INTEGER "+");";
         db.execSQL(SQL_CREATE_BUGS_TABLE);
     }
     public void saveUserTableToDB(ArrayList<User> users) throws IOException {
@@ -146,6 +147,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             contentValues.put(DbContract.MenuEntry.COLUMN_JOB,user.getJob());
             contentValues.put(DbContract.MenuEntry.COLUMN_ADDRESS,user.getAddress());
             contentValues.put(DbContract.MenuEntry.COLUMN_BIRTHDAY,birthday);
+            contentValues.put(DbContract.MenuEntry.COLUMN_ID_USER,user.getId());
             db.insert(DbContract.MenuEntry.TABLE_USER,null,contentValues);
         }
     }
