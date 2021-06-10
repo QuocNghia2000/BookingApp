@@ -5,11 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
-import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.User;
@@ -39,14 +35,10 @@ import java.util.List;
 
 public class ListChatFragment extends Fragment {
     private List<Message> listMess;
-    //private User user;
     private Doctor doctor;
     private RecyclerView rcvListChat;
     private ListChatAdapter listChatAdapter;
-    private List<Doctor> listDocContact;
     private DatabaseReference dbRef;
-    private boolean isPerson;
-    private boolean person;
     private ImageView imvBack;
     private int id_user;
     private SearchView searchView;

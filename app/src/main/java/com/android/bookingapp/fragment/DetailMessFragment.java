@@ -22,8 +22,6 @@ import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.NetWorkChangeListener;
-import com.android.bookingapp.model.Time;
-import com.android.bookingapp.model.User;
 import com.android.bookingapp.viewmodel.DetailChatAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,11 +45,11 @@ public class DetailMessFragment extends Fragment {
     private EditText edtContent;
     private ImageView imvSend,ivBack;
     private DatabaseReference myRef;
-    private User user;
     private SearchView searchView;
     DatabaseOpenHelper db;
     private ArrayList<Message> listMess;
     NetWorkChangeListener netWorkChangeListener;
+    String fullnameUser;
 
 
     @Override
@@ -64,6 +62,7 @@ public class DetailMessFragment extends Fragment {
             doctor = (Doctor) getArguments().getSerializable("doctor");
             id_user = getArguments().getInt("id_user");
             isUser = getArguments().getBoolean("isUser");
+            fullnameUser=getArguments().getString("fullnameUser");
         }
         netWorkChangeListener=new NetWorkChangeListener();
         listMess = new ArrayList<>();
@@ -82,28 +81,10 @@ public class DetailMessFragment extends Fragment {
         db=new DatabaseOpenHelper(getContext());
         getData();
 
-        myRef.child("User").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot data: snapshot.getChildren())
-                {
-                    User user1 = data.getValue(User.class);
-                    if(user1.getId()==id_user)
-                    {
-                        user=new User(user1.getId(),user1.getEmail(),user1.getPassword(),user1.getFullname(),user1.getPhone());
-                        break;
-                    }
-                }
-                if(isUser){
-                    tvName.setText(doctor.getFullname());
-                }
-                else tvName.setText(user.getFullname());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
+        if(isUser){
+            tvName.setText(doctor.getFullname());
+        }
+        else tvName.setText(fullnameUser);
 
         imvSend.setOnClickListener(new View.OnClickListener() {
             @Override
