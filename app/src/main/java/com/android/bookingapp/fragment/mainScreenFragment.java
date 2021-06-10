@@ -276,14 +276,12 @@ public class mainScreenFragment extends Fragment {
                     }
                 }
                 try {
-                    db.deleteInformationUser();
                     db.createUserTable();
                     Cursor cursor=db.getUserFromSqlite();
                     if(getActivity().getIntent().getSerializableExtra("doctor")!=null){
                         if(cursor.getCount()==0)
                         {
                             db.saveUserTableToDB(userAll);
-                            Toast.makeText(getContext(),"okok",Toast.LENGTH_SHORT).show();
                         }
 
                     }

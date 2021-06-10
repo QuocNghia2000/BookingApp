@@ -1,6 +1,5 @@
 package com.android.bookingapp.viewmodel;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,14 +18,12 @@ import com.android.bookingapp.model.Doctor;
 import java.util.ArrayList;
 
 public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapter.MyViewHolder> {
-    private Context context;
     private int id_user;
     private ArrayList<Doctor> mDoctors;
 
-    public DetailDepartAdapter(ArrayList<Doctor> mDoctors,int id_user,Context context){
+    public DetailDepartAdapter(ArrayList<Doctor> mDoctors,int id_user){
         this.id_user = id_user;
         this.mDoctors=mDoctors;
-        this.context = context;
     }
 
     @NonNull
