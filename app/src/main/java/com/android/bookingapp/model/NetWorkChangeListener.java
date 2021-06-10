@@ -6,11 +6,12 @@ import android.content.Intent;
 import android.widget.Toast;
 
 public class NetWorkChangeListener extends BroadcastReceiver {
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if(!CheckInternet.checkInternet(context))
         {
-            Toast.makeText(context,"Don't have Internet",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"detailMessFragment.getDateTimeNow()",Toast.LENGTH_SHORT).show();
         }
     }
 }

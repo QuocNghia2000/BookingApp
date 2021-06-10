@@ -1,6 +1,11 @@
 package com.android.bookingapp.fragment;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +27,7 @@ import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
-import com.android.bookingapp.model.NetWorkChangeListener;
+import com.android.bookingapp.view.NotificationApplication;
 import com.android.bookingapp.viewmodel.DetailChatAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,6 +39,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Random;
 
 
 public class DetailMessFragment extends Fragment {
@@ -48,7 +55,6 @@ public class DetailMessFragment extends Fragment {
     private SearchView searchView;
     DatabaseOpenHelper db;
     private ArrayList<Message> listMess,messageList;
-    NetWorkChangeListener netWorkChangeListener;
     String fullnameUser,contentNotification;
 
 
@@ -70,7 +76,7 @@ public class DetailMessFragment extends Fragment {
                 {
                     if(CheckInternet.checkInternet(getContext()))
                     {
-                        Message message = new Message(id_user, doctor.getId(), content,getDateTimeNow(),isUser);
+                        Message message = new Message(id_user, doctor.getId()-1, content,getDateTimeNow(),isUser);
                         myRef.child("Message").push().setValue(message);
                         try {
                             db.insertMessageToSqlite(message);
@@ -81,7 +87,7 @@ public class DetailMessFragment extends Fragment {
                     }
                     else
                     {
-                        Message message = new Message(0, id_user, doctor.getId()-1, content,getDateTimeNow(),isUser,1);
+                        Message message = new Message(0,id_user, doctor.getId()-1, content,getDateTimeNow(),isUser,1);
                         try {
                             db.insertMessageToSqlite(message);
                             getData();
@@ -135,7 +141,6 @@ public class DetailMessFragment extends Fragment {
             isUser = getArguments().getBoolean("isUser");
             fullnameUser=getArguments().getString("fullnameUser");
         }
-        netWorkChangeListener=new NetWorkChangeListener();
         listMess = new ArrayList<>();
         messageList=new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
@@ -214,6 +219,21 @@ public class DetailMessFragment extends Fragment {
         }
     }
 
+    public void sendNotification()
+    {
+        Bitmap bitmap= BitmapFactory.decodeResource(getContext().getResources(), R.mipmap.ic_launcher_round);
+        Notification notification=new NotificationCompat.Builder(getContext(), NotificationApplication.CHANNEL_ID)
+                .setContentTitle(fullnameUser)
+                .setContentText(contentNotification)
+                .setSmallIcon(R.drawable.messenger).setLargeIcon(bitmap).build();
+        NotificationManager notificationManager=(NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        if(notificationManager!=null)
+        {
+            Random random=new Random();
+
+            notificationManager.notify(random.nextInt(),notification);
+        }
+    }
     public ArrayList<Message> getDetailLocalMessage()
     {
         ArrayList<Message> messages=new ArrayList<>();
