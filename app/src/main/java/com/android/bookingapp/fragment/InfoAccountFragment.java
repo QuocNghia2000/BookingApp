@@ -38,7 +38,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class InfoAccountFragment extends Fragment {
-    private User user_now;
+    private User user_now, user_save;
     private int id;
     private Button confirm;
     private EditText name, mail, phone, job, address, password;
@@ -133,7 +133,22 @@ public class InfoAccountFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment);
             }
         });
-        if(CheckInternet.checkInternet(getContext())) {}
+        if(CheckInternet.checkInternet(getContext())) {
+            user_save = getDetailLocalUser();
+            database = FirebaseDatabase.getInstance();
+            myRef = database.getReference("User");
+            myRef.child("User" + user_save.getId()).setValue(new User(user_save.getId(),user_save.getEmail(),user_save.getPassword(),
+                    user_save.getFullname(),user_save.getPhone(),user_save.getBirthday(),user_save.isGender(),
+                    user_save.getJob(),user_save.getAddress())).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                }
+            });
+        }
         else {
             user_now = getDetailLocalUser();
             handle();
@@ -153,16 +168,16 @@ public class InfoAccountFragment extends Fragment {
                     }
                 }
                 handle();
-                confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showLogoutDialog();
-                    }
-                });
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLogoutDialog();
             }
         });
     }
@@ -221,9 +236,13 @@ public class InfoAccountFragment extends Fragment {
                 }
                 else
                 {
-                    Toast.makeText(getContext(),"No Internet",Toast.LENGTH_SHORT).show();
+                    user_now = new User(user_now.getId(),user_now.getEmail(),password.getText().toString(),
+                            name.getText().toString(),phone.getText().toString(),new Date(nDay, nMonth, nYear),male.isChecked(),
+                            job.getText().toString(),address.getText().toString());
+                    db.updateUserSqlite(user_now);
+                    dialogInterface.dismiss();
+                    Navigation.findNavController(getView()).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment, new Bundle());
                 }
-
             }
         });
         dialog = dialogBuilder.create();
@@ -235,7 +254,7 @@ public class InfoAccountFragment extends Fragment {
         Cursor cursor=db.getUserFromUser(1);
         while (cursor.moveToNext())
         {
-            int idUser=cursor.getInt(0);
+            int idUser=cursor.getInt(9);
             String email = cursor.getString(1);
             String password=cursor.getString(2);
             String fullname=cursor.getString(3);
