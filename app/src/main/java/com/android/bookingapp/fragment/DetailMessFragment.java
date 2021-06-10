@@ -1,11 +1,6 @@
 package com.android.bookingapp.fragment;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,7 +22,6 @@ import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.NetWorkChangeListener;
-import com.android.bookingapp.view.NotificationApplication;
 import com.android.bookingapp.viewmodel.DetailChatAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,7 +33,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Random;
 
 
 public class DetailMessFragment extends Fragment {
@@ -161,10 +153,9 @@ public class DetailMessFragment extends Fragment {
         db=new DatabaseOpenHelper(getContext());
         getData();
 
-        if(isUser){
-            tvName.setText(doctor.getFullname());
-        }
+        if(isUser)  tvName.setText(doctor.getFullname());
         else tvName.setText(fullnameUser);
+
     }
 
     public void getData(){
@@ -191,17 +182,19 @@ public class DetailMessFragment extends Fragment {
                             messageList.add(listMess.get(i));
                             contentNotification=listMess.get(i).getContent();
                         }
-                        Toast.makeText(getContext(),contentNotification,Toast.LENGTH_SHORT).show();
-                        if(!messageList.get(0).isFromPerson()) sendNotification();
+                        if(isUser&&!messageList.get(0).isFromPerson()) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
+                        else if(!isUser&&messageList.get(0).isFromPerson()) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
                     }
-
-                    if(listMess.size()!=getDetailLocalMessage().size())
+                    if(getDetailLocalMessage()!=null)
                     {
-                        for(Message message:db.getMessageToUpdate())
+                        if(listMess.size()!=getDetailLocalMessage().size())
                         {
-                            myRef.child("Message").push().setValue(message);
+                            for(Message message:db.getMessageToUpdate())
+                            {
+                                myRef.child("Message").push().setValue(message);
+                            }
+                            db.updateMessageSqlite();
                         }
-                        db.updateMessageSqlite();
                     }
                     scrollView();
                     myAdapter.notifyDataSetChanged();
@@ -237,21 +230,6 @@ public class DetailMessFragment extends Fragment {
             messages.add(message);
         }
         return messages;
-    }
-    private void sendNotification()
-    {
-        Bitmap bitmap= BitmapFactory.decodeResource(getContext().getResources(),R.mipmap.ic_launcher_round);
-        Notification notification=new NotificationCompat.Builder(getContext(), NotificationApplication.CHANNEL_ID)
-                .setContentTitle(fullnameUser)
-                .setContentText(contentNotification)
-                .setSmallIcon(R.drawable.messenger).setLargeIcon(bitmap).build();
-        NotificationManager notificationManager=(NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        if(notificationManager!=null)
-        {
-            Random random=new Random();
-
-            notificationManager.notify(random.nextInt(),notification);
-        }
     }
     public void scrollView()
     {
