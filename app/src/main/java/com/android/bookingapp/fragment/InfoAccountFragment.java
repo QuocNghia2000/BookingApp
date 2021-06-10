@@ -240,6 +240,7 @@ public class InfoAccountFragment extends Fragment {
                             name.getText().toString(),phone.getText().toString(),new Date(nDay, nMonth, nYear),male.isChecked(),
                             job.getText().toString(),address.getText().toString());
                     db.updateUserSqlite(user_now);
+                    Toast.makeText(getContext(),"Xác nhận thành công",Toast.LENGTH_SHORT).show();
                     dialogInterface.dismiss();
                     Navigation.findNavController(getView()).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment, new Bundle());
                 }
