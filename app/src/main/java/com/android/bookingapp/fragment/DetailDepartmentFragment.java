@@ -55,7 +55,7 @@ public class DetailDepartmentFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mDoctors=new ArrayList<>();
-        detailDepartAdapter = new DetailDepartAdapter(mDoctors,id_user,getContext());
+        detailDepartAdapter = new DetailDepartAdapter(mDoctors,id_user);
         rvDetailDeparts.setLayoutManager(new GridLayoutManager(getContext(),1));
         rvDetailDeparts.setAdapter(detailDepartAdapter);
         if(CheckInternet.checkInternet(getContext())){
