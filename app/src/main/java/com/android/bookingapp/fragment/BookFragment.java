@@ -1,5 +1,6 @@
 package com.android.bookingapp.fragment;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.databinding.FragmentBookBinding;
+import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.Reservation;
@@ -56,7 +58,7 @@ public class BookFragment extends Fragment {
     private int idReservation = 0;
     private int id_user;
     private User user;
-    private List<Reservation> listRes;
+    DatabaseOpenHelper db;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,10 +76,14 @@ public class BookFragment extends Fragment {
 
         binding= DataBindingUtil.inflate(getLayoutInflater(),R.layout.fragment_book,null,false);
         View view =binding.getRoot();
+        db=new DatabaseOpenHelper(getContext());
         binding.setDoctor(doctor);
-        //getUser->set
+        if(CheckInternet.checkInternet(getContext())) {}
+        else {
+            user = getDetailLocalUser();
+            binding.setUser(user);
+        }
         myRef = FirebaseDatabase.getInstance().getReference();
-        //Toast.makeText(getContext(),String.valueOf(id_user),Toast.LENGTH_SHORT).show();
         myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("User").addValueEventListener(new ValueEventListener() {
             @Override
@@ -93,7 +99,6 @@ public class BookFragment extends Fragment {
                 }
                 binding.setUser(user);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -105,16 +110,12 @@ public class BookFragment extends Fragment {
         edtMedicine = view.findViewById(R.id.edt_medicine_book);
         btnDone = view.findViewById(R.id.btn_done_book);
         back = view.findViewById(R.id.img_back);
-
         listTime = new ArrayList<>();
         listDate = new ArrayList<>();
         listReser = new ArrayList<>();
-
         bookAdapter = new BookAdapter(listTime,getContext(),listReser);
-
         rvBook.setLayoutManager(new GridLayoutManager(getActivity(),4));
         rvBook.setAdapter(bookAdapter);
-
         getAvailableTime();
         getDateInSpinner();
 
@@ -138,15 +139,11 @@ public class BookFragment extends Fragment {
                    {
                        Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
                        com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
-
                        if(isTrueTime(time)==-1)
                        {
                            String symptom = edtSymptom.getText().toString();
                            String medicine = edtMedicine.getText().toString();
-
-
                            Reservation reservation = new Reservation(++idReservation,id_user,doctor.getId(),symptom,medicine,time,date);
-
                            myRef = FirebaseDatabase.getInstance().getReference();
                            myRef.child("Reservation").push().setValue(reservation).addOnCompleteListener(new OnCompleteListener<Void>() {
                                @Override
@@ -167,14 +164,27 @@ public class BookFragment extends Fragment {
                    }
                    else
                    {
-                       Toast.makeText(getContext(),"No Internet",Toast.LENGTH_SHORT).show();
+                       Toast.makeText(getContext(),"Don't have Internet",Toast.LENGTH_SHORT).show();
                    }
                 }
             }
         });
-
-
         return view;
+    }
+
+    public User getDetailLocalUser() {
+        User user = new User();
+        Cursor cursor=db.getUserBookFromUser(1);
+        while (cursor.moveToNext())
+        {
+            int idUser=cursor.getInt(0);
+            String email = cursor.getString(1);
+            String password=cursor.getString(2);
+            String fullname=cursor.getString(3);
+            String phone=cursor.getString(4);
+            user = new User(idUser,email, password,fullname,phone);
+        }
+        return user;
     }
 
     public void getAvailableTime(){
@@ -184,7 +194,6 @@ public class BookFragment extends Fragment {
         listTime.add("15:00");listTime.add("15:30");listTime.add("16:00");listTime.add("16:30");
     }
 
-
     public void getDateInSpinner(){
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -192,18 +201,14 @@ public class BookFragment extends Fragment {
         Date d  = calendar.getTime();
         day = simpleDateFormat.format(d);
         listDate.add(day);
-
         calendar.add(Calendar.DAY_OF_YEAR,1);
         d  = calendar.getTime();
         day = simpleDateFormat.format(d);
         listDate.add(day);
-
         calendar.add(Calendar.DAY_OF_YEAR,1);
         d  = calendar.getTime();
         day = simpleDateFormat.format(d);
         listDate.add(day);
-
-
         ArrayAdapter spinnerAdapter = new ArrayAdapter(getContext(),android.R.layout.simple_spinner_dropdown_item,listDate);
         spBook.setAdapter(spinnerAdapter);
         spBook.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -234,15 +239,11 @@ public class BookFragment extends Fragment {
                         idReservation = idRetemp;
                         bookAdapter.notifyDataSetChanged();
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
-
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 Toast.makeText(getContext(), "onNothingSelected", Toast.LENGTH_SHORT).show();
@@ -259,7 +260,6 @@ public class BookFragment extends Fragment {
         String[] temp = stringDate.split("-");
         return new com.android.bookingapp.model.Date(temp[0],temp[1],temp[2]);
     }
-
 
     public int isTrueTime(Time t) {
         if(listReser!=null){

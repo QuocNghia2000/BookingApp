@@ -50,7 +50,6 @@ public class InfoAccountFragment extends Fragment {
     DatabaseReference myRef;
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
-    CheckInternet importFunction;
     DatabaseOpenHelper db;
 
     @Override
@@ -134,7 +133,7 @@ public class InfoAccountFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment);
             }
         });
-        if(importFunction.checkInternet(getContext())) {}
+        if(CheckInternet.checkInternet(getContext())) {}
         else {
             user_now = getDetailLocalUser();
             handle();

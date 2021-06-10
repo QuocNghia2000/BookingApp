@@ -141,7 +141,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             contentValues.put(DbContract.MenuEntry.COLUMN_EMAIL,user.getEmail());
             contentValues.put(DbContract.MenuEntry.COLUMN_PASSWORD,user.getPassword());
             contentValues.put(DbContract.MenuEntry.COLUMN_FULLNAME,user.getFullname());
-            contentValues.put(DbContract.MenuEntry.COLUMN_PHONE,user.getPassword());
+            contentValues.put(DbContract.MenuEntry.COLUMN_PHONE,user.getPhone());
             contentValues.put(DbContract.MenuEntry.COLUMN_GENDER,gender);
             contentValues.put(DbContract.MenuEntry.COLUMN_JOB,user.getJob());
             contentValues.put(DbContract.MenuEntry.COLUMN_ADDRESS,user.getAddress());
@@ -162,9 +162,16 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    private void createDoctorTable()
+    public Cursor getUserBookFromUser(int id_user)
     {
-        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_DOCTOR+"("+
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_USER+" where "+DbContract.MenuEntry._ID
+                +"="+id_user,null);
+        return cursor;
+    }
+
+    public void createDoctorTable()
+    {
+        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_DOCTOR+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 DbContract.MenuEntry.COLUMN_ID_DEPARTMENT+" INTERGER,"+
                 DbContract.MenuEntry.COLUMN_EMAIL_DOCTOR+" INTEGER NOT NULL,"+
@@ -174,6 +181,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 DbContract.MenuEntry.COLUMN_ACHIVEMENT+" TEXT ,"+
                 DbContract.MenuEntry.COLUMN_ADDRESS_DOCTOR+" TEXT "+");";
         db.execSQL(SQL_CREATE_BUGS_TABLE);
+    }
+    public Cursor getDoctorFromSqlite()
+    {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_DOCTOR,null);
+        return cursor;
     }
 
     public void updateUserSqlite(User user)
@@ -199,7 +211,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             contentValues.put(DbContract.MenuEntry.COLUMN_EMAIL,doctor.getEmail());
             contentValues.put(DbContract.MenuEntry.COLUMN_PASSWORD,doctor.getPassword());
             contentValues.put(DbContract.MenuEntry.COLUMN_FULLNAME,doctor.getFullname());
-            contentValues.put(DbContract.MenuEntry.COLUMN_PHONE,doctor.getPassword());
+            contentValues.put(DbContract.MenuEntry.COLUMN_PHONE,doctor.getPhone());
             contentValues.put(DbContract.MenuEntry.COLUMN_ID_DEPARTMENT,doctor.getDepartment());
             contentValues.put(DbContract.MenuEntry.COLUMN_ACHIVEMENT,doctor.getAchivement());
             contentValues.put(DbContract.MenuEntry.COLUMN_ADDRESS_DOCTOR,doctor.getAddress());
@@ -208,7 +220,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     }
     private void createReservationTable()
     {
-        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_RESERVATION+"("+
+        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_RESERVATION+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 DbContract.MenuEntry.COLUMN_ID_USER_RESERVATION+" INTERGER,"+
                 DbContract.MenuEntry.COLUMN_ID_DOCTOR_RESERVATION+" INTEGER NOT NULL,"+
@@ -229,12 +241,17 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             db.insert(DbContract.MenuEntry.TABLE_RESERVATION,null,contentValues);
         }
     }
-    private void createDepartmentTable()
+    public void createDepartmentTable()
     {
-        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE "+DbContract.MenuEntry.TABLE_RESERVATION+"("+
+        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_DEPARTMENT+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 DbContract.MenuEntry.COLUMN_NAME_DEPARTMENT+" TEXT "+");";
         db.execSQL(SQL_CREATE_BUGS_TABLE);
+    }
+    public Cursor getDepartmentFromSqlite()
+    {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_DEPARTMENT,null);
+        return cursor;
     }
     public void saveDepartmentTableToDB(ArrayList<Department> departments) throws IOException {
         ContentValues contentValues=new ContentValues();
