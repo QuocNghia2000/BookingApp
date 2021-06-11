@@ -56,6 +56,7 @@ public class DetailMessFragment extends Fragment {
     DatabaseOpenHelper db;
     private ArrayList<Message> listMess,messageList;
     String fullnameUser,contentNotification;
+    boolean checkisUser;
 
 
     @Override
@@ -76,7 +77,7 @@ public class DetailMessFragment extends Fragment {
                 {
                     if(CheckInternet.checkInternet(getContext()))
                     {
-                        Message message = new Message(id_user, doctor.getId()-1, content,getDateTimeNow(),isUser);
+                        Message message = new Message(id_user, doctor.getId(), content,getDateTimeNow(),isUser);
                         myRef.child("Message").push().setValue(message);
                         try {
                             db.insertMessageToSqlite(message);
@@ -87,10 +88,9 @@ public class DetailMessFragment extends Fragment {
                     }
                     else
                     {
-                        Message message = new Message(0,id_user, doctor.getId()-1, content,getDateTimeNow(),isUser,1);
+                        Message message = new Message(0,id_user, doctor.getId(), content,getDateTimeNow(),isUser,1);
                         try {
                             db.insertMessageToSqlite(message);
-                            getData();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -185,10 +185,11 @@ public class DetailMessFragment extends Fragment {
                     {
                         for (int i = messages.size(); i < listMess.size(); i++) {
                             messageList.add(listMess.get(i));
+                            checkisUser=listMess.get(i).isFromPerson();
                             contentNotification=listMess.get(i).getContent();
                         }
-                        if(isUser&&!messageList.get(0).isFromPerson()) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
-                        else if(!isUser&&messageList.get(0).isFromPerson()) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
+                        if(isUser&&!checkisUser) sendNotification();
+                        else if(!isUser&&checkisUser) sendNotification();
                     }
                     if(getDetailLocalMessage()!=null)
                     {
