@@ -11,7 +11,7 @@ public class NetWorkChangeListener extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if(!CheckInternet.checkInternet(context))
         {
-            Toast.makeText(context,"detailMessFragment.getDateTimeNow()",Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"No Internet",Toast.LENGTH_SHORT).show();
         }
     }
 }

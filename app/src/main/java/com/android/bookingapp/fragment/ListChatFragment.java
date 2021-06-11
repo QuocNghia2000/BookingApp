@@ -206,7 +206,7 @@ public class ListChatFragment extends Fragment {
             }
         }
         for(Doctor d : docTemp){
-            if(isConstrainList(idDoctor,d.getId()-1))
+            if(isConstrainList(idDoctor,d.getId()))
             {
                 listContact.add(d);
             }
@@ -215,7 +215,7 @@ public class ListChatFragment extends Fragment {
 
         for(int i=0;i<idDoctor.size();i++){
             for(Doctor d : listContact){
-                if (idDoctor.get(i)+1 == d.getId())
+                if (idDoctor.get(i) == d.getId())
                 {
                     doctemp.add(d);
                     break;

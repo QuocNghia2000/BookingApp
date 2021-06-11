@@ -1,11 +1,6 @@
 package com.android.bookingapp.fragment;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,7 +21,6 @@ import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
-import com.android.bookingapp.view.NotificationApplication;
 import com.android.bookingapp.viewmodel.DetailChatAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,7 +32,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Random;
 
 
 public class DetailMessFragment extends Fragment {
@@ -77,7 +69,7 @@ public class DetailMessFragment extends Fragment {
                 {
                     if(CheckInternet.checkInternet(getContext()))
                     {
-                        Message message = new Message(id_user, doctor.getId(), content,getDateTimeNow(),isUser);
+                        Message message = new Message(0,id_user, doctor.getId(), content,getDateTimeNow(),isUser,0);
                         myRef.child("Message").push().setValue(message);
                         try {
                             db.insertMessageToSqlite(message);
@@ -90,7 +82,9 @@ public class DetailMessFragment extends Fragment {
                     {
                         Message message = new Message(0,id_user, doctor.getId(), content,getDateTimeNow(),isUser,1);
                         try {
+                            Toast.makeText(getContext(),String.valueOf(message.getCheckLocalMes()),Toast.LENGTH_SHORT).show();
                             db.insertMessageToSqlite(message);
+                            getData();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -164,13 +158,14 @@ public class DetailMessFragment extends Fragment {
     }
 
     public void getData(){
-        if(CheckInternet.checkInternet(getContext()))
+//        if(CheckInternet.checkInternet(getContext())||check)
         {
             ArrayList<Message> messages=new ArrayList<>();
             myRef = FirebaseDatabase.getInstance().getReference();
             myRef.child("Message").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    listMess.clear();
                     messages.clear();
                     messageList.clear();
                     if(listMess.size()>0) messages.addAll(listMess);
@@ -188,8 +183,8 @@ public class DetailMessFragment extends Fragment {
                             checkisUser=listMess.get(i).isFromPerson();
                             contentNotification=listMess.get(i).getContent();
                         }
-                        if(isUser&&!checkisUser) sendNotification();
-                        else if(!isUser&&checkisUser) sendNotification();
+                        if(isUser&&!checkisUser) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
+                        else if(!isUser&&checkisUser) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
                     }
                     if(getDetailLocalMessage()!=null)
                     {
@@ -199,10 +194,10 @@ public class DetailMessFragment extends Fragment {
                             {
                                 myRef.child("Message").push().setValue(message);
                             }
+                            scrollView();
                             db.updateMessageSqlite();
                         }
                     }
-                    scrollView();
                     myAdapter.notifyDataSetChanged();
                 }
 
@@ -211,7 +206,13 @@ public class DetailMessFragment extends Fragment {
                 }
             });
         }
-        else
+//        else
+//        {
+//            listMess.clear();
+//            listMess.addAll(getDetailLocalMessage());
+//            myAdapter.notifyDataSetChanged();
+//        }
+        if(!CheckInternet.checkInternet(getContext()))
         {
             listMess.clear();
             listMess.addAll(getDetailLocalMessage());
@@ -220,25 +221,10 @@ public class DetailMessFragment extends Fragment {
         }
     }
 
-    public void sendNotification()
-    {
-        Bitmap bitmap= BitmapFactory.decodeResource(getContext().getResources(), R.mipmap.ic_launcher_round);
-        Notification notification=new NotificationCompat.Builder(getContext(), NotificationApplication.CHANNEL_ID)
-                .setContentTitle(fullnameUser)
-                .setContentText(contentNotification)
-                .setSmallIcon(R.drawable.messenger).setLargeIcon(bitmap).build();
-        NotificationManager notificationManager=(NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        if(notificationManager!=null)
-        {
-            Random random=new Random();
-
-            notificationManager.notify(random.nextInt(),notification);
-        }
-    }
     public ArrayList<Message> getDetailLocalMessage()
     {
         ArrayList<Message> messages=new ArrayList<>();
-        Cursor cursor=db.getDetailFromMessage(doctor.getId()-1);
+        Cursor cursor=db.getDetailFromMessage(doctor.getId());
         while (cursor.moveToNext())
         {
             int id=cursor.getInt(0);
