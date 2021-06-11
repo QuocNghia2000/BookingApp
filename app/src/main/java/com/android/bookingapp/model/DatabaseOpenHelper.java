@@ -98,7 +98,8 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             String content=cursor.getString(3);
             String date_time=cursor.getString(4);
             int from_person=cursor.getInt(5);
-            Message message = new Message(idUser,idDoctor, content,date_time,from_person==1?true:false);
+            int checkLocalMess=cursor.getInt(6);
+            Message message = new Message(0,idUser,idDoctor, content,date_time,from_person==1?true:false,checkLocalMess);
             messages.add(message);
         }
         return messages;

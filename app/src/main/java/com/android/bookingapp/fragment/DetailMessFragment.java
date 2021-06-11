@@ -46,9 +46,10 @@ public class DetailMessFragment extends Fragment {
     private DatabaseReference myRef;
     private SearchView searchView;
     DatabaseOpenHelper db;
-    private ArrayList<Message> listMess,messageList;
+    private ArrayList<Message> listMess;
     String fullnameUser,contentNotification;
     boolean checkisUser;
+    Message message;
 
 
     @Override
@@ -82,7 +83,6 @@ public class DetailMessFragment extends Fragment {
                     {
                         Message message = new Message(0,id_user, doctor.getId(), content,getDateTimeNow(),isUser,1);
                         try {
-                            Toast.makeText(getContext(),String.valueOf(message.getCheckLocalMes()),Toast.LENGTH_SHORT).show();
                             db.insertMessageToSqlite(message);
                             getData();
                         } catch (IOException e) {
@@ -136,7 +136,6 @@ public class DetailMessFragment extends Fragment {
             fullnameUser=getArguments().getString("fullnameUser");
         }
         listMess = new ArrayList<>();
-        messageList=new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
         rcvDetailMess = v.findViewById(R.id.rcv_detail_mess);
         myAdapter = new DetailChatAdapter(listMess,isUser);
@@ -158,7 +157,7 @@ public class DetailMessFragment extends Fragment {
     }
 
     public void getData(){
-//        if(CheckInternet.checkInternet(getContext())||check)
+        if(CheckInternet.checkInternet(getContext()))
         {
             ArrayList<Message> messages=new ArrayList<>();
             myRef = FirebaseDatabase.getInstance().getReference();
@@ -167,7 +166,6 @@ public class DetailMessFragment extends Fragment {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     listMess.clear();
                     messages.clear();
-                    messageList.clear();
                     if(listMess.size()>0) messages.addAll(listMess);
                     listMess.clear();
                     for(DataSnapshot data: snapshot.getChildren()){
@@ -179,25 +177,36 @@ public class DetailMessFragment extends Fragment {
                     if(messages.size()!=0)
                     {
                         for (int i = messages.size(); i < listMess.size(); i++) {
-                            messageList.add(listMess.get(i));
                             checkisUser=listMess.get(i).isFromPerson();
                             contentNotification=listMess.get(i).getContent();
+                            message=listMess.get(i);
                         }
                         if(isUser&&!checkisUser) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
-                        else if(!isUser&&checkisUser) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
+                        else if(!isUser&&checkisUser)
+                        {
+                            CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
+                            try {
+                                db.insertMessageToSqlite(message);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                     if(getDetailLocalMessage()!=null)
                     {
                         if(listMess.size()!=getDetailLocalMessage().size())
                         {
-                            for(Message message:db.getMessageToUpdate())
-                            {
-                                myRef.child("Message").push().setValue(message);
-                            }
-                            scrollView();
+                           if(db.getMessageToUpdate().size()>0)
+                           {
+                               for(Message message:db.getMessageToUpdate())
+                               {
+                                   myRef.child("Message").push().setValue(message);
+                               }
+                           }
                             db.updateMessageSqlite();
                         }
                     }
+                    scrollView();
                     myAdapter.notifyDataSetChanged();
                 }
 
@@ -206,19 +215,21 @@ public class DetailMessFragment extends Fragment {
                 }
             });
         }
-//        else
-//        {
-//            listMess.clear();
-//            listMess.addAll(getDetailLocalMessage());
-//            myAdapter.notifyDataSetChanged();
-//        }
-        if(!CheckInternet.checkInternet(getContext()))
+        else
         {
             listMess.clear();
             listMess.addAll(getDetailLocalMessage());
             scrollView();
             myAdapter.notifyDataSetChanged();
         }
+//        if(!CheckInternet.checkInternet(getContext()))
+//        {
+//            listMess.clear();
+//            listMess.addAll(getDetailLocalMessage());
+//            scrollView();
+//            Toast.makeText(getContext(),String.valueOf("có vô k internet"),Toast.LENGTH_SHORT).show();
+//            myAdapter.notifyDataSetChanged();
+//        }
     }
 
     public ArrayList<Message> getDetailLocalMessage()
