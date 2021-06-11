@@ -14,7 +14,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     private static final String TAG=DatabaseOpenHelper.class.getSimpleName();
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "BookingApp.db";
-    private static final String EXAMPLE = "customer";
     SQLiteDatabase db;
 
 
