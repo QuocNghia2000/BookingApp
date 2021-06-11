@@ -13,7 +13,6 @@ public class Message {
     public Message(){}
 
     public Message(int id_User, int id_Doctor, String content,String date_time,boolean fromPerson) {
-        this.id = id;
         this.id_User = id_User;
         this.id_Doctor = id_Doctor;
         this.content = content;

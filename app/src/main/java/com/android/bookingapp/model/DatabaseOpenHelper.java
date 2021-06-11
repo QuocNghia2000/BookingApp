@@ -25,11 +25,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     }
     @Override
     public void onCreate(SQLiteDatabase db) {
-//        createMessageTable();
-//        createUserTable();
-//        createDoctorTable();
-//        createReservationTable();
-//        createDepartmentTable();
         Log.d(TAG,"Database created succesfully!");
     }
 
@@ -70,10 +65,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         contentValues.put(DbContract.MenuEntry.COLUMN_ID_DOCTOR,message.getId_Doctor());
         contentValues.put(DbContract.MenuEntry.COLUMN_CONTENT,message.getContent());
         contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME,message.getDate_time());
-        if(message.isFromPerson())
-            contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,1);
-        else
-            contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,0);
+            contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,message.isFromPerson()?1:0);
         contentValues.put(DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_,message.getCheckLocalMes());
         db.insert(DbContract.MenuEntry.TABLE_MESSAGE,null,contentValues);
     }

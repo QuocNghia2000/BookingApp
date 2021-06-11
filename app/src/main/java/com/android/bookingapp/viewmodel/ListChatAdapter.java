@@ -79,7 +79,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
         {
             holder.name.setText(listContact.get(position).getFullname());
             for(Message mess: listMess){
-                if (mess.getId_Doctor() == listContact.get(position).getId()-1 ){
+                if (mess.getId_Doctor() == listContact.get(position).getId()){
                     holder.content.setText(mess.getContent());
                 }
             }

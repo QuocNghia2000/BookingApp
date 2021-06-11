@@ -21,7 +21,6 @@ import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
-import com.android.bookingapp.model.NetWorkChangeListener;
 import com.android.bookingapp.viewmodel.DetailChatAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,8 +47,8 @@ public class DetailMessFragment extends Fragment {
     private SearchView searchView;
     DatabaseOpenHelper db;
     private ArrayList<Message> listMess,messageList;
-    NetWorkChangeListener netWorkChangeListener;
     String fullnameUser,contentNotification;
+    boolean checkisUser;
 
 
     @Override
@@ -70,7 +69,7 @@ public class DetailMessFragment extends Fragment {
                 {
                     if(CheckInternet.checkInternet(getContext()))
                     {
-                        Message message = new Message(id_user, doctor.getId(), content,getDateTimeNow(),isUser);
+                        Message message = new Message(0,id_user, doctor.getId(), content,getDateTimeNow(),isUser,0);
                         myRef.child("Message").push().setValue(message);
                         try {
                             db.insertMessageToSqlite(message);
@@ -81,8 +80,9 @@ public class DetailMessFragment extends Fragment {
                     }
                     else
                     {
-                        Message message = new Message(0, id_user, doctor.getId()-1, content,getDateTimeNow(),isUser,1);
+                        Message message = new Message(0,id_user, doctor.getId(), content,getDateTimeNow(),isUser,1);
                         try {
+                            Toast.makeText(getContext(),String.valueOf(message.getCheckLocalMes()),Toast.LENGTH_SHORT).show();
                             db.insertMessageToSqlite(message);
                             getData();
                         } catch (IOException e) {
@@ -135,7 +135,6 @@ public class DetailMessFragment extends Fragment {
             isUser = getArguments().getBoolean("isUser");
             fullnameUser=getArguments().getString("fullnameUser");
         }
-        netWorkChangeListener=new NetWorkChangeListener();
         listMess = new ArrayList<>();
         messageList=new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
@@ -159,13 +158,14 @@ public class DetailMessFragment extends Fragment {
     }
 
     public void getData(){
-        if(CheckInternet.checkInternet(getContext()))
+//        if(CheckInternet.checkInternet(getContext())||check)
         {
             ArrayList<Message> messages=new ArrayList<>();
             myRef = FirebaseDatabase.getInstance().getReference();
             myRef.child("Message").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    listMess.clear();
                     messages.clear();
                     messageList.clear();
                     if(listMess.size()>0) messages.addAll(listMess);
@@ -180,10 +180,11 @@ public class DetailMessFragment extends Fragment {
                     {
                         for (int i = messages.size(); i < listMess.size(); i++) {
                             messageList.add(listMess.get(i));
+                            checkisUser=listMess.get(i).isFromPerson();
                             contentNotification=listMess.get(i).getContent();
                         }
-                        if(isUser&&!messageList.get(0).isFromPerson()) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
-                        else if(!isUser&&messageList.get(0).isFromPerson()) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
+                        if(isUser&&!checkisUser) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
+                        else if(!isUser&&checkisUser) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
                     }
                     if(getDetailLocalMessage()!=null)
                     {
@@ -193,10 +194,10 @@ public class DetailMessFragment extends Fragment {
                             {
                                 myRef.child("Message").push().setValue(message);
                             }
+                            scrollView();
                             db.updateMessageSqlite();
                         }
                     }
-                    scrollView();
                     myAdapter.notifyDataSetChanged();
                 }
 
@@ -205,7 +206,13 @@ public class DetailMessFragment extends Fragment {
                 }
             });
         }
-        else
+//        else
+//        {
+//            listMess.clear();
+//            listMess.addAll(getDetailLocalMessage());
+//            myAdapter.notifyDataSetChanged();
+//        }
+        if(!CheckInternet.checkInternet(getContext()))
         {
             listMess.clear();
             listMess.addAll(getDetailLocalMessage());
@@ -217,7 +224,7 @@ public class DetailMessFragment extends Fragment {
     public ArrayList<Message> getDetailLocalMessage()
     {
         ArrayList<Message> messages=new ArrayList<>();
-        Cursor cursor=db.getDetailFromMessage(doctor.getId()-1);
+        Cursor cursor=db.getDetailFromMessage(doctor.getId());
         while (cursor.moveToNext())
         {
             int id=cursor.getInt(0);
