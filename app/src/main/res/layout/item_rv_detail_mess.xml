@@ -27,7 +27,15 @@
             android:textSize="20dp"
 
             android:visibility="visible" />
-
+        
+        <ImageView
+            android:id="@+id/receiver"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="60dp"
+            android:src="@drawable/ic_baseline_replay_circle_filled_24" />
 
         <TextView
             android:id="@+id/sms_receive"
