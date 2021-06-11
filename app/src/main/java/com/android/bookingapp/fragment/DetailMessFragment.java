@@ -21,7 +21,6 @@ import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
-import com.android.bookingapp.model.User;
 import com.android.bookingapp.viewmodel.DetailChatAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -168,36 +167,32 @@ public class DetailMessFragment extends Fragment {
                 messDoctor.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Message message = data.getValue(Message.class);
-                    if(message.getId_User()==id_user && message.isFromPerson()==false)
-                    {
+                    if (message.getId_User() == id_user && message.isFromPerson() == false) {
                         messDoctor.add(message);
                     }
                 }
-                //if(messDoctor.size()!=)
-                db.deleteDoctorFromMessage();
-                for (int i = 0; i < messDoctor.size(); i++) {
-                    try {
-                        db.insertMessageToSqlite(messDoctor.get(i));
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                try {
+                    if (listMess.get(listMess.size() - 1).isFromPerson() == false &&
+                            listMess.get(listMess.size() - 1).getContent().equals(getDetailLocalMessage().get(getDetailLocalMessage().size() - 1).getContent())==false) {
+                        if (getDetailLocalMessage().get(getDetailLocalMessage().size() - 1).getContent().equals(messDoctor.get(messDoctor.size() - 1))==false
+                                && getDetailLocalMessageDoctor().get(getDetailLocalMessageDoctor().size() - 1).equals(messDoctor.get(messDoctor.size() - 1))==false) {
+                            try {
+                                db.insertMessageToSqlite(messDoctor.get(messDoctor.size() - 1));
+                            } catch ( IOException io) {
+                                io.printStackTrace();
+                            }
+                        }
                     }
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    e.printStackTrace();
                 }
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-    }
-
-    public int getMessDoctor() {
-        int count = 0;
-        Cursor cursor=db.getDoctorFromMessage();
-        while (cursor.moveToNext())
-        {
-            count++;
-        }
-        return count;
     }
 
     public void getData(){
@@ -219,17 +214,6 @@ public class DetailMessFragment extends Fragment {
                             listMess.add(m);
                         }
                     }
-
-//                    if(db.getDoctorFromMessage().getCount()!=messDoctor.size()) {
-//                        db.deleteDoctorFromMessage();
-//                        for(int i=0; i<messDoctor.size();i++) {
-//                            try {
-//                                db.insertMessageToSqlite(messDoctor.get(i));
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
 
                     if(messages.size()!=0)
                     {
@@ -293,6 +277,25 @@ public class DetailMessFragment extends Fragment {
         }
         return messages;
     }
+
+    public ArrayList<Message> getDetailLocalMessageDoctor()
+    {
+        ArrayList<Message> messages=new ArrayList<>();
+        Cursor cursor=db.getDetailFromMessageDoctor(doctor.getId());
+        while (cursor.moveToNext())
+        {
+            int id=cursor.getInt(0);
+            int idUser=cursor.getInt(1);
+            int idDoctor=cursor.getInt(2);
+            String content=cursor.getString(3);
+            int from_person=cursor.getInt(5);
+            int checkLocalMess=cursor.getInt(6);
+            Message message = new Message(id, idUser,idDoctor, content,getDateTimeNow(),from_person==1?true:false,checkLocalMess);
+            messages.add(message);
+        }
+        return messages;
+    }
+
     public void scrollView()
     {
         rcvDetailMess.scrollToPosition(rcvDetailMess.getAdapter().getItemCount() - 1);
