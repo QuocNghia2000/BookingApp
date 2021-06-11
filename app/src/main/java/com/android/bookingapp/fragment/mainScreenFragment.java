@@ -281,7 +281,7 @@ public class mainScreenFragment extends Fragment {
                     if(getActivity().getIntent().getSerializableExtra("doctor")!=null){
                         if(cursor.getCount()==0)
                         {
-                            db.saveUserTableToDB(userAll);
+//                            db.saveUserTableToDB(userAll);
                         }
 
                     }
