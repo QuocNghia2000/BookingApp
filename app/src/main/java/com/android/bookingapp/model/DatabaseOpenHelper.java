@@ -18,8 +18,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     SQLiteDatabase db;
 
 
-    public DatabaseOpenHelper(Context context)
-    {
+    public DatabaseOpenHelper(Context context) {
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
         db=this.getWritableDatabase();
     }
@@ -29,8 +28,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     }
 
 
-    public void createMessageTable()
-    {
+    public void createMessageTable() {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_MESSAGE+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 DbContract.MenuEntry.COLUMN_ID_USER+" INTEGER NOT NULL,"+
@@ -41,8 +39,8 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_+" INTEGER "+");";
         db.execSQL(SQL_CREATE_BUGS_TABLE);
     }
-    public void saveMessageTableToDB(ArrayList<Message> messages) throws IOException {
 
+    public void saveMessageTableToDB(ArrayList<Message> messages) throws IOException {
         ContentValues contentValues=new ContentValues();
         for(Message message:messages)
         {
@@ -58,8 +56,8 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             db.insert(DbContract.MenuEntry.TABLE_MESSAGE,null,contentValues);
         }
     }
-    public void insertMessageToSqlite(Message message) throws IOException {
 
+    public void insertMessageToSqlite(Message message) throws IOException {
         ContentValues contentValues=new ContentValues();
         contentValues.put(DbContract.MenuEntry.COLUMN_ID_USER,message.getId_User());
         contentValues.put(DbContract.MenuEntry.COLUMN_ID_DOCTOR,message.getId_Doctor());
@@ -70,29 +68,37 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         db.insert(DbContract.MenuEntry.TABLE_MESSAGE,null,contentValues);
     }
 
-    public Cursor getMessageFromSqlite()
-    {
+    public Cursor getMessageFromSqlite() {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE,null);
         return cursor;
     }
-    public Cursor getDetailFromMessage(int id_doctor)
-    {
+
+    public Cursor getDetailFromMessage(int id_doctor) {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE+" where "+DbContract.MenuEntry.COLUMN_ID_DOCTOR
                 +"="+id_doctor,null);
         return cursor;
     }
-    public void deleteInformationUser()
-    {
+
+    public Cursor getDoctorFromMessage() {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE+ " where "+DbContract.MenuEntry.COLUMN_FROM_PERSON
+                +"="+0 ,null);
+        return cursor;
+    }
+
+    public void deleteDoctorFromMessage() {
+        db.execSQL(" delete from " +DbContract.MenuEntry.TABLE_MESSAGE + " where " + DbContract.MenuEntry.COLUMN_FROM_PERSON + "= 0");
+    }
+
+    public void deleteInformationUser() {
         db.execSQL("drop table "+DbContract.MenuEntry.TABLE_MESSAGE);
         db.execSQL("drop table "+DbContract.MenuEntry.TABLE_USER);
     }
-    public ArrayList<Message> getMessageToUpdate()
-    {
+
+    public ArrayList<Message> getMessageToUpdate() {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE+" where "+DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_
                 +"=1",null);
         ArrayList<Message> messages=new ArrayList<>();
-        while (cursor.moveToNext())
-        {
+        while (cursor.moveToNext()) {
             int idUser=cursor.getInt(1);
             int idDoctor=cursor.getInt(2);
             String content=cursor.getString(3);
@@ -103,14 +109,13 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         }
         return messages;
     }
-    public void updateMessageSqlite()
-    {
+
+    public void updateMessageSqlite() {
         db.execSQL("update "+DbContract.MenuEntry.TABLE_MESSAGE+" set "+DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_+"=0 where "+
                 DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_+"=1");
     }
 
-    public void createUserTable()
-    {
+    public void createUserTable() {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists  "+DbContract.MenuEntry.TABLE_USER+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 DbContract.MenuEntry.COLUMN_EMAIL+" TEXT NOT NULL,"+
@@ -124,6 +129,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 DbContract.MenuEntry.COLUMN_ID_USER+" INTEGER "+");";
         db.execSQL(SQL_CREATE_BUGS_TABLE);
     }
+
     public void saveUserTableToDB(ArrayList<User> users) throws IOException {
         ContentValues contentValues=new ContentValues();
         for(User user:users)
@@ -144,27 +150,24 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getUserFromSqlite()
-    {
+    public Cursor getUserFromSqlite() {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_USER,null);
         return cursor;
     }
-    public Cursor getUserFromUser(int id_user)
-    {
+
+    public Cursor getUserFromUser(int id_user) {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_USER+" where "+DbContract.MenuEntry._ID
                 +"="+id_user,null);
         return cursor;
     }
 
-    public Cursor getUserBookFromUser(int id_user)
-    {
+    public Cursor getUserBookFromUser(int id_user) {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_USER+" where "+DbContract.MenuEntry._ID
                 +"="+id_user,null);
         return cursor;
     }
 
-    public void createDoctorTable()
-    {
+    public void createDoctorTable() {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_DOCTOR+"("+
                 DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 DbContract.MenuEntry.COLUMN_ID_DEPARTMENT+" INTERGER,"+
@@ -176,6 +179,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 DbContract.MenuEntry.COLUMN_ADDRESS_DOCTOR+" TEXT "+");";
         db.execSQL(SQL_CREATE_BUGS_TABLE);
     }
+
     public Cursor getDoctorFromSqlite()
     {
         Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_DOCTOR,null);
@@ -212,6 +216,33 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             db.insert(DbContract.MenuEntry.TABLE_DOCTOR,null,contentValues);
         }
     }
+
+    public void createDepartmentTable() {
+        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_DEPARTMENT+"("+
+                DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
+                DbContract.MenuEntry.COLUMN_NAME_DEPARTMENT+" TEXT "+");";
+        db.execSQL(SQL_CREATE_BUGS_TABLE);
+    }
+
+    public Cursor getDepartmentFromSqlite() {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_DEPARTMENT,null);
+        return cursor;
+    }
+
+    public void saveDepartmentTableToDB(ArrayList<Department> departments) throws IOException {
+        ContentValues contentValues=new ContentValues();
+        for(Department department:departments)
+        {
+            contentValues.put(DbContract.MenuEntry.COLUMN_NAME_DEPARTMENT,department.getName());
+            db.insert(DbContract.MenuEntry.TABLE_DEPARTMENT,null,contentValues);
+        }
+    }
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("drop table if exists "+DbContract.MenuEntry.TABLE_MESSAGE);
+        onCreate(db);
+    }
+
     private void createReservationTable()
     {
         final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_RESERVATION+"("+
@@ -234,30 +265,5 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME_RESERVATION,reservation.getDate().toString());
             db.insert(DbContract.MenuEntry.TABLE_RESERVATION,null,contentValues);
         }
-    }
-    public void createDepartmentTable()
-    {
-        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_DEPARTMENT+"("+
-                DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                DbContract.MenuEntry.COLUMN_NAME_DEPARTMENT+" TEXT "+");";
-        db.execSQL(SQL_CREATE_BUGS_TABLE);
-    }
-    public Cursor getDepartmentFromSqlite()
-    {
-        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_DEPARTMENT,null);
-        return cursor;
-    }
-    public void saveDepartmentTableToDB(ArrayList<Department> departments) throws IOException {
-        ContentValues contentValues=new ContentValues();
-        for(Department department:departments)
-        {
-            contentValues.put(DbContract.MenuEntry.COLUMN_NAME_DEPARTMENT,department.getName());
-            db.insert(DbContract.MenuEntry.TABLE_DEPARTMENT,null,contentValues);
-        }
-    }
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("drop table if exists "+DbContract.MenuEntry.TABLE_MESSAGE);
-        onCreate(db);
     }
 }

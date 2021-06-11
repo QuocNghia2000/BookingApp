@@ -21,6 +21,7 @@ import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
+import com.android.bookingapp.model.User;
 import com.android.bookingapp.viewmodel.DetailChatAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,7 +47,7 @@ public class DetailMessFragment extends Fragment {
     private DatabaseReference myRef;
     private SearchView searchView;
     DatabaseOpenHelper db;
-    private ArrayList<Message> listMess,messageList;
+    private ArrayList<Message> listMess,messageList, messDoctor;
     String fullnameUser,contentNotification;
     boolean checkisUser;
 
@@ -151,10 +152,52 @@ public class DetailMessFragment extends Fragment {
         searchView=v.findViewById(R.id.sv_detailMess);
         db=new DatabaseOpenHelper(getContext());
         getData();
-
+        getMessDoctorLocal();
+        System.out.println(db.getDoctorFromMessage().getCount());
         if(isUser)  tvName.setText(doctor.getFullname());
         else tvName.setText(fullnameUser);
 
+    }
+
+    public void getMessDoctorLocal() {
+        messDoctor = new ArrayList<>();
+        myRef = FirebaseDatabase.getInstance().getReference();
+        myRef.child("Message").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                messDoctor.clear();
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Message message = data.getValue(Message.class);
+                    if(message.getId_User()==id_user && message.isFromPerson()==false)
+                    {
+                        messDoctor.add(message);
+                    }
+                }
+                //if(messDoctor.size()!=)
+                db.deleteDoctorFromMessage();
+                for (int i = 0; i < messDoctor.size(); i++) {
+                    try {
+                        db.insertMessageToSqlite(messDoctor.get(i));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    public int getMessDoctor() {
+        int count = 0;
+        Cursor cursor=db.getDoctorFromMessage();
+        while (cursor.moveToNext())
+        {
+            count++;
+        }
+        return count;
     }
 
     public void getData(){
@@ -170,12 +213,24 @@ public class DetailMessFragment extends Fragment {
                     messageList.clear();
                     if(listMess.size()>0) messages.addAll(listMess);
                     listMess.clear();
-                    for(DataSnapshot data: snapshot.getChildren()){
+                    for(DataSnapshot data: snapshot.getChildren()) {
                         Message m = data.getValue(Message.class);
-                        if(m.getId_Doctor() == doctor.getId() && m.getId_User() == id_user){
+                        if(m.getId_Doctor() == doctor.getId() && m.getId_User() == id_user) {
                             listMess.add(m);
                         }
                     }
+
+//                    if(db.getDoctorFromMessage().getCount()!=messDoctor.size()) {
+//                        db.deleteDoctorFromMessage();
+//                        for(int i=0; i<messDoctor.size();i++) {
+//                            try {
+//                                db.insertMessageToSqlite(messDoctor.get(i));
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    }
+
                     if(messages.size()!=0)
                     {
                         for (int i = messages.size(); i < listMess.size(); i++) {
