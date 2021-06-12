@@ -51,7 +51,6 @@ public class DocMainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_doc_main, container, false);
 
         imgChat = view.findViewById(R.id.imv_chat_docMain);
@@ -75,8 +74,6 @@ public class DocMainFragment extends Fragment {
 
         addItemsOnSpinner();
 
-
-//        Toast.makeText(getContext(),String.valueOf(doctor.getFullname()),Toast.LENGTH_SHORT).show();
         imgLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,7 +165,6 @@ public class DocMainFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 nMonth= parent.getItemAtPosition(position).toString();
-                //Toast.makeText(getContext(),String.valueOf(nMonth),Toast.LENGTH_SHORT).show();
             }
 
             @Override
