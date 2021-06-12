@@ -1,14 +1,17 @@
 package com.android.bookingapp.viewmodel;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
@@ -54,14 +57,31 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(@NonNull DocMainAdapter.MyViewHolder holder, int position) {
-        holder.tvTime.setText(listRE.get(position).getTime().getHour() + ":" + listRE.get(position).getTime().getMinute());
+        int hour = listRE.get(position).getTime().getHour();
+        int minute = listRE.get(position).getTime().getMinute();
+        String time =  hour + ":" + ((minute<10)?"0":"") + minute;
+        holder.tvTime.setText(time);
         holder.tvSymptom.setText(listRE.get(position).getSymptorn());
+        User user = null;
         for(User u : listUser){
             if(listRE.get(position).getId_user() == u.getId()){
                 holder.binding.setUser(u);
+                user = u;
                 break;
             }
         }
+        User finalUser = user;
+        holder.imChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("doctor",doctor);
+                bundle.putInt("id_user",listRE.get(position).getId_user());
+                bundle.putString("fullnameUser", finalUser.getFullname());
+                bundle.putBoolean("isUser",false);
+                Navigation.findNavController(v).navigate(R.id.action_docMainFragment_to_detailMessFragment,bundle);
+            }
+        });
     }
 
     @Override
@@ -74,11 +94,13 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
         private TextView tvTime;
         private TextView tvSymptom;
         private ItemRvDocMainBinding binding;
+        private ImageView imChat;
 
         public MyViewHolder(@NonNull View itemView,ItemRvDocMainBinding binding) {
             super(itemView);
             tvTime = itemView.findViewById(R.id.tv_time_docMain);
             tvSymptom = itemView.findViewById(R.id.tv_symptom_docMain);
+            imChat = itemView.findViewById(R.id.imv_chatDetail_docMain);
             this.binding = binding;
         }
     }
