@@ -59,9 +59,12 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
     public void onBindViewHolder(@NonNull DocMainAdapter.MyViewHolder holder, int position) {
         int hour = listRE.get(position).getTime().getHour();
         int minute = listRE.get(position).getTime().getMinute();
-        String time =  hour + ":" + ((minute<10)?"0":"") + minute;
+        String time =  ((hour<10)?"0":"") + hour + ":" + ((minute<10)?"0":"") + minute;
         holder.tvTime.setText(time);
         holder.tvSymptom.setText(listRE.get(position).getSymptorn());
+        if(holder.tvSymptom.getText().equals("")){
+            holder.tvSymptom.setText("Không có biểu hiện gì!");
+        }
         User user = null;
         for(User u : listUser){
             if(listRE.get(position).getId_user() == u.getId()){
@@ -115,7 +118,6 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
                 listUser = new ArrayList<>();
                 for(DataSnapshot data : snapshot.getChildren()){
                     Reservation reservation = data.getValue(Reservation.class);
-//                    if(isSameDate(date,reservation.getDate())) Toast.makeText(context,date.getDay(),Toast.LENGTH_SHORT).show();
                     if(reservation.getId_doctor()==doctor.getId() && isSameDate(date,reservation.getDate())){
                         listRE.add(reservation);
                     }

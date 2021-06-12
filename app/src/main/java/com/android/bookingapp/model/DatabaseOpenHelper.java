@@ -14,6 +14,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     private static final String TAG=DatabaseOpenHelper.class.getSimpleName();
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "BookingApp.db";
+    private static final String EXAMPLE = "customer";
     SQLiteDatabase db;
 
 
@@ -62,7 +63,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         contentValues.put(DbContract.MenuEntry.COLUMN_ID_DOCTOR,message.getId_Doctor());
         contentValues.put(DbContract.MenuEntry.COLUMN_CONTENT,message.getContent());
         contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME,message.getDate_time());
-            contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,message.isFromPerson()?1:0);
+        contentValues.put(DbContract.MenuEntry.COLUMN_FROM_PERSON,message.isFromPerson()?1:0);
         contentValues.put(DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_,message.getCheckLocalMes());
         db.insert(DbContract.MenuEntry.TABLE_MESSAGE,null,contentValues);
     }
@@ -78,6 +79,21 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getDetailFromMessageDoctor(int id_doctor) {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE+" where "+DbContract.MenuEntry.COLUMN_ID_DOCTOR
+                +"="+id_doctor + " and " + DbContract.MenuEntry.COLUMN_FROM_PERSON + " = 0",null);
+        return cursor;
+    }
+
+    public Cursor getDoctorFromMessage() {
+        Cursor cursor=db.rawQuery("Select * from "+DbContract.MenuEntry.TABLE_MESSAGE+ " where "+DbContract.MenuEntry.COLUMN_FROM_PERSON
+                +"="+0 ,null);
+        return cursor;
+    }
+
+    public void deleteDoctorFromMessage() {
+        db.execSQL(" delete from " +DbContract.MenuEntry.TABLE_MESSAGE + " where " + DbContract.MenuEntry.COLUMN_FROM_PERSON + "= 0");
+    }
 
     public void deleteInformationUser() {
         db.execSQL("drop table "+DbContract.MenuEntry.TABLE_MESSAGE);
@@ -94,8 +110,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             String content=cursor.getString(3);
             String date_time=cursor.getString(4);
             int from_person=cursor.getInt(5);
-            int checkLocalMess=cursor.getInt(6);
-            Message message = new Message(0,idUser,idDoctor, content,date_time,from_person==1?true:false,checkLocalMess);
+            Message message = new Message(idUser,idDoctor, content,date_time,from_person==1?true:false);
             messages.add(message);
         }
         return messages;
@@ -232,29 +247,5 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists "+DbContract.MenuEntry.TABLE_MESSAGE);
         onCreate(db);
-    }
-
-    private void createReservationTable()
-    {
-        final String SQL_CREATE_BUGS_TABLE="CREATE TABLE if not exists "+DbContract.MenuEntry.TABLE_RESERVATION+"("+
-                DbContract.MenuEntry._ID+" INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                DbContract.MenuEntry.COLUMN_ID_USER_RESERVATION+" INTERGER,"+
-                DbContract.MenuEntry.COLUMN_ID_DOCTOR_RESERVATION+" INTEGER NOT NULL,"+
-                DbContract.MenuEntry.COLUMN_SYMPTORN+" INTEGER NOT NULL,"+
-                DbContract.MenuEntry.COLUMN_MEDICINE+" TEXT,"+
-                DbContract.MenuEntry.COLUMN_DATE_TIME_RESERVATION+" TEXT "+");";
-        db.execSQL(SQL_CREATE_BUGS_TABLE);
-    }
-    public void saveReservationTableToDB(ArrayList<Reservation> reservations) throws IOException {
-        ContentValues contentValues=new ContentValues();
-        for(Reservation reservation:reservations)
-        {
-            contentValues.put(DbContract.MenuEntry.COLUMN_ID_USER_RESERVATION,reservation.getId_user());
-            contentValues.put(DbContract.MenuEntry.COLUMN_ID_DOCTOR_RESERVATION,reservation.getId_doctor());
-            contentValues.put(DbContract.MenuEntry.COLUMN_SYMPTORN,reservation.getSymptorn());
-            contentValues.put(DbContract.MenuEntry.COLUMN_MEDICINE,reservation.getMedicine());
-            contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME_RESERVATION,reservation.getDate().toString());
-            db.insert(DbContract.MenuEntry.TABLE_RESERVATION,null,contentValues);
-        }
     }
 }
