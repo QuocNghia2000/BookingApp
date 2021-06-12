@@ -211,7 +211,7 @@ public class BookFragment extends Fragment {
                             com.android.bookingapp.model.Date d = reservation.getDate();
                             String date = d.getDay() + "-" + d.getMonth() + "-" + d.getYear();
 
-                            if (reservation.getId_doctor() == doctor.getId()){
+                            if ((reservation.getId_doctor() == doctor.getId()) || (reservation.getId_user() == id_user)){
                                 if(date.equals(listDate.get(position))){
                                     Time t = reservation.getTime();
                                     String time = ((t.getHour()<10)?"0":"") + t.getHour() + ":" + ((t.getMinute()<10)?"0":"") + t.getMinute();
