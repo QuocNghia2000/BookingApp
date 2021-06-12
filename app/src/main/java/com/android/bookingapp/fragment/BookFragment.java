@@ -1,5 +1,7 @@
 package com.android.bookingapp.fragment;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -29,6 +32,7 @@ import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.Reservation;
 import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
+import com.android.bookingapp.view.LoginActivity;
 import com.android.bookingapp.viewmodel.BookAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -59,6 +63,8 @@ public class BookFragment extends Fragment {
     private int id_user;
     private User user;
     DatabaseOpenHelper db;
+    AlertDialog.Builder dialogBuilder;
+    AlertDialog dialog;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +83,7 @@ public class BookFragment extends Fragment {
         binding= DataBindingUtil.inflate(getLayoutInflater(),R.layout.fragment_book,null,false);
         View view =binding.getRoot();
         db=new DatabaseOpenHelper(getContext());
+        dialogBuilder=new AlertDialog.Builder(getContext());
         binding.setDoctor(doctor);
         if(CheckInternet.checkInternet(getContext())) {}
         else {
@@ -137,30 +144,7 @@ public class BookFragment extends Fragment {
                 {
                    if(CheckInternet.checkInternet(getContext()))
                    {
-                       Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
-                       com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
-                       if(isTrueTime(time)==-1)
-                       {
-                           String symptom = edtSymptom.getText().toString();
-                           String medicine = edtMedicine.getText().toString();
-                           Reservation reservation = new Reservation(++idReservation,id_user,doctor.getId(),symptom,medicine,time,date);
-                           myRef = FirebaseDatabase.getInstance().getReference();
-                           myRef.child("Reservation").push().setValue(reservation).addOnCompleteListener(new OnCompleteListener<Void>() {
-                               @Override
-                               public void onComplete(@NonNull Task<Void> task) {
-                                   if(task.isSuccessful())
-                                   {
-                                       Toast.makeText(getContext(),"Đặt lịch thành công!", Toast.LENGTH_SHORT).show();
-                                       Navigation.findNavController(v).navigate(R.id.action_bookFragment_to_mainScreenFragment);
-                                   }
-                                   else
-                                   {
-                                       Toast.makeText(getContext(),"Lỗi", Toast.LENGTH_SHORT).show();
-                                   }
-                               }
-                           });
-                       }
-                       else Toast.makeText(getContext(),"Giờ đã được đặt!!",Toast.LENGTH_SHORT).show();
+                       showLogoutDialog(v);
                    }
                    else
                    {
@@ -270,5 +254,49 @@ public class BookFragment extends Fragment {
             }
         }
         return -1;
+    }
+
+    public void showLogoutDialog(View v){
+        dialogBuilder.setMessage("Xác nhận đặt lịch?");
+        dialogBuilder.setCancelable(false);
+        dialogBuilder.setPositiveButton("Không", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        dialogBuilder.setNegativeButton("Có", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                Time time = getTimePush(listTime.get(bookAdapter.getItemSelected()));
+                com.android.bookingapp.model.Date date = getDatePush(spBook.getSelectedItem().toString());
+                if(isTrueTime(time)==-1)
+                {
+                    String symptom = edtSymptom.getText().toString();
+                    String medicine = edtMedicine.getText().toString();
+                    Reservation reservation = new Reservation(++idReservation,id_user,doctor.getId(),symptom,medicine,time,date);
+                    myRef = FirebaseDatabase.getInstance().getReference();
+                    myRef.child("Reservation").push().setValue(reservation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful())
+                            {
+                                Toast.makeText(getContext(),"Đặt lịch thành công!", Toast.LENGTH_SHORT).show();
+                                Navigation.findNavController(v).navigate(R.id.action_bookFragment_to_mainScreenFragment);
+                            }
+                            else
+                            {
+                                Toast.makeText(getContext(),"Lỗi", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+                else Toast.makeText(getContext(),"Giờ đã được đặt!!",Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog = dialogBuilder.create();
+        dialog.show();
+
     }
 }

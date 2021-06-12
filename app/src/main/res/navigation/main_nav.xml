@@ -68,6 +68,9 @@
         <action
             android:id="@+id/action_docMainFragment_to_listChatFragment"
             app:destination="@id/listChatFragment" />
+        <action
+            android:id="@+id/action_docMainFragment_to_detailMessFragment"
+            app:destination="@id/detailMessFragment" />
     </fragment>
     <fragment
         android:id="@+id/listChatFragment"
