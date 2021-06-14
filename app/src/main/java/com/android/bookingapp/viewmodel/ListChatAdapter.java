@@ -97,7 +97,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                     {
                         bundle.putInt("id_user",id_user);
                         bundle.putString("nameDisplay",listContact.get(getAdapterPosition()).getFullname());
-                        bundle.putSerializable("doctor",listContact.get(getAdapterPosition()));
+                        bundle.putInt("doctorID",listContact.get(getAdapterPosition()).getId());
                         bundle.putBoolean("isUser",true);
                     }
                     else
