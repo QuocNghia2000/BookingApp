@@ -28,14 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHolder> {
-    private int doctorID;
-    private Date date;
+    private final int doctorID;
+    private final Date date;
+    private final Context context;
     private DatabaseReference myRef;
     private List<Reservation> listRE;
     private List<User> listUser;
-    private Context context;
 
-    public DocMainAdapter(Date date,int doctorID,Context context){
+    public DocMainAdapter(Date date, int doctorID, Context context) {
         this.doctorID = doctorID;
         this.date = date;
         this.listUser = new ArrayList<>();
@@ -48,24 +48,24 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemRvDocMainBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),R.layout.item_rv_doc_main,parent,false);
+        ItemRvDocMainBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_rv_doc_main, parent, false);
         View v = binding.getRoot();
-        return new MyViewHolder(v,binding);
+        return new MyViewHolder(v, binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull DocMainAdapter.MyViewHolder holder, int position) {
         int hour = listRE.get(position).getTime().getHour();
         int minute = listRE.get(position).getTime().getMinute();
-        String time =  ((hour<10)?"0":"") + hour + ":" + ((minute<10)?"0":"") + minute;
+        String time = ((hour < 10) ? "0" : "") + hour + ":" + ((minute < 10) ? "0" : "") + minute;
         holder.tvTime.setText(time);
         holder.tvSymptom.setText(listRE.get(position).getSymptorn());
-        if(holder.tvSymptom.getText().equals("")){
+        if (holder.tvSymptom.getText().equals("")) {
             holder.tvSymptom.setText("Không có biểu hiện gì!");
         }
         User user = null;
-        for(User u : listUser){
-            if(listRE.get(position).getId_user() == u.getId()){
+        for (User u : listUser) {
+            if (listRE.get(position).getId_user() == u.getId()) {
                 holder.binding.setUser(u);
                 user = u;
                 break;
@@ -76,11 +76,11 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("doctorID",doctorID);
-                bundle.putInt("id_user",listRE.get(position).getId_user());
+                bundle.putSerializable("doctorID", doctorID);
+                bundle.putInt("id_user", listRE.get(position).getId_user());
                 bundle.putString("nameDisplay", finalUser.getFullname());
-                bundle.putBoolean("isUser",false);
-                Navigation.findNavController(v).navigate(R.id.action_docMainFragment_to_detailMessFragment,bundle);
+                bundle.putBoolean("isUser", false);
+                Navigation.findNavController(v).navigate(R.id.action_docMainFragment_to_detailMessFragment, bundle);
             }
         });
     }
@@ -90,40 +90,22 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
         return listRE.size();
     }
 
-
-    class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView tvTime;
-        private TextView tvSymptom;
-        private ItemRvDocMainBinding binding;
-        private ImageView imChat;
-
-        public MyViewHolder(@NonNull View itemView,ItemRvDocMainBinding binding) {
-            super(itemView);
-            tvTime = itemView.findViewById(R.id.tv_time_docMain);
-            tvSymptom = itemView.findViewById(R.id.tv_symptom_docMain);
-            imChat = itemView.findViewById(R.id.imv_chatDetail_docMain);
-            this.binding = binding;
-        }
-    }
-
-
-    public void getReservation(){
+    public void getReservation() {
         myRef = FirebaseDatabase.getInstance().getReference("Reservation");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listRE = new ArrayList<>();
                 listUser = new ArrayList<>();
-                for(DataSnapshot data : snapshot.getChildren()){
+                for (DataSnapshot data : snapshot.getChildren()) {
                     Reservation reservation = data.getValue(Reservation.class);
-//                    if(isSameDate(date,reservation.getDate())) Toast.makeText(context,date.getDay(),Toast.LENGTH_SHORT).show();
-                    if(reservation.getId_doctor()==doctorID && isSameDate(date,reservation.getDate())){
+                    if (reservation.getId_doctor() == doctorID && isSameDate(date, reservation.getDate())) {
                         listRE.add(reservation);
                     }
                 }
 
                 List<Reservation> temp = new ArrayList<>();
-                for(int i=listRE.size()-1;i>=0;i--){
+                for (int i = listRE.size() - 1; i >= 0; i--) {
                     temp.add(listRE.get(i));
                 }
                 listRE = new ArrayList<>(temp);
@@ -132,20 +114,19 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
                 myRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot data : snapshot.getChildren()){
+                        for (DataSnapshot data : snapshot.getChildren()) {
                             User user = data.getValue(User.class);
-                            if(isContainList(user.getId())){
+                            if (isContainList(user.getId())) {
                                 listUser.add(user);
                             }
                         }
-                       notifyDataSetChanged();
+                        notifyDataSetChanged();
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
-
             }
 
             @Override
@@ -155,18 +136,33 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
         });
     }
 
-    public boolean isSameDate(Date d1,Date d2){
-        if(!d1.getDay().equals(d2.getDay())) return false;
-        if(!d1.getMonth().equals(d2.getMonth())) return false;
-        if(!d1.getYear().equals(d2.getYear())) return false;
-        return true;
+    public boolean isSameDate(Date d1, Date d2) {
+        if (!d1.getDay().equals(d2.getDay())) return false;
+        if (!d1.getMonth().equals(d2.getMonth())) return false;
+        return d1.getYear().equals(d2.getYear());
     }
-    public boolean isContainList(int idUser){
-        for (Reservation r : listRE){
-            if(r.getId_user() == idUser){
+
+    public boolean isContainList(int idUser) {
+        for (Reservation r : listRE) {
+            if (r.getId_user() == idUser) {
                 return true;
             }
         }
         return false;
+    }
+
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvTime;
+        private final TextView tvSymptom;
+        private final ItemRvDocMainBinding binding;
+        private final ImageView imChat;
+
+        public MyViewHolder(@NonNull View itemView, ItemRvDocMainBinding binding) {
+            super(itemView);
+            tvTime = itemView.findViewById(R.id.tv_time_docMain);
+            tvSymptom = itemView.findViewById(R.id.tv_symptom_docMain);
+            imChat = itemView.findViewById(R.id.imv_chatDetail_docMain);
+            this.binding = binding;
+        }
     }
 }
