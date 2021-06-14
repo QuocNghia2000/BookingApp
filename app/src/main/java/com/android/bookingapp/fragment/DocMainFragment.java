@@ -64,9 +64,9 @@ public class DocMainFragment extends Fragment {
             doctorID= getArguments().getInt("doctorID",-1);
         }
 
-        mainAdapter = new DocMainAdapter(date,doctorID,getContext());
+//        mainAdapter = new DocMainAdapter(date,doctorID,getContext());
         rcvDocMain.setLayoutManager(new GridLayoutManager(getContext(),1));
-        rcvDocMain.setAdapter(mainAdapter);
+//        rcvDocMain.setAdapter(mainAdapter);
 
         addItemsOnSpinner();
 
@@ -89,13 +89,17 @@ public class DocMainFragment extends Fragment {
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                date = getDateInSpinner();
-                mainAdapter = new DocMainAdapter(date,doctorID,getContext());
-                rcvDocMain.setAdapter(mainAdapter);
-                mainAdapter.notifyDataSetChanged();
+                searchReservation();
             }
         });
+        searchReservation();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        searchReservation();
+        super.onResume();
     }
 
     public void showLogoutDialog(){
@@ -209,5 +213,12 @@ public class DocMainFragment extends Fragment {
         if(Integer.valueOf(month)<10) month="0" + month;
         String year =  spinner_year.getSelectedItem().toString();
         return new Date(day,month,year);
+    }
+
+    public void searchReservation(){
+        date = getDateInSpinner();
+        mainAdapter = new DocMainAdapter(date,doctorID,getContext());
+        rcvDocMain.setAdapter(mainAdapter);
+        mainAdapter.notifyDataSetChanged();
     }
 }
