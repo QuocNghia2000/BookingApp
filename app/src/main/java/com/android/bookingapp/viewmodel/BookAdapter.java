@@ -15,12 +15,12 @@ import com.google.android.material.card.MaterialCardView;
 import java.util.List;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> {
-    private List<String> listTime;
+    private final List<String> listTime;
     private int SelectedTime;
-    private Context context;
-    private List<String> listReser;
+    private final Context context;
+    private final List<String> listReser;
 
-    public BookAdapter(List<String> listTime,Context context,List<String> listReser){
+    public BookAdapter(List<String> listTime, Context context, List<String> listReser) {
         this.listTime = listTime;
         this.context = context;
         this.SelectedTime = -1;
@@ -37,21 +37,19 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.tvTime.setText(listTime.get(position));
-        if(SelectedTime == position)
-        {
+        if (SelectedTime == position) {
             holder.mcvBook.setStrokeColor(context.getColor(R.color.purple_700));
             holder.tvTime.setTextColor(context.getColor(R.color.white));
             holder.mcvBook.setCardBackgroundColor(context.getColor(R.color.purple_700));
-        }
-        else if (!checkReser(listTime.get(position))){
+        } else if (!checkReser(listTime.get(position))) {
             holder.mcvBook.setStrokeColor(context.getColor(R.color.gray));
             holder.tvTime.setTextColor(context.getColor(R.color.white));
             holder.mcvBook.setCardBackgroundColor(context.getColor(R.color.gray));
-        }else {
-                holder.mcvBook.setStrokeColor(context.getColor(R.color.black));
-                holder.tvTime.setTextColor(context.getColor(R.color.black));
-                holder.mcvBook.setCardBackgroundColor(context.getColor(R.color.white));
-            }
+        } else {
+            holder.mcvBook.setStrokeColor(context.getColor(R.color.black));
+            holder.tvTime.setTextColor(context.getColor(R.color.black));
+            holder.mcvBook.setCardBackgroundColor(context.getColor(R.color.white));
+        }
     }
 
     @Override
@@ -59,9 +57,17 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
         return listTime.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView tvTime;
-        private MaterialCardView mcvBook;
+    public boolean checkReser(String time) {
+        return !listReser.contains(time);
+    }
+
+    public int getItemSelected() {
+        return SelectedTime;
+    }
+
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvTime;
+        private final MaterialCardView mcvBook;
 
 
         public MyViewHolder(@NonNull View itemView) {
@@ -73,22 +79,12 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
             mcvBook.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (checkReser(listTime.get(getAdapterPosition())))
-                    {
+                    if (checkReser(listTime.get(getAdapterPosition()))) {
                         SelectedTime = getAdapterPosition();
                         notifyDataSetChanged();
                     }
                 }
             });
         }
-    }
-
-    public boolean checkReser(String time){
-        if(listReser.contains(time)) return false;
-        else return true;
-    }
-
-    public  int getItemSelected(){
-        return SelectedTime;
     }
 }

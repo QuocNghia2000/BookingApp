@@ -16,12 +16,12 @@ import com.android.bookingapp.model.Department;
 import java.util.ArrayList;
 
 public class DepartAdapter extends RecyclerView.Adapter<DepartAdapter.MyViewHolder> {
-    private ArrayList<Department> mDeparts;
-    private int id_user;
+    private final ArrayList<Department> mDeparts;
+    private final int id_user;
 
-    public DepartAdapter(ArrayList<Department> mDeparts,int id_user){
+    public DepartAdapter(ArrayList<Department> mDeparts, int id_user) {
         this.id_user = id_user;
-        this.mDeparts=mDeparts;
+        this.mDeparts = mDeparts;
     }
 
     @NonNull
@@ -37,9 +37,9 @@ public class DepartAdapter extends RecyclerView.Adapter<DepartAdapter.MyViewHold
         holder.btDepartment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putSerializable("detailDepart",mDeparts.get(position));
-                bundle.putInt("id_user",id_user);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("detailDepart", mDeparts.get(position));
+                bundle.putInt("id_user", id_user);
                 Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_detailDepartmentFragment, bundle);
             }
         });
@@ -50,12 +50,12 @@ public class DepartAdapter extends RecyclerView.Adapter<DepartAdapter.MyViewHold
         return mDeparts.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder{
-        private Button btDepartment;
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        private final Button btDepartment;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            btDepartment=itemView.findViewById(R.id.department);
+            btDepartment = itemView.findViewById(R.id.department);
 
         }
     }

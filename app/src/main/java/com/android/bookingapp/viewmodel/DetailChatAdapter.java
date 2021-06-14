@@ -18,11 +18,11 @@ import java.util.ArrayList;
 
 public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.MyViewHolder> implements Filterable {
 
+    private final ArrayList<Message> listMessAll;
+    private final boolean isUser;
     private ArrayList<Message> listMess;
-    private ArrayList<Message> listMessAll;
-    private boolean isUser;
 
-    public DetailChatAdapter(ArrayList<Message> messages,boolean isUser){
+    public DetailChatAdapter(ArrayList<Message> messages, boolean isUser) {
         this.listMess = messages;
         this.listMessAll = messages;
         this.isUser = isUser;
@@ -37,30 +37,25 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
 
     @Override
     public void onBindViewHolder(@NonNull DetailChatAdapter.MyViewHolder holder, int position) {
-        if(isUser){
-            if(listMess.get(position).isFromPerson()){
+        if (isUser) {
+            if (listMess.get(position).isFromPerson()) {
                 holder.tvSend.setText(listMess.get(position).getContent());
                 holder.tvSend.setVisibility(View.VISIBLE);
                 holder.tvReceive.setVisibility(View.INVISIBLE);
-                if(listMess.get(position).getCheckLocalMes()==1) holder.ivReload.setVisibility(View.VISIBLE);
+                if (listMess.get(position).getCheckLocalMes() == 1)
+                    holder.ivReload.setVisibility(View.VISIBLE);
                 else holder.ivReload.setVisibility(View.INVISIBLE);
-            }
-            else
-            {
+            } else {
                 holder.tvReceive.setText(listMess.get(position).getContent());
                 holder.tvReceive.setVisibility(View.VISIBLE);
                 holder.tvSend.setVisibility(View.INVISIBLE);
             }
-        }
-        else
-        {
-            if(!listMess.get(position).isFromPerson()){
+        } else {
+            if (!listMess.get(position).isFromPerson()) {
                 holder.tvSend.setText(listMess.get(position).getContent());
                 holder.tvSend.setVisibility(View.VISIBLE);
                 holder.tvReceive.setVisibility(View.INVISIBLE);
-            }
-            else
-            {
+            } else {
                 holder.tvReceive.setText(listMess.get(position).getContent());
                 holder.tvReceive.setVisibility(View.VISIBLE);
                 holder.tvSend.setVisibility(View.INVISIBLE);
@@ -73,42 +68,22 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
         return listMess.size();
     }
 
-
-
-    class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView tvSend;
-        private TextView tvReceive;
-        private ImageView ivReload;
-
-        public MyViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvSend = itemView.findViewById(R.id.sms_send);
-            tvReceive = itemView.findViewById(R.id.sms_receive);
-            ivReload=itemView.findViewById(R.id.iv_reload);
-        }
-    }
-
     @Override
     public Filter getFilter() {
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 String strSearch = constraint.toString();
-                if (strSearch.isEmpty())
-                {
+                if (strSearch.isEmpty()) {
                     listMess = listMessAll;
-                }
-                else
-                {
+                } else {
                     ArrayList<Message> list = new ArrayList<>();
-                    for(Message m: listMessAll)
-                    {
-                        if(m.getContent().toLowerCase().contains(strSearch.toLowerCase()))
-                        {
+                    for (Message m : listMessAll) {
+                        if (m.getContent().toLowerCase().contains(strSearch.toLowerCase())) {
                             list.add(m);
                         }
                     }
-                    listMess =  list;
+                    listMess = list;
                 }
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = listMess;
@@ -121,5 +96,18 @@ public class DetailChatAdapter extends RecyclerView.Adapter<DetailChatAdapter.My
                 notifyDataSetChanged();
             }
         };
+    }
+
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvSend;
+        private final TextView tvReceive;
+        private final ImageView ivReload;
+
+        public MyViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvSend = itemView.findViewById(R.id.sms_send);
+            tvReceive = itemView.findViewById(R.id.sms_receive);
+            ivReload = itemView.findViewById(R.id.iv_reload);
+        }
     }
 }

@@ -34,21 +34,20 @@ import java.util.Calendar;
 
 
 public class DetailMessFragment extends Fragment {
-    private int id_user,doctorID;
+    DatabaseOpenHelper db;
+    String nameDisplay, contentNotification;
+    boolean checkisUser;
+    Message message;
+    private int id_user, doctorID;
     private RecyclerView rcvDetailMess;
     private DetailChatAdapter myAdapter;
     private boolean isUser;
     private TextView tvName;
     private EditText edtContent;
-    private ImageView imvSend,ivBack;
+    private ImageView imvSend, ivBack;
     private DatabaseReference myRef;
     private SearchView searchView;
-    DatabaseOpenHelper db;
-    private ArrayList<Message> listMess;
-    String nameDisplay,contentNotification;
-    boolean checkisUser;
-    Message message;
-
+    private ArrayList<Message> listMess, messDoctor;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,11 +63,9 @@ public class DetailMessFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String content = edtContent.getText().toString().trim();
-                if (!content.equals(""))
-                {
-                    if(CheckInternet.checkInternet(getContext()))
-                    {
-                        Message message = new Message(0,id_user, doctorID, content,getDateTimeNow(),isUser,0);
+                if (!content.equals("")) {
+                    if (CheckInternet.checkInternet(getContext())) {
+                        Message message = new Message(0, id_user, doctorID, content, getDateTimeNow(), isUser, 0);
                         myRef.child("Message").push().setValue(message);
                         try {
                             db.insertMessageToSqlite(message);
@@ -76,10 +73,8 @@ public class DetailMessFragment extends Fragment {
                             e.printStackTrace();
                         }
                         edtContent.setText("");
-                    }
-                    else
-                    {
-                        Message message = new Message(0,id_user, doctorID, content,getDateTimeNow(),isUser,1);
+                    } else {
+                        Message message = new Message(0, id_user, doctorID, content, getDateTimeNow(), isUser, 1);
                         try {
                             db.insertMessageToSqlite(message);
                             getData();
@@ -88,10 +83,8 @@ public class DetailMessFragment extends Fragment {
                         }
                         edtContent.setText("");
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Hãy nhập nội dung tin nhắn!!",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Hãy nhập nội dung tin nhắn!!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -126,83 +119,122 @@ public class DetailMessFragment extends Fragment {
     }
 
     private void init(View v) {
-        if(getArguments()!=null)
-        {
+        if (getArguments() != null) {
             doctorID = getArguments().getInt("doctorID");
             id_user = getArguments().getInt("id_user");
             isUser = getArguments().getBoolean("isUser");
-            nameDisplay=getArguments().getString("nameDisplay");
+            nameDisplay = getArguments().getString("nameDisplay");
         }
         listMess = new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
         rcvDetailMess = v.findViewById(R.id.rcv_detail_mess);
-        myAdapter = new DetailChatAdapter(listMess,isUser);
-        rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(),1));
+        myAdapter = new DetailChatAdapter(listMess, isUser);
+        rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rcvDetailMess.setAdapter(myAdapter);
-
 
         tvName = v.findViewById(R.id.tv_name_detailMess);
         edtContent = v.findViewById(R.id.edt_text_detailMess);
         imvSend = v.findViewById(R.id.imv_send_listMess);
-        ivBack=v.findViewById(R.id.imv_back_detailMess);
-        searchView=v.findViewById(R.id.sv_detailMess);
-        db=new DatabaseOpenHelper(getContext());
+        ivBack = v.findViewById(R.id.imv_back_detailMess);
+        searchView = v.findViewById(R.id.sv_detailMess);
+        db = new DatabaseOpenHelper(getContext());
         getData();
+        getMessDoctorLocal();
 
-        if(isUser)  tvName.setText(nameDisplay);
+        if (isUser) tvName.setText(nameDisplay);
         else tvName.setText(nameDisplay);
 
     }
 
-    public void getData(){
-        if(CheckInternet.checkInternet(getContext()))
-        {
-            ArrayList<Message> messages=new ArrayList<>();
+    public void getMessDoctorLocal() {
+        messDoctor = new ArrayList<>();
+        myRef = FirebaseDatabase.getInstance().getReference();
+        myRef.child("Message").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                messDoctor.clear();
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Message message = data.getValue(Message.class);
+                    if (message.getId_User() == id_user && message.isFromPerson() == false) {
+                        messDoctor.add(message);
+                    }
+                }
+                try {
+                    if (listMess.get(listMess.size() - 1).isFromPerson() == false &&
+                            listMess.get(listMess.size() - 1).getContent().equals(getDetailLocalMessage().get(getDetailLocalMessage().size() - 1).getContent()) == false) {
+                        if (getDetailLocalMessageDoctor().get(getDetailLocalMessageDoctor().size() - 1).equals(messDoctor.get(messDoctor.size() - 1).getContent()) == false) {
+                            try {
+                                db.insertMessageToSqlite(messDoctor.get(messDoctor.size() - 1));
+                            } catch (IOException io) {
+                                io.printStackTrace();
+                            }
+                        }
+                    } else if (listMess.get(listMess.size() - 1).isFromPerson() == false &&
+                            listMess.get(listMess.size() - 1).getContent().equals(getDetailLocalMessage().get(getDetailLocalMessage().size() - 1).getContent()) == true) {
+                        if (getDetailLocalMessage().get(getDetailLocalMessage().size() - 1).getContent().equals(messDoctor.get(messDoctor.size() - 1).getContent()) == true
+                                && getDetailLocalMessage().get(getDetailLocalMessage().size() - 1).isFromPerson() == true) {
+                            try {
+                                db.insertMessageToSqlite(messDoctor.get(messDoctor.size() - 1));
+                            } catch (IOException io) {
+                                io.printStackTrace();
+                            }
+                        }
+                    }
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    public void getData() {
+        if (CheckInternet.checkInternet(getContext())) {
+            ArrayList<Message> messages = new ArrayList<>();
             myRef = FirebaseDatabase.getInstance().getReference();
             myRef.child("Message").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     messages.clear();
-                    if(listMess.size()>0) messages.addAll(listMess);
+                    if (listMess.size() > 0) messages.addAll(listMess);
                     listMess.clear();
-                    for(DataSnapshot data: snapshot.getChildren()){
+                    for (DataSnapshot data : snapshot.getChildren()) {
                         Message m = data.getValue(Message.class);
-                        if(m.getId_Doctor() == doctorID && m.getId_User() == id_user){
+                        if (m.getId_Doctor() == doctorID && m.getId_User() == id_user) {
                             listMess.add(m);
                         }
                     }
-                    if(messages.size()!=0)
-                    {
+                    if (messages.size() != 0) {
                         for (int i = messages.size(); i < listMess.size(); i++) {
-                            message=listMess.get(i);
-                            checkisUser=listMess.get(i).isFromPerson();
-                            contentNotification=listMess.get(i).getContent();
+                            message = listMess.get(i);
+                            checkisUser = listMess.get(i).isFromPerson();
+                            contentNotification = listMess.get(i).getContent();
                         }
-                        if(isUser&&!checkisUser)
-                        {
-                            CheckInternet.sendNotification(nameDisplay,contentNotification,getContext());
+                        if (isUser && !checkisUser) {
                             try {
-                                db.insertMessageToSqlite(message);
-                            } catch (IOException e) {
+                                CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
+                            } catch (NullPointerException e) {
                                 e.printStackTrace();
                             }
                         }
-                        if(!isUser&&checkisUser)
-                        {
-                            CheckInternet.sendNotification(nameDisplay,contentNotification,getContext());
+                        if (!isUser && checkisUser) {
+                            try {
+                                CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-                    if(getDetailLocalMessage()!=null)
-                    {
-                        if(listMess.size()!=getDetailLocalMessage().size())
-                        {
-                           if(db.getMessageToUpdate().size()>0)
-                           {
-                               for(Message message:db.getMessageToUpdate())
-                               {
-                                   myRef.child("Message").push().setValue(message);
-                               }
-                           }
+                    if (getDetailLocalMessageDoctor() != null) {
+                        if (listMess.size() != getDetailLocalMessageDoctor().size()) {
+                            if (db.getMessageToUpdate().size() > 0) {
+                                for (Message message : db.getMessageToUpdate()) {
+                                    myRef.child("Message").push().setValue(message);
+                                }
+                            }
                             db.updateMessageSqlite();
                         }
                     }
@@ -214,51 +246,56 @@ public class DetailMessFragment extends Fragment {
                 public void onCancelled(@NonNull DatabaseError error) {
                 }
             });
-        }
-        else
-        {
+        } else {
             listMess.clear();
-            listMess.addAll(getDetailLocalMessage());
+            listMess.addAll(getDetailLocalMessageDoctor());
             scrollView();
             myAdapter.notifyDataSetChanged();
         }
-//        if(!CheckInternet.checkInternet(getContext()))
-//        {
-//            listMess.clear();
-//            listMess.addAll(getDetailLocalMessage());
-//            scrollView();
-//            Toast.makeText(getContext(),String.valueOf("có vô k internet"),Toast.LENGTH_SHORT).show();
-//            myAdapter.notifyDataSetChanged();
-//        }
     }
 
-    public ArrayList<Message> getDetailLocalMessage()
-    {
-        ArrayList<Message> messages=new ArrayList<>();
-        Cursor cursor=db.getDetailFromMessage(doctorID);
-        while (cursor.moveToNext())
-        {
-            int id=cursor.getInt(0);
-            int idUser=cursor.getInt(1);
-            int idDoctor=cursor.getInt(2);
-            String content=cursor.getString(3);
-            int from_person=cursor.getInt(5);
-            int checkLocalMess=cursor.getInt(6);
-            Message message = new Message(id, idUser,idDoctor, content,getDateTimeNow(),from_person==1?true:false,checkLocalMess);
+    public ArrayList<Message> getDetailLocalMessage() {
+        ArrayList<Message> messages = new ArrayList<>();
+        Cursor cursor = db.getDetailFromMessage(id_user);
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            int idUser = cursor.getInt(1);
+            int idDoctor = cursor.getInt(2);
+            String content = cursor.getString(3);
+            int from_person = cursor.getInt(5);
+            int checkLocalMess = cursor.getInt(6);
+            Message message = new Message(id, idUser, idDoctor, content, getDateTimeNow(), from_person == 1, checkLocalMess);
             messages.add(message);
         }
         return messages;
     }
-    public void scrollView()
-    {
+
+    public ArrayList<Message> getDetailLocalMessageDoctor() {
+        ArrayList<Message> messages = new ArrayList<>();
+        Cursor cursor = db.getDetailFromMessageDoctor(doctorID);
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            int idUser = cursor.getInt(1);
+            int idDoctor = cursor.getInt(2);
+            String content = cursor.getString(3);
+            int from_person = cursor.getInt(5);
+            int checkLocalMess = cursor.getInt(6);
+            Message message = new Message(id, idUser, idDoctor, content, getDateTimeNow(), from_person == 1, checkLocalMess);
+            messages.add(message);
+        }
+        return messages;
+    }
+
+    public void scrollView() {
         rcvDetailMess.scrollToPosition(rcvDetailMess.getAdapter().getItemCount() - 1);
     }
-    public String getDateTimeNow(){
+
+    public String getDateTimeNow() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat simpleTimeFormat = new SimpleDateFormat("HH:mm");
         String time = simpleTimeFormat.format(calendar.getTime());
-        java.util.Date day  = calendar.getTime();
-        return  simpleDateFormat.format(day)+" "+time;
+        java.util.Date day = calendar.getTime();
+        return simpleDateFormat.format(day) + " " + time;
     }
 }

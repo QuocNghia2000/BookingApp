@@ -15,7 +15,7 @@ import com.android.bookingapp.R;
 
 public class NotificationApplication extends Application {
 
-    public static final String CHANNEL_ID ="Notification Message" ;
+    public static final String CHANNEL_ID = "Notification Message";
 
     @Override
     public void onCreate() {
@@ -38,17 +38,16 @@ public class NotificationApplication extends Application {
             notificationManager.createNotificationChannel(channel);
         }
     }
-    private void sendNotification()
-    {
-        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
-        Notification notification=new NotificationCompat.Builder(this,NotificationApplication.CHANNEL_ID)
+
+    private void sendNotification() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher_round);
+        Notification notification = new NotificationCompat.Builder(this, NotificationApplication.CHANNEL_ID)
                 .setContentTitle("")
                 .setContentText("")
                 .setSmallIcon(R.drawable.messenger).setLargeIcon(bitmap).build();
-        NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        if(notificationManager!=null)
-        {
-            notificationManager.notify(1,notification);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.notify(1, notification);
         }
     }
 }

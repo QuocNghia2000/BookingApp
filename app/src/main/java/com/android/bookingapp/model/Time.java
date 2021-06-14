@@ -6,7 +6,8 @@ public class Time implements Serializable {
     private int hour;
     private int minute;
 
-    public Time(){}
+    public Time() {
+    }
 
     public Time(int hour, int minute) {
         this.hour = hour;

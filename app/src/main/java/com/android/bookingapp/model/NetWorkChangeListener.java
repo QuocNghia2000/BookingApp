@@ -9,9 +9,8 @@ public class NetWorkChangeListener extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(!CheckInternet.checkInternet(context))
-        {
-            Toast.makeText(context,"No Internet",Toast.LENGTH_SHORT).show();
+        if (!CheckInternet.checkInternet(context)) {
+            Toast.makeText(context, "No Internet", Toast.LENGTH_SHORT).show();
         }
     }
 }

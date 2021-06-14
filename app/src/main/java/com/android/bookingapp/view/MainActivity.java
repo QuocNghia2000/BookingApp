@@ -11,17 +11,18 @@ import com.android.bookingapp.model.NetWorkChangeListener;
 
 public class MainActivity extends AppCompatActivity {
     NetWorkChangeListener netWorkChangeListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        netWorkChangeListener=new NetWorkChangeListener();
+        netWorkChangeListener = new NetWorkChangeListener();
     }
 
     @Override
     protected void onStart() {
-        IntentFilter intentFilter=new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(netWorkChangeListener,intentFilter);
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(netWorkChangeListener, intentFilter);
         super.onStart();
     }
 

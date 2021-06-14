@@ -37,20 +37,19 @@ public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapte
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-
         holder.binding.setDoctor(mDoctors.get(position));
         holder.doctor=mDoctors.get(position);
         holder.imvChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("doctor",mDoctors.get(position));
+                bundle.putSerializable("doctorID",mDoctors.get(position).getId());
+                bundle.putSerializable("nameDisplay",mDoctors.get(position).getFullname());
                 bundle.putInt("id_user",id_user);
                 bundle.putBoolean("isUser",true);
                 Navigation.findNavController(v).navigate(R.id.action_detailDepartmentFragment_to_detailMessFragment, bundle);
             }
         });
-
     }
 
     @Override
@@ -80,8 +79,6 @@ public class DetailDepartAdapter extends RecyclerView.Adapter<DetailDepartAdapte
                     Navigation.findNavController(v).navigate(R.id.action_detailDepartmentFragment_to_bookFragment, bundle);
                 }
             });
-
         }
     }
-
 }

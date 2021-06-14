@@ -22,26 +22,23 @@ public class CheckInternet {
         if (connectivity != null) {
             NetworkInfo info = connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
             if (info != null) {
-                if (info.isConnected()) {
-                    return true;
-                }
+                return info.isConnected();
             }
         }
         return false;
     }
-    public static void sendNotification(String title,String content,Context context)
-    {
-        Bitmap bitmap= BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_round);
-        Notification notification=new NotificationCompat.Builder(context, NotificationApplication.CHANNEL_ID)
+
+    public static void sendNotification(String title, String content, Context context) {
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher_round);
+        Notification notification = new NotificationCompat.Builder(context, NotificationApplication.CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setSmallIcon(R.drawable.messenger).setLargeIcon(bitmap).build();
-        NotificationManager notificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-        if(notificationManager!=null)
-        {
-            Random random=new Random();
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            Random random = new Random();
 
-            notificationManager.notify(random.nextInt(),notification);
+            notificationManager.notify(random.nextInt(), notification);
         }
     }
 
