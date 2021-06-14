@@ -164,7 +164,6 @@ public class DetailMessFragment extends Fragment {
             myRef.child("Message").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    listMess.clear();
                     messages.clear();
                     if(listMess.size()>0) messages.addAll(listMess);
                     listMess.clear();
@@ -177,12 +176,11 @@ public class DetailMessFragment extends Fragment {
                     if(messages.size()!=0)
                     {
                         for (int i = messages.size(); i < listMess.size(); i++) {
+                            message=listMess.get(i);
                             checkisUser=listMess.get(i).isFromPerson();
                             contentNotification=listMess.get(i).getContent();
-                            message=listMess.get(i);
                         }
-                        if(isUser&&!checkisUser) CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
-                        else if(!isUser&&checkisUser)
+                        if(isUser&&!checkisUser)
                         {
                             CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
                             try {
@@ -190,6 +188,10 @@ public class DetailMessFragment extends Fragment {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                        }
+                        else if(!isUser&&checkisUser)
+                        {
+                            CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
                         }
                     }
                     if(getDetailLocalMessage()!=null)

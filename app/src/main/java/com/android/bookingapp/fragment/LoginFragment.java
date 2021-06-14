@@ -20,9 +20,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
-import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.view.MainActivity;
 import com.google.firebase.database.DataSnapshot;
@@ -46,7 +46,8 @@ public class LoginFragment extends Fragment {
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String USERNAME = "userNameKey";
     public static final String PASS = "passKey";
-    public static final String ID_USER = "ID_USER";
+    public static final String VALIDATION="validation";
+    public static final String ID_CURRENT = "ID_USER";
     SharedPreferences sharedpreferences;
     DatabaseOpenHelper db;
 
@@ -63,6 +64,7 @@ public class LoginFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         dialogBuilder=new AlertDialog.Builder(getContext());
 
+        db=new DatabaseOpenHelper(getContext());
         myRef = database.getReference("User");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -97,9 +99,7 @@ public class LoginFragment extends Fragment {
                         int index=posCurrent(username.getText().toString(),pass.getText().toString(),users);
                         if(index!=-1)
                         {
-                            saveData(username.getText().toString(),pass.getText().toString(),users.get(index).getId());
-                            db=new DatabaseOpenHelper(getContext());
-                            db.createMessageTable();
+                            saveData(username.getText().toString(),pass.getText().toString(),users.get(index).getId(),"user");
                             //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
                             Intent intent =new Intent(getActivity(), MainActivity.class);
                             intent.putExtra("id",users.get(index).getId());
@@ -146,12 +146,18 @@ public class LoginFragment extends Fragment {
         bt_login=view.findViewById(R.id.bt_login);
         bt_register=view.findViewById(R.id.bt_register);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        if(isLogining())
+        if(isLogining()&&validation().equals("user"))
         {
-            String email=sharedpreferences.getString(USERNAME,"");
-            String pass=sharedpreferences.getString(PASS,"");
             Intent intent =new Intent(getActivity(), MainActivity.class);
-            intent.putExtra("id",sharedpreferences.getInt(ID_USER,-1));
+            intent.putExtra("id",sharedpreferences.getInt(ID_CURRENT,-1));
+            //Toast.makeText(getContext(),,Toast.LENGTH_SHORT).show();
+            getActivity().finish();
+            startActivity(intent);
+        }
+        if(isLogining()&&validation().equals("doctor"))
+        {
+            Intent intent =new Intent(getActivity(), MainActivity.class);
+            intent.putExtra("doctorID",sharedpreferences.getInt(ID_CURRENT,-1));
             getActivity().finish();
             startActivity(intent);
         }
@@ -171,8 +177,9 @@ public class LoginFragment extends Fragment {
                     }
                 }
                 if(doctor!=null){
+                    saveData(username.getText().toString(),pass,doctor.getId(),"doctor");
                     Intent intent =new Intent(getActivity(), MainActivity.class);
-                    intent.putExtra("doctor",doctor);
+                    intent.putExtra("doctorID",doctor.getId());
                     getActivity().finish();
                     startActivity(intent);
                 }
@@ -188,14 +195,19 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void saveData(String username, String Pass,int idUser) {
+    private void saveData(String username, String Pass,int idUser,String validation) {
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString(USERNAME, username);
         editor.putString(PASS, Pass);
-        editor.putInt(ID_USER,idUser);
+        editor.putString(VALIDATION, validation);
+        editor.putInt(ID_CURRENT,idUser);
         editor.commit();
     }
+    private String validation()
+    {
+        return sharedpreferences.getString(VALIDATION,"");
 
+    }
     private boolean isLogining() {
     return sharedpreferences.contains(USERNAME);
     }

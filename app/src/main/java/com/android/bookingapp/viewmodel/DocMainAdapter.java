@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.databinding.ItemRvDocMainBinding;
 import com.android.bookingapp.model.Date;
-import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Reservation;
 import com.android.bookingapp.model.User;
 import com.google.firebase.database.DataSnapshot;
@@ -27,15 +25,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHolder> {
-    private Doctor doctor;
+    private int doctorID;
     private Date date;
     private DatabaseReference myRef;
     private List<Reservation> listRE;
     private List<User> listUser;
     private Context context;
 
-    public DocMainAdapter(Date date,Doctor doctor,Context context){
-        this.doctor = doctor;
+    public DocMainAdapter(Date date,int doctorID,Context context){
+        this.doctorID = doctorID;
         this.date = date;
         this.listUser = new ArrayList<>();
         this.listRE = new ArrayList<>();
@@ -94,7 +92,7 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
                 for(DataSnapshot data : snapshot.getChildren()){
                     Reservation reservation = data.getValue(Reservation.class);
 //                    if(isSameDate(date,reservation.getDate())) Toast.makeText(context,date.getDay(),Toast.LENGTH_SHORT).show();
-                    if(reservation.getId_doctor()==doctor.getId() && isSameDate(date,reservation.getDate())){
+                    if(reservation.getId_doctor()==doctorID && isSameDate(date,reservation.getDate())){
                         listRE.add(reservation);
                     }
                 }

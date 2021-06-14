@@ -71,8 +71,19 @@ public class mainScreenFragment extends Fragment {
     Dialog dialogSearch;
     private List<String> list;
     private ArrayList<Doctor> listDoc;
+    public static final String USERNAME = "userNameKey";
 
 
+//    public String userValidatiion() {
+//        db=new DatabaseOpenHelper(getContext());
+//        Cursor cursor=db.getUserFromUser(1);
+//        String email="";
+//        while (cursor.moveToNext())
+//        {
+//            email=cursor.getString(1);
+//        }
+//        return email;
+//    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,16 +94,18 @@ public class mainScreenFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        if(getActivity().getIntent().getSerializableExtra("doctor")!=null)
+
+        int doctorID=getActivity().getIntent().getIntExtra("doctorID",-1);
+        if(doctorID!=-1)
         {
-            Doctor doctor= (Doctor) getActivity().getIntent().getSerializableExtra("doctor");
             Bundle bundle = new Bundle();
-            bundle.putSerializable("doctor",doctor);
+            bundle.putInt("doctorID",doctorID);
             Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_docMainFragment,bundle);
         }
-        if(getActivity().getIntent()!=null)
+       else
         {
             idUser= getActivity().getIntent().getIntExtra("id",-1);
+            Toast.makeText(getContext(),sharedpreferences.getString(USERNAME,""),Toast.LENGTH_SHORT).show();
         }
 
         mDeparts=new ArrayList<>();
@@ -122,7 +135,7 @@ public class mainScreenFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(!CheckInternet.checkInternet(getContext())) {
-                    Toast.makeText(getContext(),"Offine",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Offline",Toast.LENGTH_SHORT).show();
                 } else {
                     showLogoutDialog();
                 }
@@ -281,9 +294,8 @@ public class mainScreenFragment extends Fragment {
                     if(getActivity().getIntent().getSerializableExtra("doctor")!=null){
                         if(cursor.getCount()==0)
                         {
-//                            db.saveUserTableToDB(userAll);
+                            db.saveUserTableToDB(userAll);
                         }
-
                     }
                     else if(cursor.getCount()==0) db.saveUserTableToDB(users);
                 } catch (IOException e) {

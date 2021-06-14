@@ -35,7 +35,7 @@ import java.util.List;
 
 public class ListChatFragment extends Fragment {
     private List<Message> listMess;
-    private Doctor doctor;
+    private int doctorID;
     private RecyclerView rcvListChat;
     private ListChatAdapter listChatAdapter;
     private DatabaseReference dbRef;
@@ -70,10 +70,11 @@ public class ListChatFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_list_chat, container, false);
 
         listMess = new ArrayList<>();
+        listContact = new ArrayList<>();
+        listContactDoc = new ArrayList<>();
         db=new DatabaseOpenHelper(getContext());
         rcvListChat = v.findViewById(R.id.rcv_listchat);
         imvBack=v.findViewById(R.id.imv_back_listChat);
-        rcvListChat.setLayoutManager(new GridLayoutManager(getContext(),1));
         if(getArguments().getInt("id_user",-1)!=-1)
         {
             id_user = getArguments().getInt("id_user");
@@ -86,8 +87,7 @@ public class ListChatFragment extends Fragment {
         }
         else
         {
-            doctor = (Doctor) getArguments().getSerializable("doctor");
-            listContactDoc = new ArrayList<>();
+            doctorID =  getArguments().getInt("doctorID");
             getListMessDoctor();
         }
 
@@ -131,7 +131,6 @@ public class ListChatFragment extends Fragment {
                         }
                     }
                 }
-                listContact = new ArrayList<>();
                 for (int i=idDoctorFirst.size()-1;i>=0;i--){
                     if(!isConstrainList(idDoctor,idDoctorFirst.get(i))){
                         idDoctor.add(idDoctorFirst.get(i));
@@ -161,8 +160,7 @@ public class ListChatFragment extends Fragment {
                             }
                         }
                         listContact = new ArrayList<>(doctemp);
-                        listChatAdapter = new ListChatAdapter(id_user,getContext(),listContact, (ArrayList<Message>) listMess);
-                        rcvListChat.setAdapter(listChatAdapter);
+                        setListChatUserAdapter();
                         listChatAdapter.notifyDataSetChanged();
                     }
 
@@ -179,6 +177,19 @@ public class ListChatFragment extends Fragment {
             }
         });
 
+    }
+
+    private void setListChatUserAdapter()
+    {
+        rcvListChat.setLayoutManager(new GridLayoutManager(getContext(),1));
+        listChatAdapter = new ListChatAdapter(id_user,listContact, (ArrayList<Message>) listMess);
+        rcvListChat.setAdapter(listChatAdapter);
+    }
+    private void setListChatDoctorAdapter()
+    {
+        rcvListChat.setLayoutManager(new GridLayoutManager(getContext(),1));
+        listChatAdapter = new ListChatAdapter(doctorID,listContactDoc, (ArrayList<Message>) listMess,"");
+        rcvListChat.setAdapter(listChatAdapter);
     }
 
     public void getListMessUserOff(){
@@ -199,7 +210,6 @@ public class ListChatFragment extends Fragment {
                 listMess.add(mess);
             }
         }
-        listContact = new ArrayList<>();
         for (int i=idDoctorFirst.size()-1;i>=0;i--){
             if(!isConstrainList(idDoctor,idDoctorFirst.get(i))){
                 idDoctor.add(idDoctorFirst.get(i));
@@ -223,8 +233,7 @@ public class ListChatFragment extends Fragment {
             }
         }
         listContact = new ArrayList<>(doctemp);
-        listChatAdapter = new ListChatAdapter(id_user,getContext(),listContact, (ArrayList<Message>) listMess);
-        rcvListChat.setAdapter(listChatAdapter);
+        setListChatUserAdapter();
         listChatAdapter.notifyDataSetChanged();
     }
 
@@ -267,7 +276,7 @@ public class ListChatFragment extends Fragment {
                 for(DataSnapshot data: snapshot.getChildren())
                 {
                     Message mess = data.getValue(Message.class);
-                    if(mess.getId_Doctor() == doctor.getId())
+                    if(mess.getId_Doctor() == doctorID)
                     {
                         idUserFirst.add(mess.getId_User());
                         int t = getPositionList(listMess,mess.getId_User());
@@ -313,8 +322,7 @@ public class ListChatFragment extends Fragment {
                             }
                         }
                         listContactDoc = new ArrayList<>(usertemp);
-                        listChatAdapter = new ListChatAdapter(doctor,getContext(),listContactDoc, (ArrayList<Message>) listMess);
-                        rcvListChat.setAdapter(listChatAdapter);
+                        setListChatDoctorAdapter();
                         listChatAdapter.notifyDataSetChanged();
                     }
 

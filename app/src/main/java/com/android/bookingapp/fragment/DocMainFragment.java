@@ -3,15 +3,8 @@ package com.android.bookingapp.fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,16 +13,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.Date;
-import com.android.bookingapp.model.Doctor;
-import com.android.bookingapp.model.User;
 import com.android.bookingapp.view.LoginActivity;
 import com.android.bookingapp.viewmodel.DocMainAdapter;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,7 +32,7 @@ import java.util.Calendar;
 
 public class DocMainFragment extends Fragment {
     private ImageView imgChat, imgLogout;
-    private Doctor doctor;
+    private int doctorID;
     private Spinner spinner_day, spinner_month, spinner_year;
     private RecyclerView rcvDocMain;
     private String nDay,nMonth,nYear;
@@ -47,13 +41,15 @@ public class DocMainFragment extends Fragment {
     private Date date;
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
-
+    SharedPreferences sharedpreferences;
+    public static final String MyPREFERENCES = "MyPrefs";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_doc_main, container, false);
 
+        sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         imgChat = view.findViewById(R.id.imv_chat_docMain);
         imgLogout = view.findViewById(R.id.iv_logout);
         spinner_day = view.findViewById(R.id.spinner_date_docMain);
@@ -66,10 +62,10 @@ public class DocMainFragment extends Fragment {
 
         if(getArguments()!=null)
         {
-            doctor=(Doctor) getArguments().getSerializable("doctor");
+            doctorID= getArguments().getInt("doctorID",-1);
         }
 
-        mainAdapter = new DocMainAdapter(date,doctor,getContext());
+        mainAdapter = new DocMainAdapter(date,doctorID,getContext());
         rcvDocMain.setLayoutManager(new GridLayoutManager(getContext(),1));
         rcvDocMain.setAdapter(mainAdapter);
 
@@ -88,7 +84,7 @@ public class DocMainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable("doctor",doctor);
+                bundle.putInt("doctorID",doctorID);
                 Navigation.findNavController(view).navigate(R.id.action_docMainFragment_to_listChatFragment,bundle);
             }
         });
@@ -97,7 +93,7 @@ public class DocMainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 date = getDateInSpinner();
-                mainAdapter = new DocMainAdapter(date,doctor,getContext());
+                mainAdapter = new DocMainAdapter(date,doctorID,getContext());
                 rcvDocMain.setAdapter(mainAdapter);
                 mainAdapter.notifyDataSetChanged();
             }
@@ -118,8 +114,9 @@ public class DocMainFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-                startActivity(new Intent(getActivity(), LoginActivity.class));
+                clearData();
                 getActivity().finish();
+                startActivity(new Intent(getActivity(), LoginActivity.class));
             }
         });
         dialog = dialogBuilder.create();
@@ -195,6 +192,11 @@ public class DocMainFragment extends Fragment {
         });
     }
 
+    private void clearData() {
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.clear();
+        editor.commit();
+    }
     public Date getDateNow(){
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");

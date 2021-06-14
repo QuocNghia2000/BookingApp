@@ -1,6 +1,5 @@
 package com.android.bookingapp.viewmodel;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,6 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
-import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.User;
@@ -27,23 +25,20 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
     private ArrayList<Message> listMess;
     private ArrayList<Doctor> listContactAll;
     private ArrayList<User> listContactDocAll;
-    private Doctor doctor;
-    private Context context;
+    private int doctorID;
     private int id_user=-1;
 
-    public ListChatAdapter(int id_user,Context context,ArrayList<Doctor> listContact,ArrayList<Message> listMess){
+    public ListChatAdapter(int id_user,ArrayList<Doctor> listContact,ArrayList<Message> listMess){
         this.id_user = id_user;
         this.listMess = listMess;
         this.listContactAll = listContact;
-        this.context = context;
         this.listContact = listContact;
     }
 
-    public ListChatAdapter(Doctor doctor,Context context,ArrayList<User> listContactDoc,ArrayList<Message> listMess){
-        this.doctor = doctor;
+    public ListChatAdapter(int doctorID,ArrayList<User> listContactDoc,ArrayList<Message> listMess,String doctor){
+        this.doctorID = doctorID;
         this.listMess = listMess;
         this.listContactDocAll = listContactDoc;
-        this.context = context;
         this.listContactDoc = listContactDoc;
     }
 
@@ -57,29 +52,18 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
 
     @Override
     public void onBindViewHolder(@NonNull ListChatAdapter.MyViewHolder holder, int position) {
-        if(CheckInternet.checkInternet(context)){
-            if(this.id_user!=-1){
-                holder.name.setText(listContact.get(position).getFullname());
-                for(Message mess: listMess){
-                    if (mess.getId_Doctor() == listContact.get(position).getId() ){
-                        holder.content.setText(mess.getContent());
-                    }
-                }
-            }
-            else {
-                holder.name.setText(listContactDoc.get(position).getFullname());
-                for(Message mess: listMess){
-                    if (mess.getId_User() == listContactDoc.get(position).getId() ){
-                        holder.content.setText(mess.getContent());
-                    }
+        if(this.id_user!=-1){
+            holder.name.setText(listContact.get(position).getFullname());
+            for(Message mess: listMess){
+                if (mess.getId_Doctor() == listContact.get(position).getId() ){
+                    holder.content.setText(mess.getContent());
                 }
             }
         }
-        else
-        {
-            holder.name.setText(listContact.get(position).getFullname());
+        else {
+            holder.name.setText(listContactDoc.get(position).getFullname());
             for(Message mess: listMess){
-                if (mess.getId_Doctor() == listContact.get(position).getId()){
+                if (mess.getId_User() == listContactDoc.get(position).getId() ){
                     holder.content.setText(mess.getContent());
                 }
             }
@@ -118,7 +102,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                     }
                     else
                     {
-                        bundle.putSerializable("doctor",doctor);
+                        bundle.putInt("doctor",doctorID);
                         bundle.putInt("id_user",listContactDoc.get(getAdapterPosition()).getId());
                         bundle.putString("fullnameUser",listContactDoc.get(getAdapterPosition()).getFullname());
                         bundle.putBoolean("isUser",false);
