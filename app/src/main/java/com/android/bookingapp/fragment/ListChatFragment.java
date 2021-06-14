@@ -68,13 +68,7 @@ public class ListChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_list_chat, container, false);
-
-        listMess = new ArrayList<>();
-        listContact = new ArrayList<>();
-        listContactDoc = new ArrayList<>();
-        db=new DatabaseOpenHelper(getContext());
-        rcvListChat = v.findViewById(R.id.rcv_listchat);
-        imvBack=v.findViewById(R.id.imv_back_listChat);
+        init(v);
         if(getArguments().getInt("id_user",-1)!=-1)
         {
             id_user = getArguments().getInt("id_user");
@@ -98,68 +92,45 @@ public class ListChatFragment extends Fragment {
             }
         });
 
-
-        searchView = v.findViewById(R.id.sv_listChat);
-        db=new DatabaseOpenHelper(getContext());
-
-
         return v;
     }
 
+    private void init(View v) {
+        listMess = new ArrayList<>();
+        listContact = new ArrayList<>();
+        listContactDoc = new ArrayList<>();
+        db=new DatabaseOpenHelper(getContext());
+        rcvListChat = v.findViewById(R.id.rcv_listchat);
+        imvBack=v.findViewById(R.id.imv_back_listChat);
+        searchView = v.findViewById(R.id.sv_listChat);
+        dbRef = FirebaseDatabase.getInstance().getReference();
+    }
+
     public void getListMessUser(){
-        dbRef = FirebaseDatabase.getInstance().getReference("Message");
-        dbRef.addValueEventListener(new ValueEventListener() {
+        dbRef.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ArrayList<Integer> idDoctor = new ArrayList<>();
-                ArrayList<Integer> idDoctorFirst = new ArrayList<>();
                 for(DataSnapshot data: snapshot.getChildren())
                 {
                     Message mess = data.getValue(Message.class);
                     if(mess.getId_User() == id_user)
                     {
-                        idDoctorFirst.add(mess.getId_Doctor());
-                        int t = getPositionList(listMess,mess.getId_Doctor());
-                        if(t > -1)
-                        {
-                            listMess.remove(t);
-                            listMess.add(t,mess);
-                        }
-                        else
-                        {
-                            listMess.add(mess);
-                        }
+                        listMess.add(mess);
                     }
                 }
-                for (int i=idDoctorFirst.size()-1;i>=0;i--){
-                    if(!isConstrainList(idDoctor,idDoctorFirst.get(i))){
-                        idDoctor.add(idDoctorFirst.get(i));
-                    }
-                }
-
-                dbRef = FirebaseDatabase.getInstance().getReference("Doctor");
-                dbRef.addValueEventListener(new ValueEventListener() {
+                dbRef.child("Doctor").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        ArrayList<Integer> idDoctor=listIdLatest();
                         for(DataSnapshot data: snapshot.getChildren())
                         {
-                            Doctor d = data.getValue(Doctor.class);
-                            if(isConstrainList(idDoctor,d.getId()))
+                            Doctor doctor = data.getValue(Doctor.class);
+                            if(idDoctor.indexOf(doctor.getId())!=-1)
                             {
-                                listContact.add(d);
+                                listContact.add(doctor);
                             }
                         }
-                        List<Doctor> doctemp = new ArrayList<>();
-                        for(int i=0;i<idDoctor.size();i++){
-                            for(Doctor d : listContact){
-                                if (idDoctor.get(i) == d.getId())
-                                {
-                                    doctemp.add(d);
-                                    break;
-                                }
-                            }
-                        }
-                        listContact = new ArrayList<>(doctemp);
+                        listContact =updateListChatUser(idDoctor);
                         setListChatUserAdapter();
                         listChatAdapter.notifyDataSetChanged();
                     }
@@ -179,6 +150,116 @@ public class ListChatFragment extends Fragment {
 
     }
 
+    public void getListMessUserOff(){
+        ArrayList<Message> messTemp = getDetailLocalMessage();
+        ArrayList<Doctor> docTemp = getDetailLocalDoctor();
+        for(Message mess : messTemp){
+            if(mess.getId_User() == id_user)
+            {
+                listMess.add(mess);
+            }
+        }
+        ArrayList<Integer> idDoctor = listIdLatest();
+        for(Doctor doctor : docTemp){
+            if(idDoctor.indexOf(doctor.getId())!=-1)
+            {
+                listContact.add(doctor);
+            }
+        }
+        listContact = updateListChatUser(idDoctor);
+        setListChatUserAdapter();
+        listChatAdapter.notifyDataSetChanged();
+    }
+
+
+    public void getListMessDoctor(){
+        dbRef.child("Message").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot data: snapshot.getChildren())
+                {
+                    Message mess = data.getValue(Message.class);
+                    if(mess.getId_Doctor() == doctorID)
+                    {
+                        listMess.add(mess);
+                    }
+                }
+
+                dbRef.child("User").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        ArrayList<Integer> idUser=listIdLatest();
+                        for(DataSnapshot data: snapshot.getChildren())
+                        {
+                            User user = data.getValue(User.class);
+                            if(idUser.indexOf(user.getId())!=-1)
+                            {
+                                listContactDoc.add(user);
+                            }
+                        }
+
+                        listContactDoc =updateListChatDoctor(idUser);
+                        setListChatDoctorAdapter();
+                        listChatAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private ArrayList<Integer> listIdLatest()
+    {
+        ArrayList<Integer> idDoctor = new ArrayList<>();
+        for(int i=listMess.size()-1;i>=0;i--)
+        {
+            if(idDoctor.indexOf(listMess.get(i).getId_Doctor())==-1)
+            {
+                idDoctor.add(listMess.get(i).getId_Doctor());
+            }
+        }
+        return idDoctor;
+    }
+    private ArrayList<Doctor> updateListChatUser(ArrayList<Integer> idDoctor)
+    {
+        ArrayList<Doctor> doctemp = new ArrayList<>();
+        for(int i=0;i<idDoctor.size();i++){
+            for(Doctor d : listContact){
+                if (idDoctor.get(i) == d.getId())
+                {
+                    doctemp.add(d);
+                    break;
+                }
+            }
+        }
+        return doctemp;
+    }
+    private ArrayList<User> updateListChatDoctor(ArrayList<Integer> idUser)
+    {
+        ArrayList<User> doctemp = new ArrayList<>();
+        for(int i=0;i<idUser.size();i++){
+            for(User d : listContactDoc){
+                if (idUser.get(i) == d.getId())
+                {
+                    doctemp.add(d);
+                    break;
+                }
+            }
+        }
+        return doctemp;
+    }
+
     private void setListChatUserAdapter()
     {
         rcvListChat.setLayoutManager(new GridLayoutManager(getContext(),1));
@@ -192,49 +273,24 @@ public class ListChatFragment extends Fragment {
         rcvListChat.setAdapter(listChatAdapter);
     }
 
-    public void getListMessUserOff(){
-        ArrayList<Integer> idDoctor = new ArrayList<>();
-        ArrayList<Integer> idDoctorFirst = new ArrayList<>();
-        ArrayList<Message> messTemp = getDetailLocalMessage();
-        ArrayList<Doctor> docTemp = getDetailLocalDoctor();
-        for(Message mess : messTemp){
-            idDoctorFirst.add(mess.getId_Doctor());
-            int t = getPositionList(listMess,mess.getId_Doctor());
-            if(t > -1)
-            {
-                listMess.remove(t);
-                listMess.add(t,mess);
-            }
-            else
-            {
-                listMess.add(mess);
-            }
-        }
-        for (int i=idDoctorFirst.size()-1;i>=0;i--){
-            if(!isConstrainList(idDoctor,idDoctorFirst.get(i))){
-                idDoctor.add(idDoctorFirst.get(i));
-            }
-        }
-        for(Doctor d : docTemp){
-            if(isConstrainList(idDoctor,d.getId()))
-            {
-                listContact.add(d);
-            }
-        }
-        List<Doctor> doctemp = new ArrayList<>();
+    public ArrayList<Doctor> getDetailLocalDoctor(){
+        ArrayList<Doctor> doctors=new ArrayList<>();
+        Cursor cursor=db.getDoctorFromSqlite();
+        while (cursor.moveToNext())
+        {
+            int id=cursor.getInt(0);
+            int id_Depart=cursor.getInt(1);
+            String email=cursor.getString(2);
+            String password=cursor.getString(3);
+            String fullname=cursor.getString(4);
+            String phone=cursor.getString(5);
+            String achivement=cursor.getString(6);
+            String address=cursor.getString(7);
 
-        for(int i=0;i<idDoctor.size();i++){
-            for(Doctor d : listContact){
-                if (idDoctor.get(i) == d.getId())
-                {
-                    doctemp.add(d);
-                    break;
-                }
-            }
+            Doctor doctor = new Doctor(id, email,password, fullname,phone,id_Depart,achivement,address);
+            doctors.add(doctor);
         }
-        listContact = new ArrayList<>(doctemp);
-        setListChatUserAdapter();
-        listChatAdapter.notifyDataSetChanged();
+        return doctors;
     }
 
     public ArrayList<Message> getDetailLocalMessage()
@@ -263,119 +319,6 @@ public class ListChatFragment extends Fragment {
         String time = simpleTimeFormat.format(calendar.getTime());
         java.util.Date day  = calendar.getTime();
         return  simpleDateFormat.format(day)+" "+time;
-
-    }
-
-    public void getListMessDoctor(){
-        dbRef = FirebaseDatabase.getInstance().getReference("Message");
-        dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<Integer> idUser = new ArrayList<>();
-                List<Integer> idUserFirst = new ArrayList<>();
-                for(DataSnapshot data: snapshot.getChildren())
-                {
-                    Message mess = data.getValue(Message.class);
-                    if(mess.getId_Doctor() == doctorID)
-                    {
-                        idUserFirst.add(mess.getId_User());
-                        int t = getPositionList(listMess,mess.getId_User());
-                        if(t > -1)
-                        {
-                            listMess.remove(t);
-                            listMess.add(t,mess);
-                        }
-                        else
-                        {
-                            listMess.add(mess);
-                        }
-                    }
-                }
-
-                for (int i=idUserFirst.size()-1;i>=0;i--){
-                    if(!isConstrainList(idUser,idUserFirst.get(i))){
-                        idUser.add(idUserFirst.get(i));
-                    }
-                }
-                listContactDoc = new ArrayList<>();
-                dbRef = FirebaseDatabase.getInstance().getReference("User");
-                dbRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot data: snapshot.getChildren())
-                        {
-                            User u = data.getValue(User.class);
-                            if(isConstrainList(idUser,u.getId()))
-                            {
-                                listContactDoc.add(u);
-                            }
-                        }
-
-                        List<User> usertemp = new ArrayList<>();
-                        for(int i=0;i<idUser.size();i++){
-                            for(User u : listContactDoc){
-                                if (idUser.get(i) == u.getId())
-                                {
-                                    usertemp.add(u);
-                                    break;
-                                }
-                            }
-                        }
-                        listContactDoc = new ArrayList<>(usertemp);
-                        setListChatDoctorAdapter();
-                        listChatAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-    }
-
-    public boolean isConstrainList(List<Integer> listID,int idDoc){
-        for(int id : listID){
-            if (id == idDoc) return true;
-        }
-        return false;
-    }
-
-    public int getPositionList(List<Message> listM,int idDoc){
-        int i=0;
-        for(Message m : listM ){
-            if(m.getId_Doctor() == idDoc) return i;
-            i++;
-        }
-        return -1;
-    }
-
-    public ArrayList<Doctor> getDetailLocalDoctor(){
-        ArrayList<Doctor> doctors=new ArrayList<>();
-        Cursor cursor=db.getDoctorFromSqlite();
-        while (cursor.moveToNext())
-        {
-            int id=cursor.getInt(0);
-            int id_Depart=cursor.getInt(1);
-            String email=cursor.getString(2);
-            String password=cursor.getString(3);
-            String fullname=cursor.getString(4);
-            String phone=cursor.getString(5);
-            String achivement=cursor.getString(6);
-            String address=cursor.getString(7);
-
-            Doctor doctor = new Doctor(id, email,password, fullname,phone,id_Depart,achivement,address);
-            doctors.add(doctor);
-        }
-        return doctors;
     }
 
 }
