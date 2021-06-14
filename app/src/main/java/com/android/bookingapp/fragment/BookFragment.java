@@ -88,7 +88,6 @@ public class BookFragment extends Fragment {
             binding.setUser(user);
         }
         myRef = FirebaseDatabase.getInstance().getReference();
-        myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("User").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

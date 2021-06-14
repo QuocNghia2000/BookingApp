@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,7 +34,6 @@ import java.util.List;
 
 
 public class ListChatFragment extends Fragment {
-    DatabaseOpenHelper db;
     private List<Message> listMess;
     private int doctorID;
     private RecyclerView rcvListChat;
@@ -46,6 +44,7 @@ public class ListChatFragment extends Fragment {
     private SearchView searchView;
     private ArrayList<Doctor> listContact;
     private ArrayList<User> listContactDoc;
+    DatabaseOpenHelper db;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -70,16 +69,19 @@ public class ListChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_list_chat, container, false);
         init(v);
-        if (getArguments().getInt("id_user", -1) != -1) {
+        if(getArguments().getInt("id_user",-1)!=-1)
+        {
             id_user = getArguments().getInt("id_user");
             listContact = new ArrayList<>();
-            if (CheckInternet.checkInternet(getContext())) {
+            if(CheckInternet.checkInternet(getContext())){
                 getListMessUser();
-            } else getListMessUserOff();
+            }
+            else getListMessUserOff();
 
-        } else {
-            listContactDoc = new ArrayList<>();
-            doctorID = getArguments().getInt("doctorID");
+        }
+        else
+        {
+            doctorID =  getArguments().getInt("doctorID");
             getListMessDoctor();
         }
 
@@ -97,40 +99,45 @@ public class ListChatFragment extends Fragment {
         listMess = new ArrayList<>();
         listContact = new ArrayList<>();
         listContactDoc = new ArrayList<>();
-        db = new DatabaseOpenHelper(getContext());
+        db=new DatabaseOpenHelper(getContext());
         rcvListChat = v.findViewById(R.id.rcv_listchat);
-        imvBack = v.findViewById(R.id.imv_back_listChat);
+        imvBack=v.findViewById(R.id.imv_back_listChat);
         searchView = v.findViewById(R.id.sv_listChat);
         dbRef = FirebaseDatabase.getInstance().getReference();
     }
 
-    public void getListMessUser() {
+    public void getListMessUser(){
         dbRef.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot data : snapshot.getChildren()) {
+                for(DataSnapshot data: snapshot.getChildren())
+                {
                     Message mess = data.getValue(Message.class);
-                    if (mess.getId_User() == id_user) {
+                    if(mess.getId_User() == id_user)
+                    {
                         listMess.add(mess);
                     }
                 }
                 dbRef.child("Doctor").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<Integer> idDoctor = listIdLatest();
-                        for (DataSnapshot data : snapshot.getChildren()) {
+                        ArrayList<Integer> idDoctor=listIdDoctorLatest();
+                        for(DataSnapshot data: snapshot.getChildren())
+                        {
                             Doctor doctor = data.getValue(Doctor.class);
-                            if (idDoctor.indexOf(doctor.getId()) != -1) {
+                            if(idDoctor.indexOf(doctor.getId())!=-1)
+                            {
                                 listContact.add(doctor);
                             }
                         }
-                        listContact = updateListChatUser(idDoctor);
+                        listContact =updateListChatUser(idDoctor);
                         setListChatUserAdapter();
                         listChatAdapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+
                     }
                 });
             }
@@ -140,19 +147,22 @@ public class ListChatFragment extends Fragment {
 
             }
         });
+
     }
 
-    public void getListMessUserOff() {
+    public void getListMessUserOff(){
         ArrayList<Message> messTemp = getDetailLocalMessage();
         ArrayList<Doctor> docTemp = getDetailLocalDoctor();
-        for (Message mess : messTemp) {
-            if (mess.getId_User() == id_user) {
+        for(Message mess : messTemp){
+            if(mess.getId_User() == id_user)
+            {
                 listMess.add(mess);
             }
         }
-        ArrayList<Integer> idDoctor = listIdLatest();
-        for (Doctor doctor : docTemp) {
-            if (idDoctor.indexOf(doctor.getId()) != -1) {
+        ArrayList<Integer> idDoctor = listIdDoctorLatest();
+        for(Doctor doctor : docTemp){
+            if(idDoctor.indexOf(doctor.getId())!=-1)
+            {
                 listContact.add(doctor);
             }
         }
@@ -162,13 +172,15 @@ public class ListChatFragment extends Fragment {
     }
 
 
-    public void getListMessDoctor() {
+    public void getListMessDoctor(){
         dbRef.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot data : snapshot.getChildren()) {
+                for(DataSnapshot data: snapshot.getChildren())
+                {
                     Message mess = data.getValue(Message.class);
-                    if (mess.getId_Doctor() == doctorID) {
+                    if(mess.getId_Doctor() == doctorID)
+                    {
                         listMess.add(mess);
                     }
                 }
@@ -176,47 +188,68 @@ public class ListChatFragment extends Fragment {
                 dbRef.child("User").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<Integer> idUser = listIdLatest();
-                        for (DataSnapshot data : snapshot.getChildren()) {
+                        ArrayList<Integer> idUser=listIdUserLatest();
+                        for(DataSnapshot data: snapshot.getChildren())
+                        {
                             User user = data.getValue(User.class);
-                            if (idUser.indexOf(user.getId()) != -1) {
+                            if(idUser.indexOf(user.getId())!=-1)
+                            {
                                 listContactDoc.add(user);
                             }
                         }
-                        listContactDoc = updateListChatDoctor(idUser);
+
+                        listContactDoc =updateListChatDoctor(idUser);
                         setListChatDoctorAdapter();
                         listChatAdapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+
                     }
                 });
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
+
     }
 
-    private ArrayList<Integer> listIdLatest() {
+    private ArrayList<Integer> listIdDoctorLatest()
+    {
         ArrayList<Integer> idDoctor = new ArrayList<>();
-        for (int i = listMess.size() - 1; i >= 0; i--) {
-            if (idDoctor.indexOf(listMess.get(i).getId_Doctor()) == -1) {
+        for(int i=listMess.size()-1;i>=0;i--)
+        {
+            if(idDoctor.indexOf(listMess.get(i).getId_Doctor())==-1)
+            {
                 idDoctor.add(listMess.get(i).getId_Doctor());
-            } else if (idDoctor.indexOf(listMess.get(i).getId_User()) == -1) {
-                idDoctor.add(listMess.get(i).getId_User());
             }
         }
         return idDoctor;
     }
-
-    private ArrayList<Doctor> updateListChatUser(ArrayList<Integer> idDoctor) {
+    private ArrayList<Integer> listIdUserLatest()
+    {
+        ArrayList<Integer> idUser = new ArrayList<>();
+        for(int i=listMess.size()-1;i>=0;i--)
+        {
+            if(idUser.indexOf(listMess.get(i).getId_User())==-1)
+            {
+                idUser.add(listMess.get(i).getId_User());
+            }
+        }
+        return idUser;
+    }
+    private ArrayList<Doctor> updateListChatUser(ArrayList<Integer> idDoctor)
+    {
         ArrayList<Doctor> doctemp = new ArrayList<>();
-        for (int i = 0; i < idDoctor.size(); i++) {
-            for (Doctor d : listContact) {
-                if (idDoctor.get(i) == d.getId()) {
+        for(int i=0;i<idDoctor.size();i++){
+            for(Doctor d : listContact){
+                if (idDoctor.get(i) == d.getId())
+                {
                     doctemp.add(d);
                     break;
                 }
@@ -224,12 +257,13 @@ public class ListChatFragment extends Fragment {
         }
         return doctemp;
     }
-
-    private ArrayList<User> updateListChatDoctor(ArrayList<Integer> idUser) {
+    private ArrayList<User> updateListChatDoctor(ArrayList<Integer> idUser)
+    {
         ArrayList<User> doctemp = new ArrayList<>();
-        for (int i = 0; i < idUser.size(); i++) {
-            for (User d : listContactDoc) {
-                if (idUser.get(i) == d.getId()) {
+        for(int i=0;i<idUser.size();i++){
+            for(User d : listContactDoc){
+                if (idUser.get(i) == d.getId())
+                {
                     doctemp.add(d);
                     break;
                 }
@@ -238,61 +272,65 @@ public class ListChatFragment extends Fragment {
         return doctemp;
     }
 
-    private void setListChatUserAdapter() {
-        rcvListChat.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        listChatAdapter = new ListChatAdapter(id_user, listContact, (ArrayList<Message>) listMess);
+    private void setListChatUserAdapter()
+    {
+        rcvListChat.setLayoutManager(new GridLayoutManager(getContext(),1));
+        listChatAdapter = new ListChatAdapter(id_user,listContact, (ArrayList<Message>) listMess);
+        rcvListChat.setAdapter(listChatAdapter);
+    }
+    private void setListChatDoctorAdapter()
+    {
+        rcvListChat.setLayoutManager(new GridLayoutManager(getContext(),1));
+        listChatAdapter = new ListChatAdapter(doctorID,listContactDoc, (ArrayList<Message>) listMess,"");
         rcvListChat.setAdapter(listChatAdapter);
     }
 
-    private void setListChatDoctorAdapter() {
-        rcvListChat.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        listChatAdapter = new ListChatAdapter(doctorID, listContactDoc, (ArrayList<Message>) listMess, "");
-        rcvListChat.setAdapter(listChatAdapter);
-    }
+    public ArrayList<Doctor> getDetailLocalDoctor(){
+        ArrayList<Doctor> doctors=new ArrayList<>();
+        Cursor cursor=db.getDoctorFromSqlite();
+        while (cursor.moveToNext())
+        {
+            int id=cursor.getInt(0);
+            int id_Depart=cursor.getInt(1);
+            String email=cursor.getString(2);
+            String password=cursor.getString(3);
+            String fullname=cursor.getString(4);
+            String phone=cursor.getString(5);
+            String achivement=cursor.getString(6);
+            String address=cursor.getString(7);
 
-    public ArrayList<Doctor> getDetailLocalDoctor() {
-        ArrayList<Doctor> doctors = new ArrayList<>();
-        Cursor cursor = db.getDoctorFromSqlite();
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            int id_Depart = cursor.getInt(1);
-            String email = cursor.getString(2);
-            String password = cursor.getString(3);
-            String fullname = cursor.getString(4);
-            String phone = cursor.getString(5);
-            String achivement = cursor.getString(6);
-            String address = cursor.getString(7);
-
-            Doctor doctor = new Doctor(id, email, password, fullname, phone, id_Depart, achivement, address);
+            Doctor doctor = new Doctor(id, email,password, fullname,phone,id_Depart,achivement,address);
             doctors.add(doctor);
         }
         return doctors;
     }
 
-    public ArrayList<Message> getDetailLocalMessage() {
-        ArrayList<Message> messages = new ArrayList<>();
-        Cursor cursor = db.getMessageFromSqlite();
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            int idUser = cursor.getInt(1);
-            int idDoctor = cursor.getInt(2);
-            String content = cursor.getString(3);
-            int from_person = cursor.getInt(5);
-            int checkLocalMess = cursor.getInt(6);
-            Message message = new Message(id, idUser, idDoctor, content, getDateTimeNow(), from_person == 1, checkLocalMess);
+    public ArrayList<Message> getDetailLocalMessage()
+    {
+        ArrayList<Message> messages=new ArrayList<>();
+        Cursor cursor=db.getMessageFromSqlite();
+        while (cursor.moveToNext())
+        {
+            int id=cursor.getInt(0);
+            int idUser=cursor.getInt(1);
+            int idDoctor=cursor.getInt(2);
+            String content=cursor.getString(3);
+            int from_person=cursor.getInt(5);
+            int checkLocalMess=cursor.getInt(6);
+            Message message = new Message(id, idUser,idDoctor, content,getDateTimeNow(),from_person==1?true:false,checkLocalMess);
             messages.add(message);
         }
         return messages;
     }
 
 
-    public String getDateTimeNow() {
+    public String getDateTimeNow(){
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat simpleTimeFormat = new SimpleDateFormat("HH:mm");
         String time = simpleTimeFormat.format(calendar.getTime());
-        java.util.Date day = calendar.getTime();
-        return simpleDateFormat.format(day) + " " + time;
+        java.util.Date day  = calendar.getTime();
+        return  simpleDateFormat.format(day)+" "+time;
     }
 
 }
