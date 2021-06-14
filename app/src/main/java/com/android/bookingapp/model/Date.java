@@ -3,9 +3,10 @@ package com.android.bookingapp.model;
 import java.io.Serializable;
 
 public class Date implements Serializable {
-    String day,month,year;
+    String day, month, year;
 
-    public Date() {}
+    public Date() {
+    }
 
     public Date(String day, String month, String year) {
         this.day = day;

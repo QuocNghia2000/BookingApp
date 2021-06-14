@@ -36,33 +36,34 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class moreInfoFragment extends Fragment  {
-    private User user;
-    private EditText edt_job,edt_address;
-    private Button bt_submit;
+public class moreInfoFragment extends Fragment {
     RadioButton male;
-    Spinner spinner_day,spinner_month,spinner_year;
-    private String nDay,nMonth,nYear;
+    Spinner spinner_day, spinner_month, spinner_year;
+    Session session = null;
+    String rec, subject, textMessage;
+    private User user;
+    private EditText edt_job, edt_address;
+    private Button bt_submit;
+    private String nDay, nMonth, nYear;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            user=(User)getArguments().getSerializable("user");
+            user = (User) getArguments().getSerializable("user");
         }
     }
+
     public void addItemsOnSpinner() {
 
         ArrayList<Integer> day = new ArrayList<>();
         ArrayList<Integer> month = new ArrayList<>();
         ArrayList<Integer> year = new ArrayList<>();
-        for(int i=1;i<32;i++)
-        {
-            if(i<13) month.add(i);
+        for (int i = 1; i < 32; i++) {
+            if (i < 13) month.add(i);
             day.add(i);
         }
-        for(int i=1930;i<2021;i++)
-        {
+        for (int i = 1930; i < 2021; i++) {
             year.add(i);
         }
         ArrayAdapter<Integer> dataAdapter = new ArrayAdapter<Integer>((Context) getActivity(),
@@ -73,7 +74,7 @@ public class moreInfoFragment extends Fragment  {
         spinner_day.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                nDay= parent.getItemAtPosition(position).toString();
+                nDay = parent.getItemAtPosition(position).toString();
             }
 
             @Override
@@ -89,7 +90,7 @@ public class moreInfoFragment extends Fragment  {
         spinner_month.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                nMonth= parent.getItemAtPosition(position).toString();
+                nMonth = parent.getItemAtPosition(position).toString();
             }
 
             @Override
@@ -105,7 +106,7 @@ public class moreInfoFragment extends Fragment  {
         spinner_year.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                nYear= parent.getItemAtPosition(position).toString();
+                nYear = parent.getItemAtPosition(position).toString();
             }
 
             @Override
@@ -132,8 +133,6 @@ public class moreInfoFragment extends Fragment  {
         return generatedString;
     }
 
-    Session session = null;
-    String rec, subject, textMessage;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -141,9 +140,8 @@ public class moreInfoFragment extends Fragment  {
         bt_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Xử lý xác thực gmail
-                User user1=new User(user.getId(),user.getEmail(),user.getPassword(),user.getFullname(),user.getPhone(),
-                        new Date(nDay,nMonth,nYear),male.isChecked(),edt_job.getText().toString(),edt_address.getText().toString());
+                User user1 = new User(user.getId(), user.getEmail(), user.getPassword(), user.getFullname(), user.getPhone(),
+                        new Date(nDay, nMonth, nYear), male.isChecked(), edt_job.getText().toString(), edt_address.getText().toString());
                 rec = user1.getEmail();
                 textMessage = randomCode();
                 subject = "Mã xác thực";
@@ -155,26 +153,36 @@ public class moreInfoFragment extends Fragment  {
                 props.put("mail.smtp.port", "465");
 
                 session = Session.getDefaultInstance(props, new Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication(){
-                        return  new PasswordAuthentication("bm3doithong@gmail.com", "BM3doithong@");
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication("bm3doithong@gmail.com", "BM3doithong@");
                     }
                 });
                 RetreiveFeedTask task = new RetreiveFeedTask();
                 task.execute();
-                if(!edt_job.getText().toString().isEmpty()&&!edt_address.getText().toString().isEmpty())
-                {
+                if (!edt_job.getText().toString().isEmpty() && !edt_address.getText().toString().isEmpty()) {
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("user",user1);
-                    bundle.putString("code",textMessage);
+                    bundle.putSerializable("user", user1);
+                    bundle.putString("code", textMessage);
                     Navigation.findNavController(v).navigate(R.id.action_moreInfoFragment_to_confrimFragment, bundle);
-                    //Toast.makeText(getActivity(),"Vui lòng mở Gmail để nhận mã",Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Toast.makeText(getActivity(),"Vui lòng điền đủ thông tin",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "Vui lòng điền đủ thông tin", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_more_info, container, false);
+        edt_job = view.findViewById(R.id.job);
+        edt_address = view.findViewById(R.id.address);
+        male = view.findViewById(R.id.male);
+        bt_submit = view.findViewById(R.id.bt_submit);
+        spinner_day = (Spinner) view.findViewById(R.id.spinner_date);
+        spinner_month = (Spinner) view.findViewById(R.id.spinner_month);
+        spinner_year = (Spinner) view.findViewById(R.id.spinner_year);
+        return view;
     }
 
     class RetreiveFeedTask extends AsyncTask<String, Void, String> {
@@ -194,20 +202,5 @@ public class moreInfoFragment extends Fragment  {
             }
             return null;
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_more_info, container, false);
-        edt_job=view.findViewById(R.id.job);
-        edt_address=view.findViewById(R.id.address);
-        male=view.findViewById(R.id.male);
-        bt_submit=view.findViewById(R.id.bt_submit);
-        spinner_day = (Spinner) view.findViewById(R.id.spinner_date);
-        spinner_month = (Spinner) view.findViewById(R.id.spinner_month);
-        spinner_year = (Spinner) view.findViewById(R.id.spinner_year);
-        return view;
     }
 }

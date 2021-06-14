@@ -81,7 +81,7 @@ public class DocMainFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putInt("doctorID",doctorID);
+                bundle.putInt("doctorID", doctorID);
                 Navigation.findNavController(view).navigate(R.id.action_docMainFragment_to_listChatFragment,bundle);
             }
         });

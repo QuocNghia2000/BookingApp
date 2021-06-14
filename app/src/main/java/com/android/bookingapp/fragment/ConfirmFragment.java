@@ -23,18 +23,19 @@ import com.google.firebase.database.FirebaseDatabase;
 
 
 public class ConfirmFragment extends Fragment {
-    private User user;
-    private Button bt_done;
     FirebaseDatabase database;
     DatabaseReference myRef;
     EditText edt_code;
     String code;
+    private User user;
+    private Button bt_done;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            user=(User)getArguments().getSerializable("user");
-            code=getArguments().getString("code");
+            user = (User) getArguments().getSerializable("user");
+            code = getArguments().getString("code");
         }
     }
 
@@ -48,24 +49,21 @@ public class ConfirmFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String retype_code = edt_code.getText().toString();
-                if(retype_code.equals(code)){
-                    myRef.child("User"+user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                if (retype_code.equals(code)) {
+                    myRef.child("User" + user.getId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful())
-                            {
-                                Toast.makeText(getContext(),"Đăng ký thành công", Toast.LENGTH_SHORT).show();
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getContext(), "Đăng ký thành công", Toast.LENGTH_SHORT).show();
                                 Navigation.findNavController(v).navigate(R.id.action_confrimFragment_to_loginFragment, new Bundle());
-                            }
-                            else
-                            {
-                                Toast.makeText(getContext(),"Lỗi", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "Lỗi", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
-                }else {
-                    Toast.makeText(getContext(),"Mã xác thực không đúng!", Toast.LENGTH_SHORT).show();
-                    Log.d("code",code);
+                } else {
+                    Toast.makeText(getContext(), "Mã xác thực không đúng!", Toast.LENGTH_SHORT).show();
+                    Log.d("code", code);
                 }
             }
         });
@@ -74,10 +72,9 @@ public class ConfirmFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_confirm, container, false);
-        bt_done=view.findViewById(R.id.bt_done);
-        edt_code=view.findViewById(R.id.edt_code);
+        View view = inflater.inflate(R.layout.fragment_confirm, container, false);
+        bt_done = view.findViewById(R.id.bt_done);
+        edt_code = view.findViewById(R.id.edt_code);
         return view;
     }
 
