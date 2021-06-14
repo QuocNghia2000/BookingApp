@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
-import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.viewmodel.DetailChatAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -35,8 +34,7 @@ import java.util.Calendar;
 
 
 public class DetailMessFragment extends Fragment {
-    private int id_user;
-    private Doctor doctor;
+    private int id_user,doctorID;
     private RecyclerView rcvDetailMess;
     private DetailChatAdapter myAdapter;
     private boolean isUser;
@@ -47,7 +45,7 @@ public class DetailMessFragment extends Fragment {
     private SearchView searchView;
     DatabaseOpenHelper db;
     private ArrayList<Message> listMess;
-    String fullnameUser,contentNotification;
+    String nameDisplay,contentNotification;
     boolean checkisUser;
     Message message;
 
@@ -70,7 +68,7 @@ public class DetailMessFragment extends Fragment {
                 {
                     if(CheckInternet.checkInternet(getContext()))
                     {
-                        Message message = new Message(0,id_user, doctor.getId(), content,getDateTimeNow(),isUser,0);
+                        Message message = new Message(0,id_user, doctorID, content,getDateTimeNow(),isUser,0);
                         myRef.child("Message").push().setValue(message);
                         try {
                             db.insertMessageToSqlite(message);
@@ -81,7 +79,7 @@ public class DetailMessFragment extends Fragment {
                     }
                     else
                     {
-                        Message message = new Message(0,id_user, doctor.getId(), content,getDateTimeNow(),isUser,1);
+                        Message message = new Message(0,id_user, doctorID, content,getDateTimeNow(),isUser,1);
                         try {
                             db.insertMessageToSqlite(message);
                             getData();
@@ -130,10 +128,10 @@ public class DetailMessFragment extends Fragment {
     private void init(View v) {
         if(getArguments()!=null)
         {
-            doctor = (Doctor) getArguments().getSerializable("doctor");
+            doctorID = getArguments().getInt("doctorID");
             id_user = getArguments().getInt("id_user");
             isUser = getArguments().getBoolean("isUser");
-            fullnameUser=getArguments().getString("fullnameUser");
+            nameDisplay=getArguments().getString("nameDisplay");
         }
         listMess = new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
@@ -151,8 +149,8 @@ public class DetailMessFragment extends Fragment {
         db=new DatabaseOpenHelper(getContext());
         getData();
 
-        if(isUser)  tvName.setText(doctor.getFullname());
-        else tvName.setText(fullnameUser);
+        if(isUser)  tvName.setText(nameDisplay);
+        else tvName.setText(nameDisplay);
 
     }
 
@@ -169,7 +167,7 @@ public class DetailMessFragment extends Fragment {
                     listMess.clear();
                     for(DataSnapshot data: snapshot.getChildren()){
                         Message m = data.getValue(Message.class);
-                        if(m.getId_Doctor() == doctor.getId() && m.getId_User() == id_user){
+                        if(m.getId_Doctor() == doctorID && m.getId_User() == id_user){
                             listMess.add(m);
                         }
                     }
@@ -182,7 +180,7 @@ public class DetailMessFragment extends Fragment {
                         }
                         if(isUser&&!checkisUser)
                         {
-                            CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
+                            CheckInternet.sendNotification(nameDisplay,contentNotification,getContext());
                             try {
                                 db.insertMessageToSqlite(message);
                             } catch (IOException e) {
@@ -191,7 +189,7 @@ public class DetailMessFragment extends Fragment {
                         }
                         else if(!isUser&&checkisUser)
                         {
-                            CheckInternet.sendNotification(fullnameUser,contentNotification,getContext());
+                            CheckInternet.sendNotification(nameDisplay,contentNotification,getContext());
                         }
                     }
                     if(getDetailLocalMessage()!=null)
@@ -237,7 +235,7 @@ public class DetailMessFragment extends Fragment {
     public ArrayList<Message> getDetailLocalMessage()
     {
         ArrayList<Message> messages=new ArrayList<>();
-        Cursor cursor=db.getDetailFromMessage(doctor.getId());
+        Cursor cursor=db.getDetailFromMessage(doctorID);
         while (cursor.moveToNext())
         {
             int id=cursor.getInt(0);

@@ -10,9 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+import com.android.bookingapp.databinding.ItemRvDepartmentBinding;
 
 import com.android.bookingapp.R;
-import com.android.bookingapp.databinding.ItemRvDepartmentBinding;
 import com.android.bookingapp.model.Doctor;
 
 import java.util.ArrayList;
