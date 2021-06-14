@@ -108,10 +108,11 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
 
 
     public void getReservation(){
-        myRef = FirebaseDatabase.getInstance().getReference();
-        myRef.child("Reservation").addValueEventListener(new ValueEventListener() {
+        myRef = FirebaseDatabase.getInstance().getReference("Reservation");
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listRE = new ArrayList<>();
                 listUser = new ArrayList<>();
                 for(DataSnapshot data : snapshot.getChildren()){
                     Reservation reservation = data.getValue(Reservation.class);
@@ -127,7 +128,8 @@ public class DocMainAdapter extends RecyclerView.Adapter<DocMainAdapter.MyViewHo
                 }
                 listRE = new ArrayList<>(temp);
 
-                myRef.child("User").addValueEventListener(new ValueEventListener() {
+                myRef = FirebaseDatabase.getInstance().getReference("User");
+                myRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for(DataSnapshot data : snapshot.getChildren()){

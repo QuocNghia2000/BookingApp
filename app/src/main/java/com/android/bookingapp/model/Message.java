@@ -10,14 +10,15 @@ public class Message {
     private int checkLocalMess;
     //true: User , false: Doctor
 
-    public Message(){}
+    public Message() {
+    }
 
-    public Message(int id_User, int id_Doctor, String content,String date_time,boolean fromPerson) {
+    public Message(int id_User, int id_Doctor, String content, String date_time, boolean fromPerson) {
         this.id_User = id_User;
         this.id_Doctor = id_Doctor;
         this.content = content;
         this.fromPerson = fromPerson;
-        this.date_time=date_time;
+        this.date_time = date_time;
     }
 
     public Message(int id, int id_User, int id_Doctor, String content, String date_time, boolean fromPerson, int checkLocalMess) {
@@ -25,7 +26,7 @@ public class Message {
         this.id_User = id_User;
         this.id_Doctor = id_Doctor;
         this.content = content;
-        this.date_time=date_time;
+        this.date_time = date_time;
         this.fromPerson = fromPerson;
         this.checkLocalMess = checkLocalMess;
     }

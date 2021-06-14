@@ -23,9 +23,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Date;
-import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -222,7 +222,7 @@ public class InfoAccountFragment extends Fragment {
                         @Override
                         public void onSuccess(Void aVoid) {
                             db.updateUserSqlite(user_now);
-                            Toast.makeText(getContext(),"Xác nhận thành công",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "Xác nhận thành công", Toast.LENGTH_SHORT).show();
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {

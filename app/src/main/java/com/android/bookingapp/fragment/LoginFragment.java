@@ -34,23 +34,21 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class LoginFragment extends Fragment {
-    private EditText username,pass;
-    private TextView resetpass;
-    private Button bt_login,bt_register;
-    private ArrayList<User> users;
-    private Doctor doctor;
-    FirebaseDatabase database;
-    DatabaseReference myRef;
-    AlertDialog.Builder dialogBuilder;
-
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String USERNAME = "userNameKey";
     public static final String PASS = "passKey";
-    public static final String VALIDATION="validation";
+    public static final String VALIDATION = "validation";
     public static final String ID_CURRENT = "ID_USER";
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+    AlertDialog.Builder dialogBuilder;
     SharedPreferences sharedpreferences;
     DatabaseOpenHelper db;
-
+    private EditText username, pass;
+    private TextView resetpass;
+    private Button bt_login, bt_register;
+    private ArrayList<User> users;
+    private Doctor doctor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,17 +58,16 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        users=new ArrayList<>();
+        users = new ArrayList<>();
         database = FirebaseDatabase.getInstance();
-        dialogBuilder=new AlertDialog.Builder(getContext());
+        dialogBuilder = new AlertDialog.Builder(getContext());
 
-        db=new DatabaseOpenHelper(getContext());
+        db = new DatabaseOpenHelper(getContext());
         myRef = database.getReference("User");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot data: snapshot.getChildren())
-                {
+                for (DataSnapshot data : snapshot.getChildren()) {
                     User user = data.getValue(User.class);
                     users.add(user);
                 }
@@ -83,37 +80,29 @@ public class LoginFragment extends Fragment {
         });
 
     }
+
     private void handle() {
 
         bt_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!Patterns.EMAIL_ADDRESS.matcher(username.getText().toString()).matches())
-                {
+                if (!Patterns.EMAIL_ADDRESS.matcher(username.getText().toString()).matches()) {
                     username.setError("Vui lòng điền đúng địa chỉ email");
-                }
-                else
-                {
-                    if(CheckInternet.checkInternet(getContext()))
-                    {
-                        int index=posCurrent(username.getText().toString(),pass.getText().toString(),users);
-                        if(index!=-1)
-                        {
-                            saveData(username.getText().toString(),pass.getText().toString(),users.get(index).getId(),"user");
+                } else {
+                    if (CheckInternet.checkInternet(getContext())) {
+                        int index = posCurrent(username.getText().toString(), pass.getText().toString(), users);
+                        if (index != -1) {
+                            saveData(username.getText().toString(), pass.getText().toString(), users.get(index).getId(), "user");
                             //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
-                            Intent intent =new Intent(getActivity(), MainActivity.class);
-                            intent.putExtra("id",users.get(index).getId());
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            intent.putExtra("id", users.get(index).getId());
                             getActivity().finish();
                             startActivity(intent);
+                        } else {
+                            getDoctor(username.getText().toString(), pass.getText().toString());
                         }
-                        else
-                        {
-                            getDoctor(username.getText().toString(),pass.getText().toString());
-                        }
-                    }
-                    else
-                    {
-                        Toast.makeText(getContext(),"No Internet",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "No Internet", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -121,8 +110,8 @@ public class LoginFragment extends Fragment {
         bt_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle=new Bundle();
-                bundle.putInt("id",users.size());
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", users.size());
                 Navigation.findNavController(v).navigate(R.id.action_loginFragment_to_registerFragment, bundle);
             }
         });
@@ -138,54 +127,48 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_login, container, false);
-        username =view.findViewById(R.id.username);
-        pass=view.findViewById(R.id.password);
-        resetpass=view.findViewById(R.id.resetpass);
-        bt_login=view.findViewById(R.id.bt_login);
-        bt_register=view.findViewById(R.id.bt_register);
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
+        username = view.findViewById(R.id.username);
+        pass = view.findViewById(R.id.password);
+        resetpass = view.findViewById(R.id.resetpass);
+        bt_login = view.findViewById(R.id.bt_login);
+        bt_register = view.findViewById(R.id.bt_register);
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        if(isLogining()&&validation().equals("user"))
-        {
-            Intent intent =new Intent(getActivity(), MainActivity.class);
-            intent.putExtra("id",sharedpreferences.getInt(ID_CURRENT,-1));
+        if (isLogining() && validation().equals("user")) {
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.putExtra("id", sharedpreferences.getInt(ID_CURRENT, -1));
             //Toast.makeText(getContext(),,Toast.LENGTH_SHORT).show();
             getActivity().finish();
             startActivity(intent);
         }
-        if(isLogining()&&validation().equals("doctor"))
-        {
-            Intent intent =new Intent(getActivity(), MainActivity.class);
-            intent.putExtra("doctorID",sharedpreferences.getInt(ID_CURRENT,-1));
+        if (isLogining() && validation().equals("doctor")) {
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.putExtra("doctorID", sharedpreferences.getInt(ID_CURRENT, -1));
             getActivity().finish();
             startActivity(intent);
         }
         return view;
     }
 
-    public void getDoctor(String email,String pass){
+    public void getDoctor(String email, String pass) {
         myRef = database.getReference("Doctor");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot data: snapshot.getChildren())
-                {
+                for (DataSnapshot data : snapshot.getChildren()) {
                     Doctor d = data.getValue(Doctor.class);
-                    if (d.getEmail().equals(email) && d.getPassword().equals(pass)){
+                    if (d.getEmail().equals(email) && d.getPassword().equals(pass)) {
                         doctor = d;
                     }
                 }
-                if(doctor!=null){
-                    saveData(username.getText().toString(),pass,doctor.getId(),"doctor");
-                    Intent intent =new Intent(getActivity(), MainActivity.class);
-                    intent.putExtra("doctorID",doctor.getId());
+                if (doctor != null) {
+                    saveData(username.getText().toString(), pass, doctor.getId(), "doctor");
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra("doctorID", doctor.getId());
                     getActivity().finish();
                     startActivity(intent);
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Sai thông tin đăng nhập",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Sai thông tin đăng nhập", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -195,25 +178,26 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void saveData(String username, String Pass,int idUser,String validation) {
+    private void saveData(String username, String Pass, int idUser, String validation) {
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString(USERNAME, username);
         editor.putString(PASS, Pass);
         editor.putString(VALIDATION, validation);
-        editor.putInt(ID_CURRENT,idUser);
+        editor.putInt(ID_CURRENT, idUser);
         editor.commit();
     }
-    private String validation()
-    {
-        return sharedpreferences.getString(VALIDATION,"");
+
+    private String validation() {
+        return sharedpreferences.getString(VALIDATION, "");
 
     }
+
     private boolean isLogining() {
-    return sharedpreferences.contains(USERNAME);
+        return sharedpreferences.contains(USERNAME);
     }
 
     public int posCurrent(String email, String pass, ArrayList<User> users) {
-        if(users!=null){
+        if (users != null) {
             for (int i = 0; i < users.size(); i++) {
                 if (email.equals(users.get(i).getEmail()) && pass.equals(users.get(i).getPassword())) {
                     return i;

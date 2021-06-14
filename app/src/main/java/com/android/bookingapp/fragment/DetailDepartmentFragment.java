@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 
 public class DetailDepartmentFragment extends Fragment {
+    DatabaseOpenHelper db;
     private Department department;
     private ImageView back;
     private TextView tvNameDepart;
@@ -37,44 +38,41 @@ public class DetailDepartmentFragment extends Fragment {
     private ArrayList<Doctor> mDoctors;
     private DetailDepartAdapter detailDepartAdapter;
     private int id_user;
-    DatabaseOpenHelper db;
     private DatabaseReference dbReference;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            department= (Department) getArguments().getSerializable("detailDepart");
-            id_user= getArguments().getInt("id_user");
-            dbReference= FirebaseDatabase.getInstance().getReference("Doctor");
+            department = (Department) getArguments().getSerializable("detailDepart");
+            id_user = getArguments().getInt("id_user");
+            dbReference = FirebaseDatabase.getInstance().getReference("Doctor");
         }
-        db=new DatabaseOpenHelper(getContext());
+        db = new DatabaseOpenHelper(getContext());
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mDoctors=new ArrayList<>();
-        detailDepartAdapter = new DetailDepartAdapter(mDoctors,id_user);
-        rvDetailDeparts.setLayoutManager(new GridLayoutManager(getContext(),1));
+        mDoctors = new ArrayList<>();
+        detailDepartAdapter = new DetailDepartAdapter(mDoctors, id_user);
+        rvDetailDeparts.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rvDetailDeparts.setAdapter(detailDepartAdapter);
-        if(CheckInternet.checkInternet(getContext())){
+        if (CheckInternet.checkInternet(getContext())) {
             getDoctor();
-        }
-        else getDoctorOff();
+        } else getDoctorOff();
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               getActivity().onBackPressed();
+                getActivity().onBackPressed();
             }
         });
     }
 
-    public void getDoctorOff(){
+    public void getDoctorOff() {
         ArrayList<Doctor> docTemp = getDetailLocalDoctor();
-        for(Doctor doctor : docTemp){
-            if(doctor.getDepartment()==department.getId()-1)
-            {
+        for (Doctor doctor : docTemp) {
+            if (doctor.getDepartment() == department.getId() - 1) {
                 mDoctors.add(doctor);
                 tvNameDepart.setText(department.getName());
             }
@@ -82,37 +80,33 @@ public class DetailDepartmentFragment extends Fragment {
         detailDepartAdapter.notifyDataSetChanged();
     }
 
-    public ArrayList<Doctor> getDetailLocalDoctor(){
-        ArrayList<Doctor> doctors=new ArrayList<>();
-        Cursor cursor=db.getDoctorFromSqlite();
-        while (cursor.moveToNext())
-        {
-            int id=cursor.getInt(0);
-            int id_Depart=cursor.getInt(1);
-            String email=cursor.getString(2);
-            String password=cursor.getString(3);
-            String fullname=cursor.getString(4);
-            String phone=cursor.getString(5);
-            String achivement=cursor.getString(6);
-            String address=cursor.getString(7);
+    public ArrayList<Doctor> getDetailLocalDoctor() {
+        ArrayList<Doctor> doctors = new ArrayList<>();
+        Cursor cursor = db.getDoctorFromSqlite();
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            int id_Depart = cursor.getInt(1);
+            String email = cursor.getString(2);
+            String password = cursor.getString(3);
+            String fullname = cursor.getString(4);
+            String phone = cursor.getString(5);
+            String achivement = cursor.getString(6);
+            String address = cursor.getString(7);
 
-            Doctor doctor = new Doctor(id, email,password, fullname,phone,id_Depart,achivement,address);
+            Doctor doctor = new Doctor(id, email, password, fullname, phone, id_Depart, achivement, address);
             doctors.add(doctor);
         }
         return doctors;
     }
 
-    public void getDoctor()
-    {
+    public void getDoctor() {
         dbReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 mDoctors.clear();
-                for(DataSnapshot item:snapshot.getChildren())
-                {
-                    Doctor doctor=item.getValue(Doctor.class);
-                    if(doctor.getDepartment()==department.getId())
-                    {
+                for (DataSnapshot item : snapshot.getChildren()) {
+                    Doctor doctor = item.getValue(Doctor.class);
+                    if (doctor.getDepartment() == department.getId()) {
                         mDoctors.add(doctor);
                         tvNameDepart.setText(department.getName());
                     }
@@ -130,11 +124,10 @@ public class DetailDepartmentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_detail_department, container, false);
-        rvDetailDeparts=view.findViewById(R.id.rv_detailDepart);
-        tvNameDepart=view.findViewById(R.id.tv_nameDepart);
-        back=view.findViewById(R.id.img_back);
+        View view = inflater.inflate(R.layout.fragment_detail_department, container, false);
+        rvDetailDeparts = view.findViewById(R.id.rv_detailDepart);
+        tvNameDepart = view.findViewById(R.id.tv_nameDepart);
+        back = view.findViewById(R.id.img_back);
         return view;
     }
 }

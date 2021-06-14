@@ -53,37 +53,26 @@ import java.util.List;
 
 
 public class mainScreenFragment extends Fragment {
-    private ArrayList<Department> mDeparts;
-    private RecyclerView rvDeparts;
-    private DepartAdapter departAdapter;
-    private DatabaseReference dbReference;
-    private ImageView ivAccount,ivLogout,imvChat;
+    public static final String MyPREFERENCES = "MyPrefs";
+    public static final String USERNAME = "userNameKey";
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
     SharedPreferences sharedpreferences;
-    public static final String MyPREFERENCES = "MyPrefs";
-    private int idUser=-1;
     DatabaseOpenHelper db;
     ArrayList<Message> messages;
     ArrayList<User> users;
     ArrayList<User> userAll;
-    private TextView tvSearch;
     Dialog dialogSearch;
+    private ArrayList<Department> mDeparts;
+    private RecyclerView rvDeparts;
+    private DepartAdapter departAdapter;
+    private DatabaseReference dbReference;
+    private ImageView ivAccount, ivLogout, imvChat;
+    private int idUser = -1;
+    private TextView tvSearch;
     private List<String> list;
     private ArrayList<Doctor> listDoc;
-    public static final String USERNAME = "userNameKey";
 
-
-//    public String userValidatiion() {
-//        db=new DatabaseOpenHelper(getContext());
-//        Cursor cursor=db.getUserFromUser(1);
-//        String email="";
-//        while (cursor.moveToNext())
-//        {
-//            email=cursor.getString(1);
-//        }
-//        return email;
-//    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,81 +84,80 @@ public class mainScreenFragment extends Fragment {
 
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
-        int doctorID=getActivity().getIntent().getIntExtra("doctorID",-1);
-        if(doctorID!=-1)
-        {
+        int doctorID = getActivity().getIntent().getIntExtra("doctorID", -1);
+        if (doctorID != -1) {
             Bundle bundle = new Bundle();
-            bundle.putInt("doctorID",doctorID);
-            Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_docMainFragment,bundle);
-        }
-       else
-        {
-            idUser= getActivity().getIntent().getIntExtra("id",-1);
-            Toast.makeText(getContext(),sharedpreferences.getString(USERNAME,""),Toast.LENGTH_SHORT).show();
+            bundle.putInt("doctorID", doctorID);
+            Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_docMainFragment, bundle);
+        } else {
+            idUser = getActivity().getIntent().getIntExtra("id", -1);
+            Toast.makeText(getContext(), sharedpreferences.getString(USERNAME, ""), Toast.LENGTH_SHORT).show();
         }
 
-        mDeparts=new ArrayList<>();
-        dbReference= FirebaseDatabase.getInstance().getReference();
-        db=new DatabaseOpenHelper(getContext());
+        mDeparts = new ArrayList<>();
+        dbReference = FirebaseDatabase.getInstance().getReference();
+        db = new DatabaseOpenHelper(getContext());
 
-        if(!CheckInternet.checkInternet(getContext())){
+        if (!CheckInternet.checkInternet(getContext())) {
             listDoc = getDetailLocalDoctor();
             mDeparts = getDetailLocalDepartment();
             list = new ArrayList<>();
-            for(Doctor d : listDoc){
+            for (Doctor d : listDoc) {
                 list.add(d.getFullname());
             }
-        }
-        else{
+        } else {
             getUserLogin();
             getAllDepart();
             getAllMessage();
             getAllDoctor();
         }
-        dialogBuilder=new AlertDialog.Builder(getContext());
-        departAdapter = new DepartAdapter(mDeparts,idUser);
-        rvDeparts.setLayoutManager(new GridLayoutManager(getContext(),2));
+        dialogBuilder = new AlertDialog.Builder(getContext());
+        departAdapter = new DepartAdapter(mDeparts, idUser);
+        rvDeparts.setLayoutManager(new GridLayoutManager(getContext(), 2));
         rvDeparts.setAdapter(departAdapter);
 
         ivLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!CheckInternet.checkInternet(getContext())) {
-                    Toast.makeText(getContext(),"Offline",Toast.LENGTH_SHORT).show();
+                if (!CheckInternet.checkInternet(getContext())) {
+                    Toast.makeText(getContext(), "Offline", Toast.LENGTH_SHORT).show();
                 } else {
                     showLogoutDialog();
                 }
             }
         });
+
         ivAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putInt("id",idUser);
+                bundle.putInt("id", idUser);
                 Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_infoAccountFragment, bundle);
             }
         });
+
         imvChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putInt("id_user",idUser);
-                Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_listChatFragment,bundle);
+                bundle.putInt("id_user", idUser);
+                Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_listChatFragment, bundle);
             }
         });
+
         tvSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialogSearch = new Dialog(getContext());
                 dialogSearch.setContentView(R.layout.dialog_searchable_spinner);
-                dialogSearch.getWindow().setLayout(950,1200);
+                dialogSearch.getWindow().setLayout(950, 1200);
                 dialogSearch.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialogSearch.show();
 
                 EditText editText = dialogSearch.findViewById(R.id.edt_search_mainScreen);
                 ListView listView = dialogSearch.findViewById(R.id.lv_search_mainScreen);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),R.layout.support_simple_spinner_dropdown_item,list);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, list);
                 listView.setAdapter(adapter);
 
                 editText.addTextChangedListener(new TextWatcher() {
@@ -194,11 +182,11 @@ public class mainScreenFragment extends Fragment {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view1, int position, long id) {
                         Dialog newDialog = new Dialog(getContext());
-                        DialogInfordoctorBinding binding = DataBindingUtil.inflate(getLayoutInflater(),R.layout.dialog_infordoctor,null,false);
+                        DialogInfordoctorBinding binding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.dialog_infordoctor, null, false);
                         newDialog.setContentView(binding.getRoot());
                         binding.setDoctor(listDoc.get(position));
-                        for(Department d : mDeparts){
-                            if(listDoc.get(position).getDepartment() == d.getId()-1){
+                        for (Department d : mDeparts) {
+                            if (listDoc.get(position).getDepartment() == d.getId() - 1) {
                                 binding.setDepartment(d);
                             }
                         }
@@ -207,19 +195,19 @@ public class mainScreenFragment extends Fragment {
                         ImageView imvChat = newDialog.findViewById(R.id.imv_chat_dialog);
                         ImageView imvBook = newDialog.findViewById(R.id.imv_book_dialog);
 
-                        newDialog.getWindow().setLayout(1440,1200);
+                        newDialog.getWindow().setLayout(1440, 1200);
                         newDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        //Toast.makeText(getContext(),String.valueOf(rl.),Toast.LENGTH_SHORT).show();
                         newDialog.show();
 
                         imvChat.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Bundle bundle = new Bundle();
-                                bundle.putInt("id_user",idUser);
-                                bundle.putSerializable("doctor",listDoc.get(position));
-                                bundle.putBoolean("isUser",true);
-                                Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_detailMessFragment,bundle);
+                                bundle.putInt("id_user", idUser);
+                                bundle.putSerializable("doctorID", listDoc.get(position).getId());
+                                bundle.putSerializable("nameDisplay", listDoc.get(position).getFullname());
+                                bundle.putBoolean("isUser", true);
+                                Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_detailMessFragment, bundle);
                                 newDialog.dismiss();
                                 dialogSearch.dismiss();
                             }
@@ -229,36 +217,33 @@ public class mainScreenFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 Bundle bundle = new Bundle();
-                                bundle.putInt("id_user",idUser);
-                                bundle.putSerializable("doctor",listDoc.get(position));
-                                Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_bookFragment,bundle);
+                                bundle.putInt("id_user", idUser);
+                                bundle.putSerializable("doctor", listDoc.get(position));
+                                Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_bookFragment, bundle);
                                 newDialog.dismiss();
                                 dialogSearch.dismiss();
                             }
                         }));
-                        //dialogSearch.dismiss();
-
                     }
                 });
             }
         });
     }
 
-    private void getAllMessage()
-    {
-        messages=new ArrayList<>();
+    private void getAllMessage() {
+        messages = new ArrayList<>();
         dbReference.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 messages.clear();
-                for(DataSnapshot data: snapshot.getChildren()){
+                for (DataSnapshot data : snapshot.getChildren()) {
                     Message message = data.getValue(Message.class);
-                    if(message.getId_User()==idUser)  messages.add(message);
+                    if (message.getId_User() == idUser) messages.add(message);
                 }
                 try {
                     db.createMessageTable();
-                    Cursor cursor=db.getMessageFromSqlite();
-                    if(cursor.getCount()==0) db.saveMessageTableToDB(messages);
+                    Cursor cursor = db.getMessageFromSqlite();
+                    if (cursor.getCount() == 0) db.saveMessageTableToDB(messages);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -266,62 +251,58 @@ public class mainScreenFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(),"String.valueOf(messages.size())",Toast.LENGTH_SHORT).show();
             }
         });
 
     }
 
-    private void getUserLogin()
-    {
-        users=new ArrayList<>();
+    private void getUserLogin() {
+        users = new ArrayList<>();
         userAll = new ArrayList<>();
         dbReference.child("User").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 users.clear();
                 userAll.clear();
-                for(DataSnapshot data: snapshot.getChildren()){
+                for (DataSnapshot data : snapshot.getChildren()) {
                     User user = data.getValue(User.class);
                     userAll.add(user);
-                    if(user.getId()==idUser) {
+                    if (user.getId() == idUser) {
                         users.add(user);
                     }
                 }
                 try {
                     db.createUserTable();
-                    Cursor cursor=db.getUserFromSqlite();
-                    if(getActivity().getIntent().getSerializableExtra("doctor")!=null){
-                        if(cursor.getCount()==0)
-                        {
+                    Cursor cursor = db.getUserFromSqlite();
+                    if (getActivity().getIntent().getSerializableExtra("doctor") != null) {
+                        if (cursor.getCount() == 0) {
                             db.saveUserTableToDB(userAll);
                         }
-                    }
-                    else if(cursor.getCount()==0) db.saveUserTableToDB(users);
+                    } else if (cursor.getCount() == 0) db.saveUserTableToDB(users);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
         });
     }
 
-    public void getAllDepart()
-    {
+    public void getAllDepart() {
         dbReference.child("Department").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 mDeparts.clear();
-                for(DataSnapshot item:snapshot.getChildren())
-                {
-                    Department department=item.getValue(Department.class);
+                for (DataSnapshot item : snapshot.getChildren()) {
+                    Department department = item.getValue(Department.class);
                     mDeparts.add(department);
                 }
                 try {
                     db.createDepartmentTable();
-                    Cursor cursor=db.getDepartmentFromSqlite();
-                    if(cursor.getCount()==0) db.saveDepartmentTableToDB(mDeparts);
+                    Cursor cursor = db.getDepartmentFromSqlite();
+                    if (cursor.getCount() == 0) db.saveDepartmentTableToDB(mDeparts);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -332,10 +313,9 @@ public class mainScreenFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-
     }
 
-    public void showLogoutDialog(){
+    public void showLogoutDialog() {
         dialogBuilder.setMessage("Bạn có muốn đăng xuất?");
         dialogBuilder.setCancelable(false);
         dialogBuilder.setPositiveButton("Không", new DialogInterface.OnClickListener() {
@@ -356,8 +336,8 @@ public class mainScreenFragment extends Fragment {
         });
         dialog = dialogBuilder.create();
         dialog.show();
-
     }
+
     private void clearData() {
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.clear();
@@ -367,71 +347,67 @@ public class mainScreenFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view=inflater.inflate(R.layout.fragment_main_screen, container, false);
-
-        rvDeparts=view.findViewById(R.id.rv_department);
-        ivAccount=view.findViewById(R.id.iv_account);
-        ivLogout=view.findViewById(R.id.iv_ogout);
+        View view = inflater.inflate(R.layout.fragment_main_screen, container, false);
+        rvDeparts = view.findViewById(R.id.rv_department);
+        ivAccount = view.findViewById(R.id.iv_account);
+        ivLogout = view.findViewById(R.id.iv_ogout);
         imvChat = view.findViewById(R.id.imv_listchat_main);
         tvSearch = view.findViewById(R.id.tv_search_mainScreen);
         return view;
     }
 
-    public void getAllDoctor(){
+    public void getAllDoctor() {
         listDoc = new ArrayList<>();
         list = new ArrayList<>();
-        dbReference= FirebaseDatabase.getInstance().getReference("Doctor");
+        dbReference = FirebaseDatabase.getInstance().getReference("Doctor");
         dbReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listDoc.clear();
-                for(DataSnapshot item:snapshot.getChildren())
-                {
+                for (DataSnapshot item : snapshot.getChildren()) {
                     Doctor d = item.getValue(Doctor.class);
                     listDoc.add(d);
                     list.add(d.getFullname());
                 }
                 try {
                     db.createDoctorTable();
-                    Cursor cursor=db.getDoctorFromSqlite();
-                    if(cursor.getCount()==0) db.saveDoctorTableToDB(listDoc);
+                    Cursor cursor = db.getDoctorFromSqlite();
+                    if (cursor.getCount() == 0) db.saveDoctorTableToDB(listDoc);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }
 
-    public ArrayList<Doctor> getDetailLocalDoctor(){
-        ArrayList<Doctor> doctors=new ArrayList<>();
-        Cursor cursor=db.getDoctorFromSqlite();
-        while (cursor.moveToNext())
-        {
-            int id=cursor.getInt(0);
-            int id_Depart=cursor.getInt(1);
-            String email=cursor.getString(2);
-            String password=cursor.getString(3);
-            String fullname=cursor.getString(4);
-            String phone=cursor.getString(5);
-            String achivement=cursor.getString(6);
-            String address=cursor.getString(7);
-            Doctor doctor = new Doctor(id, email,password, fullname,phone,id_Depart,achivement,address);
+    public ArrayList<Doctor> getDetailLocalDoctor() {
+        ArrayList<Doctor> doctors = new ArrayList<>();
+        Cursor cursor = db.getDoctorFromSqlite();
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            int id_Depart = cursor.getInt(1);
+            String email = cursor.getString(2);
+            String password = cursor.getString(3);
+            String fullname = cursor.getString(4);
+            String phone = cursor.getString(5);
+            String achivement = cursor.getString(6);
+            String address = cursor.getString(7);
+            Doctor doctor = new Doctor(id, email, password, fullname, phone, id_Depart, achivement, address);
             doctors.add(doctor);
         }
         return doctors;
     }
 
-    public ArrayList<Department> getDetailLocalDepartment(){
-        ArrayList<Department> departments=new ArrayList<>();
-        Cursor cursor=db.getDepartmentFromSqlite();
-        while (cursor.moveToNext())
-        {
-            int id=cursor.getInt(0);
-            String name=cursor.getString(1);
+    public ArrayList<Department> getDetailLocalDepartment() {
+        ArrayList<Department> departments = new ArrayList<>();
+        Cursor cursor = db.getDepartmentFromSqlite();
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            String name = cursor.getString(1);
             Department department = new Department(id, name);
             departments.add(department);
         }
