@@ -154,13 +154,13 @@ public class LoginFragment extends Fragment {
             getActivity().finish();
             startActivity(intent);
         }
-//        if(isLogining()&&validation().equals("doctor"))
-//        {
-//            Intent intent =new Intent(getActivity(), MainActivity.class);
-//            intent.putExtra("doctorID",sharedpreferences.getInt(ID_CURRENT,-1));
-//            getActivity().finish();
-//            startActivity(intent);
-//        }
+        if(isLogining()&&validation().equals("doctor"))
+        {
+            Intent intent =new Intent(getActivity(), MainActivity.class);
+            intent.putExtra("doctorID",sharedpreferences.getInt(ID_CURRENT,-1));
+            getActivity().finish();
+            startActivity(intent);
+        }
         return view;
     }
 
