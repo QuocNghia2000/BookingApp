@@ -121,7 +121,7 @@ public class ListChatFragment extends Fragment {
                 dbRef.child("Doctor").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<Integer> idDoctor=listIdLatest();
+                        ArrayList<Integer> idDoctor=listIdDoctorLatest();
                         for(DataSnapshot data: snapshot.getChildren())
                         {
                             Doctor doctor = data.getValue(Doctor.class);
@@ -159,7 +159,7 @@ public class ListChatFragment extends Fragment {
                 listMess.add(mess);
             }
         }
-        ArrayList<Integer> idDoctor = listIdLatest();
+        ArrayList<Integer> idDoctor = listIdDoctorLatest();
         for(Doctor doctor : docTemp){
             if(idDoctor.indexOf(doctor.getId())!=-1)
             {
@@ -188,7 +188,7 @@ public class ListChatFragment extends Fragment {
                 dbRef.child("User").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        ArrayList<Integer> idUser=listIdLatest();
+                        ArrayList<Integer> idUser=listIdUserLatest();
                         for(DataSnapshot data: snapshot.getChildren())
                         {
                             User user = data.getValue(User.class);
@@ -219,7 +219,7 @@ public class ListChatFragment extends Fragment {
 
     }
 
-    private ArrayList<Integer> listIdLatest()
+    private ArrayList<Integer> listIdDoctorLatest()
     {
         ArrayList<Integer> idDoctor = new ArrayList<>();
         for(int i=listMess.size()-1;i>=0;i--)
@@ -230,6 +230,18 @@ public class ListChatFragment extends Fragment {
             }
         }
         return idDoctor;
+    }
+    private ArrayList<Integer> listIdUserLatest()
+    {
+        ArrayList<Integer> idUser = new ArrayList<>();
+        for(int i=listMess.size()-1;i>=0;i--)
+        {
+            if(idUser.indexOf(listMess.get(i).getId_User())==-1)
+            {
+                idUser.add(listMess.get(i).getId_User());
+            }
+        }
+        return idUser;
     }
     private ArrayList<Doctor> updateListChatUser(ArrayList<Integer> idDoctor)
     {
