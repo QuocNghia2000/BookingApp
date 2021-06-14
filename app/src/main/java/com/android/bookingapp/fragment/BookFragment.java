@@ -1,7 +1,6 @@
 package com.android.bookingapp.fragment;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,13 +25,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
 import com.android.bookingapp.databinding.FragmentBookBinding;
+import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Doctor;
-import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.Reservation;
 import com.android.bookingapp.model.Time;
 import com.android.bookingapp.model.User;
-import com.android.bookingapp.view.LoginActivity;
 import com.android.bookingapp.viewmodel.BookAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -90,7 +88,6 @@ public class BookFragment extends Fragment {
             user = getDetailLocalUser();
             binding.setUser(user);
         }
-        myRef = FirebaseDatabase.getInstance().getReference();
         myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("User").addValueEventListener(new ValueEventListener() {
             @Override
