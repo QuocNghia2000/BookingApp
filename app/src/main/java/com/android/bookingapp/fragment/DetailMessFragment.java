@@ -180,12 +180,18 @@ public class DetailMessFragment extends Fragment {
                         }
                         if(isUser&&!checkisUser)
                         {
-                            CheckInternet.sendNotification(nameDisplay,contentNotification,getContext());
-                            try {
-                                db.insertMessageToSqlite(message);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                           try {
+                               CheckInternet.sendNotification(nameDisplay,contentNotification,getContext());
+                               try {
+                                   db.insertMessageToSqlite(message);
+                               } catch (IOException e) {
+                                   e.printStackTrace();
+                               }
+                           }
+                           catch (NullPointerException e)
+                           {
+                               e.printStackTrace();
+                           }
                         }
                         if(!isUser&&checkisUser)
                         {
