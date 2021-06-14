@@ -187,7 +187,7 @@ public class DetailMessFragment extends Fragment {
                                 e.printStackTrace();
                             }
                         }
-                        else if(!isUser&&checkisUser)
+                        if(!isUser&&checkisUser)
                         {
                             CheckInternet.sendNotification(nameDisplay,contentNotification,getContext());
                         }
