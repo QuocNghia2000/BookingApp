@@ -22,14 +22,14 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
     private ArrayList<User> listContactDoc;
     private ArrayList<Doctor> listContactAll;
     private ArrayList<User> listContactDocAll;
-    private int doctorID;
-    private int id_user = -1;
+    private int doctorID, id_user = -1, countMess;
 
-    public ListChatAdapter(int id_user, ArrayList<Doctor> listContact, ArrayList<Message> listMess) {
+    public ListChatAdapter(int id_user, ArrayList<Doctor> listContact, ArrayList<Message> listMess, int countMess) {
         this.id_user = id_user;
         this.listMess = listMess;
         this.listContactAll = listContact;
         this.listContact = listContact;
+        this.countMess = countMess;
     }
 
     public ListChatAdapter(int doctorID, ArrayList<User> listContactDoc, ArrayList<Message> listMess, String doctor) {
@@ -141,6 +141,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                         bundle.putInt("id_user", id_user);
                         bundle.putString("nameDisplay", listContact.get(getAdapterPosition()).getFullname());
                         bundle.putInt("doctorID", listContact.get(getAdapterPosition()).getId());
+                        bundle.putInt("countMess",countMess);
                         bundle.putBoolean("isUser", true);
                     } else {
                         bundle.putInt("doctorID", doctorID);
