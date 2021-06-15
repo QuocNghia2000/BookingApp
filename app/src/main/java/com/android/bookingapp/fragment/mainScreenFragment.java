@@ -68,7 +68,7 @@ public class mainScreenFragment extends Fragment {
     private DepartAdapter departAdapter;
     private DatabaseReference dbReference;
     private ImageView ivAccount, ivLogout, imvChat;
-    private int idUser = -1;
+    private int idUser = -1, countMess;
     private TextView tvSearch;
     private List<String> list;
     private ArrayList<Doctor> listDoc;
@@ -91,7 +91,6 @@ public class mainScreenFragment extends Fragment {
             Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_docMainFragment, bundle);
         } else {
             idUser = getActivity().getIntent().getIntExtra("id", -1);
-            Toast.makeText(getContext(), sharedpreferences.getString(USERNAME, ""), Toast.LENGTH_SHORT).show();
         }
 
         mDeparts = new ArrayList<>();
@@ -141,6 +140,7 @@ public class mainScreenFragment extends Fragment {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 bundle.putInt("id_user", idUser);
+                bundle.putInt("countMess", countMess);
                 Navigation.findNavController(v).navigate(R.id.action_mainScreenFragment_to_listChatFragment, bundle);
             }
         });
@@ -206,6 +206,7 @@ public class mainScreenFragment extends Fragment {
                                 bundle.putInt("id_user", idUser);
                                 bundle.putSerializable("doctorID", listDoc.get(position).getId());
                                 bundle.putSerializable("nameDisplay", listDoc.get(position).getFullname());
+                                bundle.putInt("countMess", countMess);
                                 bundle.putBoolean("isUser", true);
                                 Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_detailMessFragment, bundle);
                                 newDialog.dismiss();
@@ -240,6 +241,7 @@ public class mainScreenFragment extends Fragment {
                     Message message = data.getValue(Message.class);
                     if (message.getId_User() == idUser) messages.add(message);
                 }
+                countMess = messages.size();
                 try {
                     db.createMessageTable();
                     Cursor cursor = db.getMessageFromSqlite();

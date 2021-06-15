@@ -93,7 +93,6 @@ public class LoginFragment extends Fragment {
                         int index = posCurrent(username.getText().toString(), pass.getText().toString(), users);
                         if (index != -1) {
                             saveData(username.getText().toString(), pass.getText().toString(), users.get(index).getId(), "user");
-                            //Toast.makeText(getContext(),"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getActivity(), MainActivity.class);
                             intent.putExtra("id", users.get(index).getId());
                             getActivity().finish();
@@ -102,7 +101,7 @@ public class LoginFragment extends Fragment {
                             getDoctor(username.getText().toString(), pass.getText().toString());
                         }
                     } else {
-                        Toast.makeText(getContext(), "No Internet", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Don't have Internet", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
