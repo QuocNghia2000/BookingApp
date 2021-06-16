@@ -115,7 +115,6 @@ public class DetailMessFragment extends Fragment {
             doctorID = getArguments().getInt("doctorID");
             id_user = getArguments().getInt("id_user");
             isUser = getArguments().getBoolean("isUser");
-            nameDisplay = getArguments().getString("nameDisplay");
         }
         listMess = new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
@@ -176,30 +175,12 @@ public class DetailMessFragment extends Fragment {
         myRef.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (listMess.size() > 0) countMess = listMess.size();
                 listMess.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Message message = data.getValue(Message.class);
                     if (message.getId_User() == id_user && message.getId_Doctor() == doctorID)
                     {
                         listMess.add(message);
-                    }
-                }
-                //push notification
-                if (countMess > 0) {
-                    for (int i = countMess; i < listMess.size(); i++) {
-                        checkisUser = listMess.get(i).isFromPerson();
-                        contentNotification = listMess.get(i).getContent();
-                    }
-                    try {
-                    if (isUser&&!checkisUser) {
-                        CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
-
-                    } else if (!isUser && checkisUser) {
-                        CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
-                    }
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
                     }
                 }
                 if (getDetailLocalMessage() != null) {
