@@ -51,14 +51,22 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
             holder.name.setText(listContact.get(position).getFullname());
             for (Message mess : listMess) {
                 if (mess.getId_Doctor() == listContact.get(position).getId()) {
-                    holder.content.setText(mess.getContent());
+                    if (mess.isFromPerson() == true ) {
+                        holder.content.setText("Bạn: " + mess.getContent());
+                    } else {
+                        holder.content.setText(mess.getContent());
+                    }
                 }
             }
         } else {
             holder.name.setText(listContactDoc.get(position).getFullname());
             for (Message mess : listMess) {
                 if (mess.getId_User() == listContactDoc.get(position).getId()) {
-                    holder.content.setText(mess.getContent());
+                    if (mess.isFromPerson() == false) {
+                        holder.content.setText("Bạn: " + mess.getContent());
+                    } else {
+                        holder.content.setText(mess.getContent());
+                    }
                 }
             }
         }
