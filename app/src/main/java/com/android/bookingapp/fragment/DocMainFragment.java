@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
@@ -45,6 +46,7 @@ public class DocMainFragment extends Fragment {
     SharedPreferences sharedpreferences;
     DatabaseOpenHelper db;
     public static final String MyPREFERENCES = "MyPrefs";
+    private TextView nameDoctor;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class DocMainFragment extends Fragment {
         spinner_month = view.findViewById(R.id.spinner_month_docMain);
         spinner_year = view.findViewById(R.id.spinner_year_docMain);
         rcvDocMain = view.findViewById(R.id.rcv_docMain);
+        nameDoctor=view.findViewById(R.id.name_doctor);
         btnSearch = view.findViewById(R.id.bt_search_docMain);
         dialogBuilder=new AlertDialog.Builder(getContext());
         db = new DatabaseOpenHelper(getContext());
@@ -64,6 +67,7 @@ public class DocMainFragment extends Fragment {
         if(getArguments()!=null)
         {
             doctorID= getArguments().getInt("doctorID",-1);
+            nameDoctor.setText("Xin Chào "+getArguments().getString("nameDoctor")+"!");
         }
         rcvDocMain.setLayoutManager(new GridLayoutManager(getContext(),1));
         addItemsOnSpinner();

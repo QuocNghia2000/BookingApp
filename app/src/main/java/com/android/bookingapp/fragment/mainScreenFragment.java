@@ -88,6 +88,7 @@ public class mainScreenFragment extends Fragment {
         if (doctorID != -1) {
             Bundle bundle = new Bundle();
             bundle.putInt("doctorID", doctorID);
+            bundle.putString("nameDoctor",getActivity().getIntent().getStringExtra("nameDoctor"));
             Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_docMainFragment, bundle);
         } else {
             idUser = getActivity().getIntent().getIntExtra("id", -1);

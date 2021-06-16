@@ -120,9 +120,7 @@ public class DetailMessFragment extends Fragment {
         listMess = new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
         rcvDetailMess = v.findViewById(R.id.rcv_detail_mess);
-        myAdapter = new DetailChatAdapter(listMess, isUser);
-        rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        rcvDetailMess.setAdapter(myAdapter);
+        setRcvDetailMessAdapter();
         tvName = v.findViewById(R.id.tv_name_detailMess);
         edtContent = v.findViewById(R.id.edt_text_detailMess);
         imvSend = v.findViewById(R.id.imv_send_listMess);
@@ -135,10 +133,14 @@ public class DetailMessFragment extends Fragment {
         }
         tvName.setText(nameDisplay);
     }
-
+    private void setRcvDetailMessAdapter()
+    {
+        myAdapter = new DetailChatAdapter(listMess, isUser);
+        rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        rcvDetailMess.setAdapter(myAdapter);
+    }
     public void cacheMessLocal() {
         messFirebase = new ArrayList<>();
-        myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -149,8 +151,7 @@ public class DetailMessFragment extends Fragment {
                         messFirebase.add(message);
                     }
                 }
-                countMess = getAllMessage().size();
-                System.out.println(countMess);
+                countMess = getSizeOfAllMessage();
                 try {
                     if (messFirebase.size() - countMess > 0) {
                         for (int i = countMess; i < messFirebase.size(); i++) {
@@ -160,8 +161,6 @@ public class DetailMessFragment extends Fragment {
                                 ioException.printStackTrace();
                             }
                         }
-                        countMess = messFirebase.size();
-                        System.out.println(countMess);
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
                     e.printStackTrace();
@@ -174,38 +173,33 @@ public class DetailMessFragment extends Fragment {
     }
 
     public void getData() {
-        ArrayList<Message> messages = new ArrayList<>();
-        myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listMess.clear();
-                messages.clear();
-                if (listMess.size() > 0) messages.addAll(listMess);
+                if (listMess.size() > 0) countMess = listMess.size();
                 listMess.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    Message m = data.getValue(Message.class);
-                    if (m.getId_Doctor() == doctorID && m.getId_User() == id_user) {
-                        listMess.add(m);
+                    Message message = data.getValue(Message.class);
+                    if (message.getId_User() == id_user && message.getId_Doctor() == doctorID)
+                    {
+                        listMess.add(message);
                     }
                 }
-                if (messages.size() != 0) {
-                    for (int i = messages.size(); i < listMess.size(); i++) {
+                //push notification
+                if (countMess > 0) {
+                    for (int i = countMess; i < listMess.size(); i++) {
                         checkisUser = listMess.get(i).isFromPerson();
                         contentNotification = listMess.get(i).getContent();
                     }
-                    if (isUser && !checkisUser) {
-                        try {
-                            CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                    if (isUser&&!checkisUser) {
+                        CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
+
                     } else if (!isUser && checkisUser) {
-                        try {
-                            CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
-                        }
+                        CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
+                    }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
                     }
                 }
                 if (getDetailLocalMessage() != null) {
@@ -213,10 +207,10 @@ public class DetailMessFragment extends Fragment {
                         for (Message message : db.getMessageToUpdate()) {
                             myRef.child("Message").push().setValue(message);
                         }
-                        scrollView();
                         db.updateMessageSqlite();
                     }
                 }
+                scrollView();
                 myAdapter.notifyDataSetChanged();
             }
 
@@ -248,20 +242,9 @@ public class DetailMessFragment extends Fragment {
         return messages;
     }
 
-    public ArrayList<Message> getAllMessage() {
-        ArrayList<Message> allmessages = new ArrayList<>();
-        Cursor cursor = db.getDetailFromMessage(id_user);
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            int idUser = cursor.getInt(1);
-            int idDoctor = cursor.getInt(2);
-            String content = cursor.getString(3);
-            int from_person = cursor.getInt(5);
-            int checkLocalMess = cursor.getInt(6);
-            Message message = new Message(id, idUser, idDoctor, content, getDateTimeNow(), from_person == 1, checkLocalMess);
-            allmessages.add(message);
-        }
-        return allmessages;
+    public Integer getSizeOfAllMessage() {
+        Cursor cursor = db.getMessageFromSqlite();
+        return cursor.getCount();
     }
 
     public void scrollView() {
