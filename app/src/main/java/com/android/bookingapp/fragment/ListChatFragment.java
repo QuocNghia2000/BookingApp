@@ -69,7 +69,7 @@ public class ListChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_list_chat, container, false);
         init(v);
-        if (getArguments().getInt("id_user", -1) != -1) {
+        if (getArguments().getInt("id_user") != -1) {
             id_user = getArguments().getInt("id_user");
             listContact = new ArrayList<>();
             if (CheckInternet.checkInternet(getContext())) {
