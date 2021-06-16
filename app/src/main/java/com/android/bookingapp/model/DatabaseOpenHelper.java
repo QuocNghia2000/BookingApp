@@ -79,20 +79,10 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor getDetailFromMessageDoctor(int id_doctor) {
-        Cursor cursor = db.rawQuery("Select * from " + DbContract.MenuEntry.TABLE_MESSAGE + " where " + DbContract.MenuEntry.COLUMN_ID_DOCTOR
-                + "=" + id_doctor + " and " + DbContract.MenuEntry.COLUMN_FROM_PERSON + " = 0", null);
-        return cursor;
-    }
-
     public Cursor getDoctorFromMessage() {
         Cursor cursor = db.rawQuery("Select * from " + DbContract.MenuEntry.TABLE_MESSAGE + " where " + DbContract.MenuEntry.COLUMN_FROM_PERSON
                 + "=" + 0, null);
         return cursor;
-    }
-
-    public void deleteDoctorFromMessage() {
-        db.execSQL(" delete from " + DbContract.MenuEntry.TABLE_MESSAGE + " where " + DbContract.MenuEntry.COLUMN_FROM_PERSON + "= 0");
     }
 
     public void deleteInformationUser() {

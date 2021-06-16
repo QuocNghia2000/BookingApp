@@ -22,8 +22,7 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
     private ArrayList<User> listContactDoc;
     private ArrayList<Doctor> listContactAll;
     private ArrayList<User> listContactDocAll;
-    private int doctorID;
-    private int id_user = -1;
+    private int doctorID, id_user = -1, countMess;
 
     public ListChatAdapter(int id_user, ArrayList<Doctor> listContact, ArrayList<Message> listMess) {
         this.id_user = id_user;

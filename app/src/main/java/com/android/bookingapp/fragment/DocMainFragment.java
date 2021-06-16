@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.bookingapp.R;
+import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Date;
 import com.android.bookingapp.view.LoginActivity;
 import com.android.bookingapp.viewmodel.DocMainAdapter;
@@ -42,6 +43,7 @@ public class DocMainFragment extends Fragment {
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
     SharedPreferences sharedpreferences;
+    DatabaseOpenHelper db;
     public static final String MyPREFERENCES = "MyPrefs";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -57,17 +59,13 @@ public class DocMainFragment extends Fragment {
         rcvDocMain = view.findViewById(R.id.rcv_docMain);
         btnSearch = view.findViewById(R.id.bt_search_docMain);
         dialogBuilder=new AlertDialog.Builder(getContext());
+        db = new DatabaseOpenHelper(getContext());
         date = getDateNow();
-
         if(getArguments()!=null)
         {
             doctorID= getArguments().getInt("doctorID",-1);
         }
-
-//        mainAdapter = new DocMainAdapter(date,doctorID,getContext());
         rcvDocMain.setLayoutManager(new GridLayoutManager(getContext(),1));
-//        rcvDocMain.setAdapter(mainAdapter);
-
         addItemsOnSpinner();
 
         imgLogout.setOnClickListener(new View.OnClickListener() {
@@ -102,8 +100,8 @@ public class DocMainFragment extends Fragment {
         super.onResume();
     }
 
-    public void showLogoutDialog(){
-        dialogBuilder.setMessage("Bạn có chắc chắn không?");
+    public void showLogoutDialog() {
+        dialogBuilder.setMessage("Bạn có muốn đăng xuất?");
         dialogBuilder.setCancelable(false);
         dialogBuilder.setPositiveButton("Không", new DialogInterface.OnClickListener() {
             @Override
@@ -115,9 +113,10 @@ public class DocMainFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
+                db.deleteInformationUser();
                 clearData();
-                getActivity().finish();
                 startActivity(new Intent(getActivity(), LoginActivity.class));
+                getActivity().finish();
             }
         });
         dialog = dialogBuilder.create();

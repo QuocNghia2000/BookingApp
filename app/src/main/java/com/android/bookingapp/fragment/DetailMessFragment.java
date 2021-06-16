@@ -37,8 +37,7 @@ public class DetailMessFragment extends Fragment {
     DatabaseOpenHelper db;
     String nameDisplay, contentNotification;
     boolean checkisUser;
-    Message message;
-    private int id_user, doctorID;
+    private int id_user, doctorID, countMess;
     private RecyclerView rcvDetailMess;
     private DetailChatAdapter myAdapter;
     private boolean isUser;
@@ -47,7 +46,7 @@ public class DetailMessFragment extends Fragment {
     private ImageView imvSend, ivBack;
     private DatabaseReference myRef;
     private SearchView searchView;
-    private ArrayList<Message> listMess, messDoctor;
+    private ArrayList<Message> listMess, messFirebase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,11 +66,6 @@ public class DetailMessFragment extends Fragment {
                     if (CheckInternet.checkInternet(getContext())) {
                         Message message = new Message(0, id_user, doctorID, content, getDateTimeNow(), isUser, 0);
                         myRef.child("Message").push().setValue(message);
-                        try {
-                            db.insertMessageToSqlite(message);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
                         edtContent.setText("");
                     } else {
                         Message message = new Message(0, id_user, doctorID, content, getDateTimeNow(), isUser, 1);
@@ -114,8 +108,6 @@ public class DetailMessFragment extends Fragment {
                 scrollView();
             }
         });
-
-
     }
 
     private void init(View v) {
@@ -131,7 +123,6 @@ public class DetailMessFragment extends Fragment {
         myAdapter = new DetailChatAdapter(listMess, isUser);
         rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rcvDetailMess.setAdapter(myAdapter);
-
         tvName = v.findViewById(R.id.tv_name_detailMess);
         edtContent = v.findViewById(R.id.edt_text_detailMess);
         imvSend = v.findViewById(R.id.imv_send_listMess);
@@ -139,52 +130,43 @@ public class DetailMessFragment extends Fragment {
         searchView = v.findViewById(R.id.sv_detailMess);
         db = new DatabaseOpenHelper(getContext());
         getData();
-        getMessDoctorLocal();
-
-        if (isUser) tvName.setText(nameDisplay);
-        else tvName.setText(nameDisplay);
-
+        if(isUser) {
+            cacheMessLocal();
+        }
+        tvName.setText(nameDisplay);
     }
 
-    public void getMessDoctorLocal() {
-        messDoctor = new ArrayList<>();
+    public void cacheMessLocal() {
+        messFirebase = new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                messDoctor.clear();
+                messFirebase.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Message message = data.getValue(Message.class);
-                    if (message.getId_User() == id_user && message.isFromPerson() == false) {
-                        messDoctor.add(message);
+                    if (message.getId_User() == id_user) {
+                        messFirebase.add(message);
                     }
                 }
+                countMess = getAllMessage().size();
+                System.out.println(countMess);
                 try {
-                    if (listMess.get(listMess.size() - 1).isFromPerson() == false &&
-                            listMess.get(listMess.size() - 1).getContent().equals(getDetailLocalMessage().get(getDetailLocalMessage().size() - 1).getContent()) == false) {
-                        if (getDetailLocalMessageDoctor().get(getDetailLocalMessageDoctor().size() - 1).equals(messDoctor.get(messDoctor.size() - 1).getContent()) == false) {
+                    if (messFirebase.size() - countMess > 0) {
+                        for (int i = countMess; i < messFirebase.size(); i++) {
                             try {
-                                db.insertMessageToSqlite(messDoctor.get(messDoctor.size() - 1));
-                            } catch (IOException io) {
-                                io.printStackTrace();
+                                db.insertMessageToSqlite(messFirebase.get(i));
+                            } catch (IOException ioException) {
+                                ioException.printStackTrace();
                             }
                         }
-                    } else if (listMess.get(listMess.size() - 1).isFromPerson() == false &&
-                            listMess.get(listMess.size() - 1).getContent().equals(getDetailLocalMessage().get(getDetailLocalMessage().size() - 1).getContent()) == true) {
-                        if (getDetailLocalMessage().get(getDetailLocalMessage().size() - 1).getContent().equals(messDoctor.get(messDoctor.size() - 1).getContent()) == true
-                                && getDetailLocalMessage().get(getDetailLocalMessage().size() - 1).isFromPerson() == true) {
-                            try {
-                                db.insertMessageToSqlite(messDoctor.get(messDoctor.size() - 1));
-                            } catch (IOException io) {
-                                io.printStackTrace();
-                            }
-                        }
+                        countMess = messFirebase.size();
+                        System.out.println(countMess);
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -192,63 +174,59 @@ public class DetailMessFragment extends Fragment {
     }
 
     public void getData() {
-        if (CheckInternet.checkInternet(getContext())) {
-            ArrayList<Message> messages = new ArrayList<>();
-            myRef = FirebaseDatabase.getInstance().getReference();
-            myRef.child("Message").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    messages.clear();
-                    if (listMess.size() > 0) messages.addAll(listMess);
-                    listMess.clear();
-                    for (DataSnapshot data : snapshot.getChildren()) {
-                        Message m = data.getValue(Message.class);
-                        if (m.getId_Doctor() == doctorID && m.getId_User() == id_user) {
-                            listMess.add(m);
-                        }
+        ArrayList<Message> messages = new ArrayList<>();
+        myRef = FirebaseDatabase.getInstance().getReference();
+        myRef.child("Message").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listMess.clear();
+                messages.clear();
+                if (listMess.size() > 0) messages.addAll(listMess);
+                listMess.clear();
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Message m = data.getValue(Message.class);
+                    if (m.getId_Doctor() == doctorID && m.getId_User() == id_user) {
+                        listMess.add(m);
                     }
-                    if (messages.size() != 0) {
-                        for (int i = messages.size(); i < listMess.size(); i++) {
-                            message = listMess.get(i);
-                            checkisUser = listMess.get(i).isFromPerson();
-                            contentNotification = listMess.get(i).getContent();
-                        }
-                        if (isUser && !checkisUser) {
-                            try {
-                                CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (!isUser && checkisUser) {
-                            try {
-                                CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    if (getDetailLocalMessageDoctor() != null) {
-                        if (listMess.size() != getDetailLocalMessageDoctor().size()) {
-                            if (db.getMessageToUpdate().size() > 0) {
-                                for (Message message : db.getMessageToUpdate()) {
-                                    myRef.child("Message").push().setValue(message);
-                                }
-                            }
-                            db.updateMessageSqlite();
-                        }
-                    }
-                    scrollView();
-                    myAdapter.notifyDataSetChanged();
                 }
+                if (messages.size() != 0) {
+                    for (int i = messages.size(); i < listMess.size(); i++) {
+                        checkisUser = listMess.get(i).isFromPerson();
+                        contentNotification = listMess.get(i).getContent();
+                    }
+                    if (isUser && !checkisUser) {
+                        try {
+                            CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    } else if (!isUser && checkisUser) {
+                        try {
+                            CheckInternet.sendNotification(nameDisplay, contentNotification, getContext());
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                if (getDetailLocalMessage() != null) {
+                    if (listMess.size() != getDetailLocalMessage().size()) {
+                        for (Message message : db.getMessageToUpdate()) {
+                            myRef.child("Message").push().setValue(message);
+                        }
+                        scrollView();
+                        db.updateMessageSqlite();
+                    }
+                }
+                myAdapter.notifyDataSetChanged();
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                }
-            });
-        } else {
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+        if (!CheckInternet.checkInternet(getContext())) {
             listMess.clear();
-            listMess.addAll(getDetailLocalMessageDoctor());
+            listMess.addAll(getDetailLocalMessage());
             scrollView();
             myAdapter.notifyDataSetChanged();
         }
@@ -256,6 +234,22 @@ public class DetailMessFragment extends Fragment {
 
     public ArrayList<Message> getDetailLocalMessage() {
         ArrayList<Message> messages = new ArrayList<>();
+        Cursor cursor = db.getDetailFromMessage(doctorID);
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            int idUser = cursor.getInt(1);
+            int idDoctor = cursor.getInt(2);
+            String content = cursor.getString(3);
+            int from_person = cursor.getInt(5);
+            int checkLocalMess = cursor.getInt(6);
+            Message message = new Message(id, idUser, idDoctor, content, getDateTimeNow(), from_person == 1, checkLocalMess);
+            messages.add(message);
+        }
+        return messages;
+    }
+
+    public ArrayList<Message> getAllMessage() {
+        ArrayList<Message> allmessages = new ArrayList<>();
         Cursor cursor = db.getDetailFromMessage(id_user);
         while (cursor.moveToNext()) {
             int id = cursor.getInt(0);
@@ -265,25 +259,9 @@ public class DetailMessFragment extends Fragment {
             int from_person = cursor.getInt(5);
             int checkLocalMess = cursor.getInt(6);
             Message message = new Message(id, idUser, idDoctor, content, getDateTimeNow(), from_person == 1, checkLocalMess);
-            messages.add(message);
+            allmessages.add(message);
         }
-        return messages;
-    }
-
-    public ArrayList<Message> getDetailLocalMessageDoctor() {
-        ArrayList<Message> messages = new ArrayList<>();
-        Cursor cursor = db.getDetailFromMessageDoctor(doctorID);
-        while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            int idUser = cursor.getInt(1);
-            int idDoctor = cursor.getInt(2);
-            String content = cursor.getString(3);
-            int from_person = cursor.getInt(5);
-            int checkLocalMess = cursor.getInt(6);
-            Message message = new Message(id, idUser, idDoctor, content, getDateTimeNow(), from_person == 1, checkLocalMess);
-            messages.add(message);
-        }
-        return messages;
+        return allmessages;
     }
 
     public void scrollView() {
