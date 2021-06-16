@@ -36,7 +36,7 @@ import java.util.ArrayList;
 public class LoginFragment extends Fragment {
     public static final String MyPREFERENCES = "MyPrefs";
     public static final String USERNAME = "userNameKey";
-    public static final String NAMEDOCTOR = "nameDoctor";
+    public static final String FULLNAME = "nameDoctor";
     public static final String VALIDATION = "validation";
     public static final String ID_CURRENT = "ID_USER";
     FirebaseDatabase database;
@@ -92,7 +92,7 @@ public class LoginFragment extends Fragment {
                     if (CheckInternet.checkInternet(getContext())) {
                         int index = posCurrent(username.getText().toString(), pass.getText().toString(), users);
                         if (index != -1) {
-                            saveData(username.getText().toString(), pass.getText().toString(), users.get(index).getId(), "user");
+                            saveData(username.getText().toString(),  users.get(index).getFullname(), users.get(index).getId(), "user");
                             Intent intent = new Intent(getActivity(), MainActivity.class);
                             intent.putExtra("id", users.get(index).getId());
                             getActivity().finish();
@@ -137,14 +137,14 @@ public class LoginFragment extends Fragment {
         if (isLogining() && validation().equals("user")) {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             intent.putExtra("id", sharedpreferences.getInt(ID_CURRENT, -1));
-            //Toast.makeText(getContext(),,Toast.LENGTH_SHORT).show();
+            intent.putExtra("nameUser", sharedpreferences.getString(FULLNAME, ""));
             getActivity().finish();
             startActivity(intent);
         }
         if (isLogining() && validation().equals("doctor")) {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             intent.putExtra("doctorID", sharedpreferences.getInt(ID_CURRENT, -1));
-            intent.putExtra("nameDoctor", sharedpreferences.getString(NAMEDOCTOR, ""));
+            intent.putExtra("nameDoctor", sharedpreferences.getString(FULLNAME, ""));
             getActivity().finish();
             startActivity(intent);
         }
@@ -180,10 +180,10 @@ public class LoginFragment extends Fragment {
         });
     }
 
-    private void saveData(String username, String Pass, int idUser, String validation) {
+    private void saveData(String username, String fullname, int idUser, String validation) {
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString(USERNAME, username);
-        editor.putString(NAMEDOCTOR, Pass);
+        editor.putString(FULLNAME, fullname);
         editor.putString(VALIDATION, validation);
         editor.putInt(ID_CURRENT, idUser);
         editor.commit();

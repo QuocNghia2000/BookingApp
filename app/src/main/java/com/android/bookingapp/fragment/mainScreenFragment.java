@@ -84,7 +84,7 @@ public class mainScreenFragment extends Fragment {
 
         sharedpreferences = getActivity().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
-        int doctorID = getActivity().getIntent().getIntExtra("doctorID", -1);
+        int doctorID = getActivity().getIntent().getIntExtra("doctorID",-1);
         if (doctorID != -1) {
             Bundle bundle = new Bundle();
             bundle.putInt("doctorID", doctorID);
