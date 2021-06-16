@@ -46,7 +46,7 @@ public class DetailMessFragment extends Fragment {
     private ImageView imvSend, ivBack;
     private DatabaseReference myRef;
     private SearchView searchView;
-    private ArrayList<Message> listMess, messDoctor, messLocal;
+    private ArrayList<Message> listMess, messFirebase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -115,10 +115,8 @@ public class DetailMessFragment extends Fragment {
             doctorID = getArguments().getInt("doctorID");
             id_user = getArguments().getInt("id_user");
             isUser = getArguments().getBoolean("isUser");
-            countMess = getArguments().getInt("countMess");
             nameDisplay = getArguments().getString("nameDisplay");
         }
-        Toast.makeText(getContext(),String.valueOf(countMess),Toast.LENGTH_SHORT).show();
         listMess = new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
         rcvDetailMess = v.findViewById(R.id.rcv_detail_mess);
@@ -132,34 +130,38 @@ public class DetailMessFragment extends Fragment {
         searchView = v.findViewById(R.id.sv_detailMess);
         db = new DatabaseOpenHelper(getContext());
         getData();
-        cacheMessLocal();
+        if(isUser) {
+            cacheMessLocal();
+        }
         tvName.setText(nameDisplay);
     }
 
     public void cacheMessLocal() {
-        messLocal = new ArrayList<>();
+        messFirebase = new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();
         myRef.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                messLocal.clear();
+                messFirebase.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Message message = data.getValue(Message.class);
                     if (message.getId_User() == id_user) {
-                        messLocal.add(message);
+                        messFirebase.add(message);
                     }
                 }
+                countMess = getAllMessage().size();
+                System.out.println(countMess);
                 try {
-                    if (messLocal.size() - countMess > 0) {
-                        Toast.makeText(getContext(), "vào if", Toast.LENGTH_SHORT).show();
-                        for (int i = countMess; i < messLocal.size(); i++) {
+                    if (messFirebase.size() - countMess > 0) {
+                        for (int i = countMess; i < messFirebase.size(); i++) {
                             try {
-                                db.insertMessageToSqlite(messLocal.get(i));
+                                db.insertMessageToSqlite(messFirebase.get(i));
                             } catch (IOException ioException) {
                                 ioException.printStackTrace();
                             }
                         }
-                        countMess = messLocal.size();
+                        countMess = messFirebase.size();
+                        System.out.println(countMess);
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
                     e.printStackTrace();
@@ -244,6 +246,22 @@ public class DetailMessFragment extends Fragment {
             messages.add(message);
         }
         return messages;
+    }
+
+    public ArrayList<Message> getAllMessage() {
+        ArrayList<Message> allmessages = new ArrayList<>();
+        Cursor cursor = db.getDetailFromMessage(id_user);
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            int idUser = cursor.getInt(1);
+            int idDoctor = cursor.getInt(2);
+            String content = cursor.getString(3);
+            int from_person = cursor.getInt(5);
+            int checkLocalMess = cursor.getInt(6);
+            Message message = new Message(id, idUser, idDoctor, content, getDateTimeNow(), from_person == 1, checkLocalMess);
+            allmessages.add(message);
+        }
+        return allmessages;
     }
 
     public void scrollView() {
