@@ -35,8 +35,7 @@ import java.util.Calendar;
 
 public class DetailMessFragment extends Fragment {
     DatabaseOpenHelper db;
-    String nameDisplay, contentNotification;
-    boolean checkisUser;
+    String nameDisplay;
     private int id_user, doctorID, countMess;
     private RecyclerView rcvDetailMess;
     private DetailChatAdapter myAdapter;
@@ -115,6 +114,7 @@ public class DetailMessFragment extends Fragment {
             doctorID = getArguments().getInt("doctorID");
             id_user = getArguments().getInt("id_user");
             isUser = getArguments().getBoolean("isUser");
+            nameDisplay = getArguments().getString("nameDisplay");
         }
         listMess = new ArrayList<>();
         myRef = FirebaseDatabase.getInstance().getReference();

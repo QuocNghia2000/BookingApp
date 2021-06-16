@@ -51,6 +51,7 @@
 
         <SearchView
             android:id="@+id/sv_listChat"
+            android:queryHint="Nhập nôi dung tìm kiếm"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"
