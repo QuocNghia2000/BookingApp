@@ -91,7 +91,6 @@ public class mainScreenFragment extends Fragment {
             Navigation.findNavController(view).navigate(R.id.action_mainScreenFragment_to_docMainFragment, bundle);
         } else {
             idUser = getActivity().getIntent().getIntExtra("id", -1);
-            Toast.makeText(getContext(), sharedpreferences.getString(USERNAME, ""), Toast.LENGTH_SHORT).show();
         }
 
         mDeparts = new ArrayList<>();
