@@ -36,7 +36,7 @@ import java.util.List;
 public class ListChatFragment extends Fragment {
     DatabaseOpenHelper db;
     private List<Message> listMess;
-    private int doctorID, countMess;
+    private int doctorID;
     private RecyclerView rcvListChat;
     private ListChatAdapter listChatAdapter;
     private DatabaseReference dbRef;
@@ -95,7 +95,6 @@ public class ListChatFragment extends Fragment {
         listContact = new ArrayList<>();
         listContactDoc = new ArrayList<>();
         db = new DatabaseOpenHelper(getContext());
-        countMess = getArguments().getInt("countMess");
         rcvListChat = v.findViewById(R.id.rcv_listchat);
         imvBack = v.findViewById(R.id.imv_back_listChat);
         searchView = v.findViewById(R.id.sv_listChat);
@@ -247,7 +246,7 @@ public class ListChatFragment extends Fragment {
 
     private void setListChatUserAdapter() {
         rcvListChat.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        listChatAdapter = new ListChatAdapter(id_user, listContact, (ArrayList<Message>) listMess,countMess);
+        listChatAdapter = new ListChatAdapter(id_user, listContact, (ArrayList<Message>) listMess);
         rcvListChat.setAdapter(listChatAdapter);
     }
 
