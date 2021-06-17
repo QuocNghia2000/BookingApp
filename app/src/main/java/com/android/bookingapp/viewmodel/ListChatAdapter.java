@@ -147,12 +147,12 @@ public class ListChatAdapter extends RecyclerView.Adapter<ListChatAdapter.MyView
                     if (id_user != -1) {
                         bundle.putInt("id_user", id_user);
                         bundle.putInt("doctorID", listContact.get(getAdapterPosition()).getId());
-                        bundle.putSerializable("nameDisplay", listContact.get(getAdapterPosition()).getFullname());
+                        bundle.putString("nameDisplay", listContact.get(getAdapterPosition()).getFullname());
                         bundle.putBoolean("isUser", true);
                     } else {
                         bundle.putInt("doctorID", doctorID);
                         bundle.putInt("id_user", listContactDoc.get(getAdapterPosition()).getId());
-                        bundle.putSerializable("nameDisplay", listContactDoc.get(getAdapterPosition()).getFullname());
+                        bundle.putString("nameDisplay", listContactDoc.get(getAdapterPosition()).getFullname());
                         bundle.putBoolean("isUser", false);
                     }
                     Navigation.findNavController(v).navigate(R.id.action_listChatFragment_to_detailMessFragment, bundle);

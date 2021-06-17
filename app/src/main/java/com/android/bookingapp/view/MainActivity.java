@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     NetWorkChangeListener netWorkChangeListener;
-    String nameUser,nameDoctor, contentNotification;
+    String nameUser,nameDoctor;
     boolean check;
     private int  countMess;
     private DatabaseReference myRef;
@@ -71,7 +71,11 @@ public class MainActivity extends AppCompatActivity {
                 listMess.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Message message = data.getValue(Message.class);
-                    if (message.getId_User() == id)
+                    if (message.getId_User() == id && idUser!=-1)
+                    {
+                        listMess.add(message);
+                    }
+                    else if(message.getId_Doctor() == id)
                     {
                         listMess.add(message);
                     }
@@ -81,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = countMess; i < listMess.size(); i++) {
                         message=listMess.get(i);
                     }
+
                     if (message.isFromPerson()&&!check) {
                         myRef.child("User").addValueEventListener(new ValueEventListener() {
                             @Override
