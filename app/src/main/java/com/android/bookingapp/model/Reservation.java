@@ -79,4 +79,9 @@ public class Reservation implements Serializable {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public String getDateTime(){
+        String datetime = date.day + "-" + date.getMonth() + "-" + date.getYear() + " " + time.getHour() + ":" + time.getMinute();
+        return datetime;
+    }
 }
