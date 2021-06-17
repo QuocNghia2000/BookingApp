@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.bookingapp.R;
 import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
+import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Doctor;
 import com.android.bookingapp.model.Message;
 import com.android.bookingapp.model.User;
@@ -71,13 +72,14 @@ public class ListChatFragment extends Fragment {
         init(v);
         if (getArguments().getInt("id_user",-1) != -1) {
             id_user = getArguments().getInt("id_user");
-            listContact = new ArrayList<>();
             if (CheckInternet.checkInternet(getContext())) {
                 getListMessUser();
             } else getListMessUserOff();
         } else {
             doctorID = getArguments().getInt("doctorID",-1);
-            getListMessDoctor();
+            if (CheckInternet.checkInternet(getContext())) {
+                getListMessDoctor();
+            } else getListMessDoctorOff();
         }
 
         imvBack.setOnClickListener(new View.OnClickListener() {
@@ -195,7 +197,25 @@ public class ListChatFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
+    }
 
+    public void getListMessDoctorOff() {
+        ArrayList<Message> messTemp = getDetailLocalMessage();
+        ArrayList<User> userTemp = getDetailLocalUser();
+        for (Message mess : messTemp) {
+            if (mess.getId_Doctor() == doctorID) {
+                listMess.add(mess);
+            }
+        }
+        ArrayList<Integer> idUser = listIdUserLatest();
+        for (User user : userTemp) {
+            if (idUser.indexOf(user.getId()) != -1) {
+                listContactDoc.add(user);
+            }
+        }
+        listContactDoc = updateListChatDoctor(idUser);
+        setListChatDoctorAdapter();
+        listChatAdapter.notifyDataSetChanged();
     }
 
     private ArrayList<Integer> listIdDoctorLatest() {
@@ -272,6 +292,27 @@ public class ListChatFragment extends Fragment {
             doctors.add(doctor);
         }
         return doctors;
+    }
+
+    public ArrayList<User> getDetailLocalUser() {
+        ArrayList<User> users = new ArrayList<>();
+        Cursor cursor = db.getUserFromSqlite();
+        while (cursor.moveToNext()) {
+            int idUser=cursor.getInt(9);
+            String email = cursor.getString(1);
+            String password=cursor.getString(2);
+            String fullname=cursor.getString(3);
+            String phone=cursor.getString(4);
+            String birth=cursor.getString(8);
+            String[] date = birth.split("/");
+            Date birthday= new Date(date[0],date[1],date[2]);
+            int gender = Integer.valueOf(cursor.getString(5));
+            String job=cursor.getString(6);
+            String address=cursor.getString(7);
+            User user = new User(idUser,email, password,fullname,phone,birthday,gender==1?true:false,job,address);
+            users.add(user);
+        }
+        return users;
     }
 
     public ArrayList<Message> getDetailLocalMessage() {
