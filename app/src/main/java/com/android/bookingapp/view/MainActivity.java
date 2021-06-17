@@ -3,6 +3,7 @@ package com.android.bookingapp.view;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
                         listMess.add(message);
                     }
                 }
+                Toast.makeText(getApplicationContext(),String.valueOf(countMess)+String.valueOf(listMess.size()),Toast.LENGTH_SHORT).show();
                 //push notification
                 if (listMess.size()-countMess > 0 && countMess>0) {
                     for (int i = countMess; i < listMess.size(); i++) {
