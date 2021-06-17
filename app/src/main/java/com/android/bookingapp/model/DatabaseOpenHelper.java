@@ -73,9 +73,15 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor getDetailFromMessage(int id_doctor) {
+    public Cursor getDetailFromMessageUser(int id_doctor) {
         Cursor cursor = db.rawQuery("Select * from " + DbContract.MenuEntry.TABLE_MESSAGE + " where " + DbContract.MenuEntry.COLUMN_ID_DOCTOR
                 + "=" + id_doctor, null);
+        return cursor;
+    }
+
+    public Cursor getDetailFromMessageDoctor(int id_user) {
+        Cursor cursor = db.rawQuery("Select * from " + DbContract.MenuEntry.TABLE_MESSAGE + " where " + DbContract.MenuEntry.COLUMN_ID_USER
+                + "=" + id_user, null);
         return cursor;
     }
 
@@ -85,9 +91,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public void deleteInformationUser() {
+    public void deleteInformation() {
         db.execSQL("drop table " + DbContract.MenuEntry.TABLE_MESSAGE);
         db.execSQL("drop table " + DbContract.MenuEntry.TABLE_USER);
+        db.execSQL("drop table " + DbContract.MenuEntry.TABLE_DEPARTMENT);
+        db.execSQL("drop table " + DbContract.MenuEntry.TABLE_DOCTOR);
     }
 
     public ArrayList<Message> getMessageToUpdate() {

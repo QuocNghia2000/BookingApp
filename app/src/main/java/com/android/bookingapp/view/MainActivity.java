@@ -81,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
                         listMess.add(message);
                     }
                 }
-                Toast.makeText(getApplicationContext(),String.valueOf(countMess)+String.valueOf(listMess.size()), Toast.LENGTH_SHORT).show();
-                //push notification
                 if (listMess.size()-countMess > 0 && countMess>0) {
                     for (int i = countMess; i < listMess.size(); i++) {
                         message=listMess.get(i);

@@ -54,7 +54,6 @@ import java.util.List;
 
 public class mainScreenFragment extends Fragment {
     public static final String MyPREFERENCES = "MyPrefs";
-    public static final String USERNAME = "userNameKey";
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
     SharedPreferences sharedpreferences;
@@ -328,7 +327,7 @@ public class mainScreenFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-                db.deleteInformationUser();
+                db.deleteInformation();
                 clearData();
                 startActivity(new Intent(getActivity(), LoginActivity.class));
                 getActivity().finish();

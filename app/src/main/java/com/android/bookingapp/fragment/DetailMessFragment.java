@@ -66,11 +66,20 @@ public class DetailMessFragment extends Fragment {
                         Message message = new Message(0, id_user, doctorID, content, getDateTimeNow(), isUser, 0);
                         myRef.child("Message").push().setValue(message);
                         edtContent.setText("");
+                    } else if (isUser) {
+                        Message message = new Message(0, id_user, doctorID, content, getDateTimeNow(), isUser, 1);
+                        try {
+                            db.insertMessageToSqlite(message);
+                            getDataUser();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        edtContent.setText("");
                     } else {
                         Message message = new Message(0, id_user, doctorID, content, getDateTimeNow(), isUser, 1);
                         try {
                             db.insertMessageToSqlite(message);
-                            getData();
+                            getDataDoctor();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -126,19 +135,23 @@ public class DetailMessFragment extends Fragment {
         ivBack = v.findViewById(R.id.imv_back_detailMess);
         searchView = v.findViewById(R.id.sv_detailMess);
         db = new DatabaseOpenHelper(getContext());
-        getData();
-        if(isUser) {
-            cacheMessLocal();
+        if (isUser) {
+            getDataUser();
+            cacheMessLocalUser();
+        } else {
+            getDataDoctor();
+            cacheMessLocalDoctor();
         }
         tvName.setText(nameDisplay);
     }
-    private void setRcvDetailMessAdapter()
-    {
+
+    private void setRcvDetailMessAdapter() {
         myAdapter = new DetailChatAdapter(listMess, isUser);
         rcvDetailMess.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rcvDetailMess.setAdapter(myAdapter);
     }
-    public void cacheMessLocal() {
+
+    public void cacheMessLocalUser() {
         messFirebase = new ArrayList<>();
         myRef.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
@@ -165,26 +178,60 @@ public class DetailMessFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }
 
-    public void getData() {
+    public void cacheMessLocalDoctor() {
+        messFirebase = new ArrayList<>();
+        myRef.child("Message").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                messFirebase.clear();
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Message message = data.getValue(Message.class);
+                    if (message.getId_Doctor() == doctorID) {
+                        messFirebase.add(message);
+                    }
+                }
+                countMess = getSizeOfAllMessage();
+                try {
+                    if (messFirebase.size() - countMess > 0) {
+                        for (int i = countMess; i < messFirebase.size(); i++) {
+                            try {
+                                db.insertMessageToSqlite(messFirebase.get(i));
+                            } catch (IOException ioException) {
+                                ioException.printStackTrace();
+                            }
+                        }
+                    }
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    public void getDataUser() {
         myRef.child("Message").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listMess.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Message message = data.getValue(Message.class);
-                    if (message.getId_User() == id_user && message.getId_Doctor() == doctorID)
-                    {
+                    if (message.getId_User() == id_user && message.getId_Doctor() == doctorID) {
                         listMess.add(message);
                     }
                 }
-                if (getDetailLocalMessage() != null) {
-                    if (listMess.size() != getDetailLocalMessage().size()) {
+                if (getDetailLocalMessageUser() != null) {
+                    if (listMess.size() != getDetailLocalMessageUser().size()) {
                         for (Message message : db.getMessageToUpdate()) {
                             myRef.child("Message").push().setValue(message);
                         }
@@ -201,15 +248,66 @@ public class DetailMessFragment extends Fragment {
         });
         if (!CheckInternet.checkInternet(getContext())) {
             listMess.clear();
-            listMess.addAll(getDetailLocalMessage());
+            listMess.addAll(getDetailLocalMessageUser());
             scrollView();
             myAdapter.notifyDataSetChanged();
         }
     }
 
-    public ArrayList<Message> getDetailLocalMessage() {
+    public void getDataDoctor() {
+        myRef.child("Message").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listMess.clear();
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Message message = data.getValue(Message.class);
+                    if (message.getId_Doctor() == doctorID && message.getId_User() == id_user) {
+                        listMess.add(message);
+                    }
+                }
+                if (getDetailLocalMessageDoctor() != null) {
+                    if (listMess.size() != getDetailLocalMessageDoctor().size()) {
+                        for (Message message : db.getMessageToUpdate()) {
+                            myRef.child("Message").push().setValue(message);
+                        }
+                        db.updateMessageSqlite();
+                    }
+                }
+                scrollView();
+                myAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+        if (!CheckInternet.checkInternet(getContext())) {
+            listMess.clear();
+            listMess.addAll(getDetailLocalMessageDoctor());
+            scrollView();
+            myAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public ArrayList<Message> getDetailLocalMessageUser() {
         ArrayList<Message> messages = new ArrayList<>();
-        Cursor cursor = db.getDetailFromMessage(doctorID);
+        Cursor cursor = db.getDetailFromMessageUser(doctorID);
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(0);
+            int idUser = cursor.getInt(1);
+            int idDoctor = cursor.getInt(2);
+            String content = cursor.getString(3);
+            int from_person = cursor.getInt(5);
+            int checkLocalMess = cursor.getInt(6);
+            Message message = new Message(id, idUser, idDoctor, content, getDateTimeNow(), from_person == 1, checkLocalMess);
+            messages.add(message);
+        }
+        return messages;
+    }
+
+    public ArrayList<Message> getDetailLocalMessageDoctor() {
+        ArrayList<Message> messages = new ArrayList<>();
+        Cursor cursor = db.getDetailFromMessageDoctor(id_user);
         while (cursor.moveToNext()) {
             int id = cursor.getInt(0);
             int idUser = cursor.getInt(1);
