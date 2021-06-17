@@ -244,4 +244,32 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists " + DbContract.MenuEntry.TABLE_MESSAGE);
         onCreate(db);
     }
+
+    public void createReservationTable() {
+        final String SQL_CREATE_BUGS_TABLE = "CREATE TABLE if not exists  " + DbContract.MenuEntry.TABLE_RESERVATION + "(" +
+                DbContract.MenuEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                DbContract.MenuEntry.COLUMN_ID_USER_RESERVATION + " INTEGER," +
+                DbContract.MenuEntry.COLUMN_ID_DOCTOR_RESERVATION + " INTEGER," +
+                DbContract.MenuEntry.COLUMN_SYMPTORN + " TEXT," +
+                DbContract.MenuEntry.COLUMN_MEDICINE + " TEXT ," +
+                DbContract.MenuEntry.COLUMN_DATE_TIME_RESERVATION + " TEXT " + ");";
+        db.execSQL(SQL_CREATE_BUGS_TABLE);
+    }
+
+    public void saveReservationTableToDB(ArrayList<Reservation> reservations) throws IOException {
+        ContentValues contentValues = new ContentValues();
+        for (Reservation reservation : reservations) {
+            contentValues.put(DbContract.MenuEntry.COLUMN_ID_USER_RESERVATION, reservation.getId_user());
+            contentValues.put(DbContract.MenuEntry.COLUMN_ID_DOCTOR_RESERVATION, reservation.getId_doctor());
+            contentValues.put(DbContract.MenuEntry.COLUMN_SYMPTORN, reservation.getSymptorn());
+            contentValues.put(DbContract.MenuEntry.COLUMN_MEDICINE, reservation.getMedicine());
+            contentValues.put(DbContract.MenuEntry.COLUMN_DATE_TIME_RESERVATION, reservation.getDateTime());
+            db.insert(DbContract.MenuEntry.TABLE_RESERVATION, null, contentValues);
+        }
+    }
+
+    public Cursor getReservationFromSqlite() {
+        Cursor cursor = db.rawQuery("Select * from " + DbContract.MenuEntry.TABLE_RESERVATION, null);
+        return cursor;
+    }
 }

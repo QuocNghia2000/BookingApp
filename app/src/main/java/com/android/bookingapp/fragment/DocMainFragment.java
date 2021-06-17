@@ -29,6 +29,7 @@ import com.android.bookingapp.model.CheckInternet;
 import com.android.bookingapp.model.DatabaseOpenHelper;
 import com.android.bookingapp.model.Date;
 import com.android.bookingapp.model.Message;
+import com.android.bookingapp.model.Reservation;
 import com.android.bookingapp.model.User;
 import com.android.bookingapp.view.LoginActivity;
 import com.android.bookingapp.viewmodel.DocMainAdapter;
@@ -42,6 +43,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
 public class DocMainFragment extends Fragment {
@@ -62,6 +64,8 @@ public class DocMainFragment extends Fragment {
     private TextView nameDoctor;
     private ArrayList<Message> messages;
     private ArrayList<User> listUser;
+    private DatabaseReference myRef;
+    private List<Reservation> listRE;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,7 +86,6 @@ public class DocMainFragment extends Fragment {
         db = new DatabaseOpenHelper(getContext());
         date = getDateNow();
         getAllMessage();
-        getUser();
         if (getArguments() != null) {
             doctorID = getArguments().getInt("doctorID", -1);
             nameDoctor.setText("Xin Chào \n" + getArguments().getString("nameDoctor") + "!");
@@ -116,12 +119,12 @@ public class DocMainFragment extends Fragment {
                 searchReservation();
             }
         });
-        searchReservation();
         return view;
     }
 
     @Override
     public void onResume() {
+        listRE = new ArrayList<>();
         searchReservation();
         super.onResume();
     }
@@ -240,30 +243,7 @@ public class DocMainFragment extends Fragment {
         });
     }
 
-    public void getUser() {
-        listUser = new ArrayList<>();
-        dbReference.child("User").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listUser.clear();
-                for (DataSnapshot item : snapshot.getChildren()) {
-                    User user = item.getValue(User.class);
-                    listUser.add(user);
-                }
-                try {
-                    db.createUserTable();
-                    Cursor cursor = db.getUserFromSqlite();
-                    if (cursor.getCount() == 0) db.saveUserTableToDB(listUser);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }
 
     private void clearData() {
         SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -291,8 +271,10 @@ public class DocMainFragment extends Fragment {
 
     public void searchReservation() {
         date = getDateInSpinner();
-        mainAdapter = new DocMainAdapter(date, doctorID, getContext());
+        mainAdapter = new DocMainAdapter(getContext(),date,doctorID);
         rcvDocMain.setAdapter(mainAdapter);
         mainAdapter.notifyDataSetChanged();
     }
+
+
 }
