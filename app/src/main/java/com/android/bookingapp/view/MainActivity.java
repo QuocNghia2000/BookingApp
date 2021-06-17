@@ -72,11 +72,11 @@ public class MainActivity extends AppCompatActivity {
                 listMess.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Message message = data.getValue(Message.class);
-                    if (message.getId_User() == id && idUser!=-1)
+                    if (message.getId_User() == id && idUser!=-1 && check)
                     {
                         listMess.add(message);
                     }
-                    else if(message.getId_Doctor() == id)
+                    else if(message.getId_Doctor() == id && !check)
                     {
                         listMess.add(message);
                     }
