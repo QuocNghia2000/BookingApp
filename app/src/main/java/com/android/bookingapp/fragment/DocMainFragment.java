@@ -142,7 +142,7 @@ public class DocMainFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-                db.deleteInformation();
+                db.deleteInformationDocotor();
                 clearData();
                 startActivity(new Intent(getActivity(), LoginActivity.class));
                 getActivity().finish();

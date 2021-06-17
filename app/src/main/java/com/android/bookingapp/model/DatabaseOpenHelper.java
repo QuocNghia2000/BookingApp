@@ -98,6 +98,14 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         db.execSQL("drop table " + DbContract.MenuEntry.TABLE_DOCTOR);
     }
 
+    public void deleteInformationDocotor() {
+        db.execSQL("drop table " + DbContract.MenuEntry.TABLE_MESSAGE);
+        db.execSQL("drop table " + DbContract.MenuEntry.TABLE_USER);
+        db.execSQL("drop table " + DbContract.MenuEntry.TABLE_DEPARTMENT);
+        db.execSQL("drop table " + DbContract.MenuEntry.TABLE_DOCTOR);
+        db.execSQL("drop table " + DbContract.MenuEntry.TABLE_RESERVATION);
+    }
+
     public ArrayList<Message> getMessageToUpdate() {
         Cursor cursor = db.rawQuery("Select * from " + DbContract.MenuEntry.TABLE_MESSAGE + " where " + DbContract.MenuEntry.COLUMN_CHECK_MESS_LOCAL_
                 + "=1", null);
