@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         else
         {
             check=false;
-            getData(getIntent().getIntExtra("doctorID",-1));
+            getData(getIntent().getIntExtra("doctorID",-1),"doctor");
         }
     }
 
@@ -76,10 +76,6 @@ public class MainActivity extends AppCompatActivity {
                     {
                         listMess.add(message);
                     }
-                    else if(message.getId_Doctor() == id)
-                    {
-                        listMess.add(message);
-                    }
                 }
                 Toast.makeText(getApplicationContext(),String.valueOf(countMess)+String.valueOf(listMess.size()),Toast.LENGTH_SHORT).show();
                 //push notification
@@ -87,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = countMess; i < listMess.size(); i++) {
                         message=listMess.get(i);
                     }
-
                     if (message.isFromPerson()&&!check) {
                         myRef.child("User").addValueEventListener(new ValueEventListener() {
                             @Override
@@ -106,7 +101,34 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                     }
-                    else if(check&!message.isFromPerson())
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+    public void getData(int id,String isDoctor) {
+        myRef.child("Message").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                countMess = listMess.size();
+                listMess.clear();
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Message message = data.getValue(Message.class);
+                    if(message.getId_Doctor() == id && isDoctor.equals("doctor"))
+                    {
+                        listMess.add(message);
+                    }
+                }
+                Toast.makeText(getApplicationContext(),String.valueOf(countMess)+String.valueOf(listMess.size()),Toast.LENGTH_SHORT).show();
+                //push notification
+                if (listMess.size()-countMess > 0 && countMess>0) {
+                    for (int i = countMess; i < listMess.size(); i++) {
+                        message=listMess.get(i);
+                    }
+                    if(check&!message.isFromPerson())
                     {
                         myRef.child("Doctor").addValueEventListener(new ValueEventListener() {
                             @Override
