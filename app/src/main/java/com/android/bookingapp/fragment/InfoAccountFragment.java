@@ -177,7 +177,15 @@ public class InfoAccountFragment extends Fragment {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showLogoutDialog();
+                if (!extractNumber(name.getText().toString())) {
+                    Toast.makeText(getActivity(), "Lỗi họ và tên", Toast.LENGTH_SHORT).show();
+                } else if (!isNumeric(phone.getText().toString())) {
+                    Toast.makeText(getActivity(), "Lỗi số điện thoại", Toast.LENGTH_SHORT).show();
+                } else  if(!extractNumber(job.getText().toString())) {
+                    Toast.makeText(getActivity(), "Lỗi nghề nghiệp", Toast.LENGTH_SHORT).show();
+                } else {
+                    showLogoutDialog();
+                }
             }
         });
     }
@@ -248,6 +256,32 @@ public class InfoAccountFragment extends Fragment {
         });
         dialog = dialogBuilder.create();
         dialog.show();
+    }
+
+    public boolean extractNumber( String str) {
+        StringBuilder sb = new StringBuilder();
+        boolean found = false;
+        for(char c : str.toCharArray()){
+            if(Character.isDigit(c)){
+                sb.append(c);
+                found = true;
+            } else if(found){
+                break;
+            }
+        }
+        if(sb.toString().isEmpty())
+            return true;
+        else
+            return false;
+    }
+
+    public static boolean isNumeric(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch(NumberFormatException e){
+            return false;
+        }
     }
 
     public User getDetailLocalUser() {
