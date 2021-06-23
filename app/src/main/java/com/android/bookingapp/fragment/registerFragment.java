@@ -64,18 +64,24 @@ public class registerFragment extends Fragment {
             public void onClick(View v) {
                 if (!fullname.getText().toString().isEmpty() && !email.getText().toString().isEmpty() && !phone.getText().toString().isEmpty()
                         && !pass.getText().toString().isEmpty() && !confirm_pass.getText().toString().isEmpty()) {
-                    if (!emailExist(email.getText().toString())) {
-                        Toast.makeText(getActivity(), "Vui lòng nhập đầy đủ các thông tin sau", Toast.LENGTH_SHORT).show();
-                        if (pass.getText().toString().trim().equals(confirm_pass.getText().toString().trim())) {
-                            User user = new User(getArguments().getInt("id"), email.getText().toString(), pass.getText().toString(), fullname.getText().toString(), phone.getText().toString());
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("user", user);
-                            Navigation.findNavController(v).navigate(R.id.action_registerFragment_to_moreInfoFragment, bundle);
-                        } else {
-                            Toast.makeText(getActivity(), "Mật khẩu và xác nhận phải trùng nhau", Toast.LENGTH_SHORT).show();
-                        }
-                    } else
-                        Toast.makeText(getActivity(), "Email đã tồn tại", Toast.LENGTH_SHORT).show();
+                    if (!extractNumber(fullname.getText().toString())) {
+                        Toast.makeText(getActivity(), "Lỗi họ và tên", Toast.LENGTH_SHORT).show();
+                    } else if (!isNumeric(phone.getText().toString())) {
+                        Toast.makeText(getActivity(), "Lỗi số điện thoại", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (!emailExist(email.getText().toString())) {
+                            Toast.makeText(getActivity(), "Vui lòng nhập đầy đủ các thông tin sau", Toast.LENGTH_SHORT).show();
+                            if (pass.getText().toString().trim().equals(confirm_pass.getText().toString().trim())) {
+                                User user = new User(getArguments().getInt("id"), email.getText().toString(), pass.getText().toString(), fullname.getText().toString(), phone.getText().toString());
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("user", user);
+                                Navigation.findNavController(v).navigate(R.id.action_registerFragment_to_moreInfoFragment, bundle);
+                            } else {
+                                Toast.makeText(getActivity(), "Mật khẩu và xác nhận phải trùng nhau", Toast.LENGTH_SHORT).show();
+                            }
+                        } else
+                            Toast.makeText(getActivity(), "Email đã tồn tại", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(getActivity(), "Vui lòng điền đủ thông tin", Toast.LENGTH_SHORT).show();
                 }
@@ -95,6 +101,32 @@ public class registerFragment extends Fragment {
             if (user.getEmail().equals(email)) return true;
         }
         return false;
+    }
+
+    public boolean extractNumber( String str) {
+        StringBuilder sb = new StringBuilder();
+        boolean found = false;
+        for(char c : str.toCharArray()){
+            if(Character.isDigit(c)){
+                sb.append(c);
+                found = true;
+            } else if(found){
+                break;
+            }
+        }
+        if(sb.toString().isEmpty())
+            return true;
+        else
+            return false;
+    }
+
+    public static boolean isNumeric(String str) {
+        try {
+            Double.parseDouble(str);
+            return true;
+        } catch(NumberFormatException e){
+            return false;
+        }
     }
 
     @Override

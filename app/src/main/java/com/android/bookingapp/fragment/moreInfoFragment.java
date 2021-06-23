@@ -159,13 +159,17 @@ public class moreInfoFragment extends Fragment {
                 });
                 RetreiveFeedTask task = new RetreiveFeedTask();
                 task.execute();
-                if (!edt_job.getText().toString().isEmpty() && !edt_address.getText().toString().isEmpty()) {
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("user", user1);
-                    bundle.putString("code", textMessage);
-                    Navigation.findNavController(v).navigate(R.id.action_moreInfoFragment_to_confrimFragment, bundle);
+                if(!extractNumber(edt_job.getText().toString())) {
+                    Toast.makeText(getActivity(), "Lỗi nghề nghiệp", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getActivity(), "Vui lòng điền đủ thông tin", Toast.LENGTH_SHORT).show();
+                    if (!edt_job.getText().toString().isEmpty() && !edt_address.getText().toString().isEmpty()) {
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("user", user1);
+                        bundle.putString("code", textMessage);
+                        Navigation.findNavController(v).navigate(R.id.action_moreInfoFragment_to_confrimFragment, bundle);
+                    } else {
+                        Toast.makeText(getActivity(), "Vui lòng điền đủ thông tin", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -183,6 +187,23 @@ public class moreInfoFragment extends Fragment {
         spinner_month = (Spinner) view.findViewById(R.id.spinner_month);
         spinner_year = (Spinner) view.findViewById(R.id.spinner_year);
         return view;
+    }
+
+    public boolean extractNumber( String str) {
+        StringBuilder sb = new StringBuilder();
+        boolean found = false;
+        for(char c : str.toCharArray()){
+            if(Character.isDigit(c)){
+                sb.append(c);
+                found = true;
+            } else if(found){
+                break;
+            }
+        }
+        if(sb.toString().isEmpty())
+            return true;
+        else
+            return false;
     }
 
     class RetreiveFeedTask extends AsyncTask<String, Void, String> {
