@@ -91,7 +91,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="15dp"
                 android:background="@android:color/transparent"
-                android:hint="Password">
+                android:hint="Mật khẩu">
             </EditText>
 
         </LinearLayout>
