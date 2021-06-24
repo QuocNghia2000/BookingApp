@@ -273,11 +273,15 @@ public class mainScreenFragment extends Fragment {
                 try {
                     db.createUserTable();
                     Cursor cursor = db.getUserFromSqlite();
-                    if (getActivity().getIntent().getSerializableExtra("doctor") != null) {
-                        if (cursor.getCount() == 0) {
-                            db.saveUserTableToDB(userAll);
-                        }
-                    } else if (cursor.getCount() == 0) db.saveUserTableToDB(users);
+                    try {
+                        if (getActivity().getIntent().getSerializableExtra("doctor") != null) {
+                            if (cursor.getCount() == 0) {
+                                db.saveUserTableToDB(userAll);
+                            }
+                        } else if (cursor.getCount() == 0) db.saveUserTableToDB(users);
+                    } catch (NullPointerException ex) {
+                        ex.printStackTrace();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

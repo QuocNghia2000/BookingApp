@@ -133,8 +133,10 @@ public class InfoAccountFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_infoAccountFragment_to_mainScreenFragment);
             }
         });
+        db = new DatabaseOpenHelper(getContext());
         if(CheckInternet.checkInternet(getContext())) {
             user_save = getDetailLocalUser();
+            user_now = user_save;
             database = FirebaseDatabase.getInstance();
             myRef = database.getReference("User");
             myRef.child("User" + user_save.getId()).setValue(new User(user_save.getId(),user_save.getEmail(),user_save.getPassword(),
@@ -148,8 +150,7 @@ public class InfoAccountFragment extends Fragment {
                 public void onFailure(@NonNull Exception e) {
                 }
             });
-        }
-        else {
+        } else {
             user_now = getDetailLocalUser();
             handle();
         }
@@ -286,7 +287,7 @@ public class InfoAccountFragment extends Fragment {
 
     public User getDetailLocalUser() {
         User user = new User();
-        Cursor cursor=db.getUserFromUser(1);
+        Cursor cursor=db.getUserFromSqlite();
         while (cursor.moveToNext())
         {
             int idUser=cursor.getInt(9);
