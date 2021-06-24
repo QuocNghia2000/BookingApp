@@ -72,27 +72,24 @@ public class ForgetPassFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        users = new ArrayList<>();
+        users=new ArrayList<>();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("User");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot data : snapshot.getChildren()) {
+                for(DataSnapshot data: snapshot.getChildren())
+                {
                     User user = data.getValue(User.class);
-                    if (user.getEmail() == email.getText().toString()) {
-                        idUserCurrent = user.getId();
-                    }
+                    users.add(user);
                 }
                 handle();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }
-
     private void handle() {
         bt_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,9 +100,9 @@ public class ForgetPassFragment extends Fragment {
         bt_sendpass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (email.getText().toString().equals("")) {
-                    Toast.makeText(getContext(), "Vui lòng nhập đẩy đủ thông tin", Toast.LENGTH_SHORT).show();
-                } else if (idUserCurrent != -1) {
+                if(email.getText().toString().equals("")) {
+                    Toast.makeText(getContext(),"Vui lòng nhập đẩy đủ thông tin",Toast.LENGTH_SHORT).show();
+                } else if(posCurrent(email.getText().toString())!=-1) {
                     rec = email.getText().toString();
                     textMessage = randomCode();
                     subject = "Mật khẩu mới";
@@ -116,24 +113,35 @@ public class ForgetPassFragment extends Fragment {
                     props.put("mail.smtp.auth", "true");
                     props.put("mail.smtp.port", "465");
                     session = Session.getDefaultInstance(props, new Authenticator() {
-                        protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication("bm3doithong@gmail.com", "BM3doithong@");
+                        protected PasswordAuthentication getPasswordAuthentication(){
+                            return  new PasswordAuthentication("bm3doithong@gmail.com", "BM3doithong@");
                         }
                     });
                     RetreiveFeedTask task = new RetreiveFeedTask();
                     task.execute();
-                    Toast.makeText(getContext(), "Vui mở gmail để nhận lại mật khẩu", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Vui mở gmail để nhận lại mật khẩu",Toast.LENGTH_SHORT).show();
                     Navigation.findNavController(v).navigate(R.id.action_ForgetPassFragment_to_loginFragment);
 
                     HashMap hashMap = new HashMap();
                     hashMap.put("password", textMessage);
-                    String userId = String.valueOf(idUserCurrent);
-                    myRef.child("User" + userId).updateChildren(hashMap);
+                    String userId = String.valueOf(users.get(posCurrent(email.getText().toString())).getId());
+                    myRef.child("User"+userId).updateChildren(hashMap);
                 } else {
-                    Toast.makeText(getContext(), "Vui lòng kiểm tra lại thông tin", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Vui lòng kiểm tra lại thông tin",Toast.LENGTH_SHORT).show();
                 }
             }
         });
+    }
+
+    public int posCurrent(String email) {
+        if(users!=null){
+            for (int i = 0; i < users.size(); i++) {
+                if (email.equals(users.get(i).getEmail())) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     @Override

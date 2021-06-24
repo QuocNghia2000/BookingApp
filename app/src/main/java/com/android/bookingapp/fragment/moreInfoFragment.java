@@ -140,36 +140,34 @@ public class moreInfoFragment extends Fragment {
         bt_submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User user1 = new User(user.getId(), user.getEmail(), user.getPassword(), user.getFullname(), user.getPhone(),
-                        new Date(nDay, nMonth, nYear), male.isChecked(), edt_job.getText().toString(), edt_address.getText().toString());
-                rec = user1.getEmail();
-                textMessage = randomCode();
-                subject = "Mã xác thực";
-                Properties props = new Properties();
-                props.put("mail.smtp.host", "smtp.gmail.com");
-                props.put("mail.smtp.socketFactory.port", "465");
-                props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-                props.put("mail.smtp.auth", "true");
-                props.put("mail.smtp.port", "465");
-
-                session = Session.getDefaultInstance(props, new Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication("bm3doithong@gmail.com", "BM3doithong@");
-                    }
-                });
-                RetreiveFeedTask task = new RetreiveFeedTask();
-                task.execute();
                 if(!extractNumber(edt_job.getText().toString())) {
                     Toast.makeText(getActivity(), "Lỗi nghề nghiệp", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (!edt_job.getText().toString().isEmpty() && !edt_address.getText().toString().isEmpty()) {
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("user", user1);
-                        bundle.putString("code", textMessage);
-                        Navigation.findNavController(v).navigate(R.id.action_moreInfoFragment_to_confrimFragment, bundle);
+                } else if(!edt_job.getText().toString().isEmpty() && !edt_address.getText().toString().isEmpty()) {
+                    User user1 = new User(user.getId(), user.getEmail(), user.getPassword(), user.getFullname(), user.getPhone(),
+                            new Date(nDay, nMonth, nYear), male.isChecked(), edt_job.getText().toString(), edt_address.getText().toString());
+                    rec = user1.getEmail();
+                    textMessage = randomCode();
+                    subject = "Mã xác thực";
+                    Properties props = new Properties();
+                    props.put("mail.smtp.host", "smtp.gmail.com");
+                    props.put("mail.smtp.socketFactory.port", "465");
+                    props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+                    props.put("mail.smtp.auth", "true");
+                    props.put("mail.smtp.port", "465");
+
+                    session = Session.getDefaultInstance(props, new Authenticator() {
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return new PasswordAuthentication("bm3doithong@gmail.com", "BM3doithong@");
+                        }
+                    });
+                    RetreiveFeedTask task = new RetreiveFeedTask();
+                    task.execute();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("user", user1);
+                    bundle.putString("code", textMessage);
+                    Navigation.findNavController(v).navigate(R.id.action_moreInfoFragment_to_confrimFragment, bundle);
                     } else {
-                        Toast.makeText(getActivity(), "Vui lòng điền đủ thông tin", Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(getActivity(), "Vui lòng điền đủ thông tin", Toast.LENGTH_SHORT).show();
                 }
             }
         });
