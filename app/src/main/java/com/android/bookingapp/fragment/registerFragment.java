@@ -70,7 +70,6 @@ public class registerFragment extends Fragment {
                         Toast.makeText(getActivity(), "Lỗi số điện thoại", Toast.LENGTH_SHORT).show();
                     } else {
                         if (!emailExist(email.getText().toString())) {
-                            Toast.makeText(getActivity(), "Vui lòng nhập đầy đủ các thông tin sau", Toast.LENGTH_SHORT).show();
                             if (pass.getText().toString().trim().equals(confirm_pass.getText().toString().trim())) {
                                 User user = new User(getArguments().getInt("id"), email.getText().toString(), pass.getText().toString(), fullname.getText().toString(), phone.getText().toString());
                                 Bundle bundle = new Bundle();
