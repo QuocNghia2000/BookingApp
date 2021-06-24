@@ -167,12 +167,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor getUserFromUser(int id_user) {
-        Cursor cursor = db.rawQuery("Select * from " + DbContract.MenuEntry.TABLE_USER + " where " + DbContract.MenuEntry._ID
-                + "=" + id_user, null);
-        return cursor;
-    }
-
     public Cursor getUserBookFromUser(int id_user) {
         Cursor cursor = db.rawQuery("Select * from " + DbContract.MenuEntry.TABLE_USER + " where " + DbContract.MenuEntry._ID
                 + "=" + id_user, null);
